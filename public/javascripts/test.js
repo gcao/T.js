@@ -5,9 +5,9 @@
   processTemplate = function(template) {
     var html;
     console.log(template);
-    window.processed = process(template);
+    window.processed = T.process(template);
     console.log(processed);
-    html = render(processed);
+    html = T.render(processed);
     console.log(html);
     return html;
   };
@@ -45,7 +45,7 @@
       }
     ];
     template = [
-      'div', include(partial, function() {
+      'div', T.include(partial, function() {
         return {
           name: 'John Doe'
         };

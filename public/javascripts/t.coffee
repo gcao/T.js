@@ -37,14 +37,14 @@ renderChildren = (children, data) ->
   # TODO how does reduce work?
   #children.reduce (s, item) -> s + render(item)
 
-this.include = (template, mapper) ->
+include = (template, mapper) ->
   (data) -> 
     if mapper
       process(template, mapper(data))
     else
       process(template, data)
 
-this.process = (template, data) ->
+process = (template, data) ->
   return process(template(data), data)  if isFunction(template)
 
   if isArray template
@@ -64,7 +64,7 @@ this.process = (template, data) ->
 
   template
 
-this.render = (template, data) ->
+render = (template, data) ->
   return template  if typeof (template) is "string"
   return "" + template  unless isArray(template)
   return  if template.length is 0
@@ -98,3 +98,7 @@ this.render = (template, data) ->
 
   result
 
+this.T         = ->
+this.T.include = include
+this.T.process = process
+this.T.render  = render

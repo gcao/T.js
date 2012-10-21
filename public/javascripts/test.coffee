@@ -1,11 +1,11 @@
 processTemplate = (template) ->
   console.log template
 
-  window.processed = process template
+  window.processed = T.process template
   console.log processed
 
   #console.log item for item in processed
-  html = render processed
+  html = T.render processed
 
   console.log html
 
@@ -15,7 +15,7 @@ window.test1 = (container) ->
   partial1 = ['div', 'partial1']
   partial2 = ['div', 'partial2']
   partial3 = [
-    'div' 
+    'div'
     -> partial2
     ['div', 'partial3']
   ]
@@ -39,7 +39,7 @@ window.test2 = (container) ->
 
   template = [
     'div'
-    include(partial, -> {name: 'John Doe'})
+    T.include(partial, -> {name: 'John Doe'})
   ]
 
   container.html processTemplate template
