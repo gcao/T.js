@@ -1,5 +1,10 @@
 partial1 = ['div', 'partial1']
 partial2 = ['div', 'partial2']
+partial3 = [
+  'div' 
+  -> partial2
+  ['div', 'partial3']
+]
 
 template = [
   'div'
@@ -7,10 +12,10 @@ template = [
     class: 'blue-theme'
     style:
       display: 'absolute'
-  'header'
+  ['div', 'header']
   -> partial1
-  -> partial2
-  'footer'
+  -> partial3
+  ['div', 'footer']
 ]
 
 html = render template
