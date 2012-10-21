@@ -4,9 +4,7 @@ processTemplate = (template) ->
   window.processed = T.process template
   console.log processed
 
-  #console.log item for item in processed
   html = T.render processed
-
   console.log html
 
   html
@@ -27,7 +25,7 @@ window.test1 = (container) ->
       style:
         display: 'absolute'
     ['div', 'header']
-    -> partial1
+    partial1
     -> partial3
     ['div', 'footer']
   ]

@@ -28,9 +28,7 @@
         style: {
           display: 'absolute'
         }
-      }, ['div', 'header'], function() {
-        return partial1;
-      }, function() {
+      }, ['div', 'header'], partial1, function() {
         return partial3;
       }, ['div', 'footer']
     ];
