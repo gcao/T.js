@@ -18,16 +18,23 @@ T.template = (items...) ->
 # only stored where it is used 
 # Example:
 # template = T('div', 'text')
-# template.compile()
+# template.compile({format: true})
 T.template.prototype.compile = (options) ->
+  this.compiled = new T.compile(this, options)
 
 # If template is compiled, the intermediate function is used, 
 # otherwise, default rendering function is invoked
 T.template.prototype.render = (data) ->
+  if this.compiled
+    this.compiled data
+  else
+    this.renderDefault data
+
+T.template.prototype.renderDefault = (data) ->
 
 # Add items directly inside parent array
 # Example:
-# partial = T('div', 'text')
+# partial = T('text')
 # template = T('div', T.expand(partial))
 T.expand = ->
 

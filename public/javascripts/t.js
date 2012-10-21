@@ -31,9 +31,19 @@
     return this.items = items;
   };
 
-  T.template.prototype.compile = function(options) {};
+  T.template.prototype.compile = function(options) {
+    return this.compiled = new T.compile(this, options);
+  };
 
-  T.template.prototype.render = function(data) {};
+  T.template.prototype.render = function(data) {
+    if (this.compiled) {
+      return this.compiled(data);
+    } else {
+      return this.renderDefault(data);
+    }
+  };
+
+  T.template.prototype.renderDefault = function(data) {};
 
   T.expand = function() {};
 
