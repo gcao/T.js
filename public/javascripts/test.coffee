@@ -6,7 +6,7 @@ partial3 = [
   ['div', 'partial3']
 ]
 
-template = [
+window.template = [
   'div'
     id   : 'main'
     class: 'blue-theme'
@@ -18,7 +18,13 @@ template = [
   ['div', 'footer']
 ]
 
-html = render template
+console.log template
+
+window.processed = process template
+console.log processed
+
+#console.log item for item in processed
+html = render processed
 
 console.log html
 
