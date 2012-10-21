@@ -72,22 +72,32 @@
     return result;
   };
 
+  this.include = function(template, mapper) {
+    return function(data) {
+      if (mapper) {
+        return process(template, mapper(data));
+      } else {
+        return process(template, data);
+      }
+    };
+  };
+
   this.process = function(template, data) {
     var i, item, key, value;
     if (isFunction(template)) {
-      return process(template(data));
+      return process(template(data), data);
     }
     if (isArray(template)) {
       for (i in template) {
         item = template[i];
-        template[i] = process(item);
+        template[i] = process(item, data);
       }
     } else if (isObject(template)) {
       for (key in template) {
         if (!__hasProp.call(template, key)) continue;
         value = template[key];
         if (isFunction(value)) {
-          template[key] = process(value(data));
+          template[key] = process(value(data), data);
         }
       }
     }

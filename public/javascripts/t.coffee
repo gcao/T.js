@@ -37,12 +37,19 @@ renderChildren = (children, data) ->
   # TODO how does reduce work?
   #children.reduce (s, item) -> s + render(item)
 
+this.include = (template, mapper) ->
+  (data) -> 
+    if mapper
+      process(template, mapper(data))
+    else
+      process(template, data)
+
 this.process = (template, data) ->
-  return process(template(data))  if isFunction(template)
+  return process(template(data), data)  if isFunction(template)
 
   if isArray template
     for i, item of template
-      template[i] = process(item)
+      template[i] = process(item, data)
     
     # TODO, parse first into tag name and id/classes
     # combine multiple attributes hash into one
@@ -53,7 +60,7 @@ this.process = (template, data) ->
   else if isObject(template)
     for own key, value of template
       if isFunction value
-        template[key] = process(value(data))
+        template[key] = process(value(data), data)
 
   template
 
