@@ -8,3 +8,8 @@ guard 'shell' do
   watch(%r{^public/javascripts/(.+\.coffee)$}) { `coffee -c public/javascripts/$1` }
 end
 
+guard 'livereload' do
+  watch(%r{.+\.js})
+  watch(%r{.+\.erb})
+end
+

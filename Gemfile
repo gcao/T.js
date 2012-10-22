@@ -6,8 +6,9 @@ group :development do
   gem "guard-shell"
   gem 'rb-fsevent', "~> 0.4.3.1", :platforms => [:mri]
   gem 'sinatra'
-  gem 'websocket-rack'
+  gem 'sinatra-contrib'
   gem 'thin'
+  gem 'rack-livereload'
   gem 'guard-livereload'
 end
 
