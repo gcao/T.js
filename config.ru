@@ -11,7 +11,7 @@ class MyApp < Sinatra::Base
     erb :index
   end
 
-  get '/spec_runner' do
+  get '/spec_runner.html' do
     erb :spec_runner
   end
 end

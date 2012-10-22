@@ -83,6 +83,7 @@
       }
     };
     wrapFunc.template = template;
+    wrapFunc.mapper = mapper;
     return wrapFunc;
   };
 

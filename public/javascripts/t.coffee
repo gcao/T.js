@@ -42,8 +42,9 @@ include = (template, mapper) ->
     else
       process(template, data)
 
-  # Keep a reference to the template so that it could be compiled
+  # Keep a reference to the template and the mapper so that compilation could access them
   wrapFunc.template = template
+  wrapFunc.mapper = mapper
   wrapFunc
 
 processFunctions = (template, data) ->

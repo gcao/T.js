@@ -11,13 +11,12 @@ guard
 
 NOTES
 
-LiveReload:
+Run with LiveReload support:
 thin -p 8000 start
-open http://localhost:8000
-open http://localhost:8000/spec_runner
 
 Run with no external dependency:
 cd public && python -m SimpleHTTPServer
+
 open http://localhost:8000
 open http://localhost:8000/spec_runner.html
 
