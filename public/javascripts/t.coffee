@@ -34,16 +34,46 @@ renderChildren = (children, data) ->
   for item in children
     result += render(item)
   result
-  # TODO how does reduce work?
-  #children.reduce (s, item) -> s + render(item)
 
 include = (template, mapper) ->
-  (data) -> 
+  wrapFunc = (data) ->
     if mapper
       process(template, mapper(data))
     else
       process(template, data)
 
+  # Keep a reference to the template so that it could be compiled
+  wrapFunc.template = template
+  wrapFunc
+
+processFunctions = (template, data) ->
+  return processFunctions(template(data), data)  if isFunction(template)
+
+  if isArray template
+    (processFunctions(item, data) for i, item of template)
+  else if isObject template
+    result = {}
+    for own key, value of template
+      if isFunction value
+        result[key] = processFunctions(value(data), data)
+      else
+        result[key] = value
+  else
+    template
+
+# Normalize children and their decendants
+normalizeChildren = (children) ->
+
+# Normalize top level array
+normalize = (output) ->
+
+# Combine attributes into one hash and move to second position of array
+processAttributes = (output) ->
+
+# process could be splitted into several steps: 
+# run all functions and generated functions
+# move children up if their first child is not a tag
+# combine attributes into one
 process = (template, data) ->
   return process(template(data), data)  if isFunction(template)
 
@@ -52,7 +82,8 @@ process = (template, data) ->
       template[i] = process(item, data)
     
     # TODO, parse first into tag name and id/classes
-    # combine multiple attributes hash into one
+    # combine multiple attributes hash into one 
+    # attributes does not have to be immediately after tag element
     # merge css classes, styles
     # overwrite others
     # What about event handlers?
@@ -98,7 +129,14 @@ render = (template, data) ->
 
   result
 
-this.T         = ->
-this.T.include = include
-this.T.process = process
-this.T.render  = render
+T         = ->
+T.include = include
+T.process = process
+T.render  = render
+T.utils   =
+  processFunctions : processFunctions
+  normalize        : normalize
+  processAttributes: processAttributes
+
+this.T = T
+
