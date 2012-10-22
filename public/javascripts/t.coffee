@@ -62,10 +62,37 @@ processFunctions = (template, data) ->
     template
 
 # Normalize children and their decendants
-normalizeChildren = (children) ->
+normalizeChildren = (items) ->
+  return items  unless isArray items
+
+  console.log 'normalizeChildren'
+  console.log items
+
+  for i in [items.length - 1..0]
+    item = normalizeChildren items[i]
+    if isArray item
+      if item[0] is ''
+        console.log 'here'
+        console.log items
+        items.splice i, 1, item.shift()...
+        console.log items
+    else if typeof item is 'undefined' or item is null or item is ''
+      #items.splice i, 1
+    else
+      items[i] = item
+
+  console.log 'after normalizeChildren'
+  console.log items
+  items
 
 # Normalize top level array
-normalize = (output) ->
+normalize = (items) ->
+  return items  unless isArray items
+
+  items = normalizeChildren(items)
+
+  console.log items
+  items
 
 # Combine attributes into one hash and move to second position of array
 processAttributes = (output) ->

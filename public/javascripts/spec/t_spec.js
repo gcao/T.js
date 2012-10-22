@@ -4,8 +4,8 @@
   describe("T.utils.normalize", function() {
     return it("should normalize array", function() {
       var input, output;
-      input = [];
-      output = [];
+      input = ['div', ['', 'text']];
+      output = ['div', 'text'];
       return expect(T.utils.normalize(input)).toEqual(output);
     });
   });
