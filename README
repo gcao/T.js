@@ -1,6 +1,17 @@
 T - template engine for Javascript
 
+SETUP
+
+brew install node
+npm install coffee-script
+
+gem install bundler
+bundle
+guard
+
 NOTES
 
 cd public && python -m SimpleHTTPServer
 open http://localhost:8000
+open http://localhost:8000/spec_runner.html
+
