@@ -73,10 +73,8 @@ normalizeChildren = (items) ->
     item = normalizeChildren items[i]
     if isArray item
       if item[0] is ''
-        console.log 'here'
-        console.log items
-        items.splice i, 1, item.shift()...
-        console.log items
+        item.shift()
+        items.splice i, 1, item...
     else if typeof item is 'undefined' or item is null or item is ''
       #items.splice i, 1
     else

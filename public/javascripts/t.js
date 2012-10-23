@@ -128,10 +128,8 @@
       item = normalizeChildren(items[i]);
       if (isArray(item)) {
         if (item[0] === '') {
-          console.log('here');
-          console.log(items);
-          items.splice.apply(items, [i, 1].concat(__slice.call(item.shift())));
-          console.log(items);
+          item.shift();
+          items.splice.apply(items, [i, 1].concat(__slice.call(item)));
         }
       } else if (typeof item === 'undefined' || item === null || item === '') {
 
