@@ -1,18 +1,30 @@
 isArray    = (o) -> o instanceof Array
 isFunction = (o) -> typeof (o) is "function"
 isObject   = (o) -> typeof (o) is "object" and (o not instanceof Array)
+
 isEmpty    = (o) ->
   return true unless o
-  for key of o
-    return false if o.hasOwnProperty key
+  for own key of o
+    return false
   return true
+
+hasFunction = (o) ->
+  return true if isFunction o
+
+  if isArray o
+    for item in o
+      return true if hasFunction item
+
+  else if isObject o
+    for own key, value of o
+      return true if hasFunction value
+
 merge      = (o1, o2) ->
   return o1 unless o2
   return o2 unless o1
 
-  for key, value of o2
-    if o2.hasOwnProperty key
-      o1[key] = value
+  for own key, value of o2
+    o1[key] = value
 
   o1
 
@@ -176,32 +188,34 @@ processAttributes = (items) ->
     items.splice 1, 0, attrs unless isEmpty attrs
   items
 
+prepareOutput = (template, data) ->
+  if isFunction template
+    prepareOutput(template(data))
+  else if isArray template
+    if hasFunction template
+      (prepareOutput(item) for item in template)
+    else
+      template
+  else if isObject template
+    if hasFunction template
+      output = {}
+      for key, value of template
+        output[key] = prepareOutput(value)
+      output
+    else
+      template
+  else
+    template
+
 # process could be splitted into several steps: 
 # run all functions and generated functions
 # parse first item 'div#id.class1.class2' into 'div', {id: 'id', 'class': 'class1 class2'}
 # move children up if their first child is not a tag
 # combine attributes into one (merge styles)
 process = (template, data) ->
-  output = processFunctions(template, data)
-  normalize(output)
-
-  if isArray template
-    for i, item of template
-      template[i] = process(item, data)
-
-    # What
-    # parse first into tag name and id/classes
-    # combine multiple attributes hash into one 
-    # attributes does not have to be immediately after tag element
-    # merge css classes, styles
-    # overwrite others
-
-  else if isObject(template)
-    for own key, value of template
-      if isFunction value
-        template[key] = process(value(data), data)
-
-  template
+  output = prepareOutput(template, data)
+  output = normalize(output)
+  output = processAttributes(output)
 
 render = (template, data) ->
   return template if typeof (template) is "string"
