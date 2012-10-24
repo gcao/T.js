@@ -1,3 +1,9 @@
+describe "T.utils.processFirst", ->
+  it "should parse first item into an array", ->
+    input  = ['div#this.class1.class2', 'text']
+    output = ['div', {id: 'this', 'class': 'class1 class2'}, 'text']
+    expect(T.utils.processFirst(input)).toEqual(output)
+
 describe "T.utils.normalize", ->
   it "should normalize array", ->
     input  = ['div', ['', 'text']]
@@ -41,3 +47,14 @@ describe "T.utils.processAttributes", ->
     input  = ['div', {'class': 'first second'}, {'class': 'third'}]
     output = ['div', {'class': 'first second third'}]
     expect(T.utils.processAttributes(input)).toEqual(output)
+
+describe "T.process", ->
+  it "should create ready-to-render data from template and input", ->
+    input  = [
+      'div'
+        'class': 'first second'
+      ,
+        'class': 'third'
+    ]
+    output = ['div', {'class': 'first second third'}]
+    expect(T.process(input)).toEqual(output)

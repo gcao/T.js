@@ -16,14 +16,27 @@ merge      = (o1, o2) ->
 
   o1
 
-parseFirstPattern = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
-parseFirst = (first) ->
-  throw "Invalid first argument #{first}"  unless typeof (first) is 'string'
+FirstFieldPattern = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 
-  if matches = first.match(parseFirstPattern)
-    {tag: matches[1], id: matches[3], classes: matches[5]}
+# Parse first item and add parsed data to array
+processFirst = (items) ->
+  first = items[0]
+
+  throw "Invalid first argument #{first}" unless typeof (first) is 'string'
+
+  if matches = first.match(FirstFieldPattern)
+    tag     = matches[1]
+    id      = matches[3]
+    classes = matches[5]
+    if id or classes
+      attrs = {}
+      attrs.id    = id if id
+      attrs.class = classes.replace('.', ' ') if classes
+      items.splice 0, 1, tag, attrs
   else
     first
+
+  items
 
 renderAttributes = (attributes, data) ->
   result = ""
@@ -43,7 +56,7 @@ renderAttributes = (attributes, data) ->
   result
 
 renderChildren = (children, data) ->
-  return children  unless isArray children
+  return children unless isArray children
   result = ""
   for item in children
     result += render(item)
@@ -78,10 +91,7 @@ processFunctions = (template, data) ->
 
 # Normalize children and their decendants
 normalizeChildren = (items) ->
-  return items  unless isArray items
-
-  #console.log 'normalizeChildren'
-  #console.log items
+  return items unless isArray items
 
   for i in [items.length - 1..0]
     item = normalizeChildren items[i]
@@ -94,19 +104,13 @@ normalizeChildren = (items) ->
     else
       items[i] = item
 
-  #console.log 'after normalizeChildren'
-  #console.log items
   items
 
 # Normalize top level array
 normalize = (items) ->
-  return items  unless isArray items
+  return items unless isArray items
 
-  items = normalizeChildren(items)
-
-  #console.log 'after normalize'
-  #console.log items
-  items
+  normalizeChildren(items)
 
 parseStyleString = (str) ->
   styles = {}
@@ -158,6 +162,7 @@ processAttributes = (items) ->
         styles = attrs.style
         newStyles = item.style
 
+        # Set item.class to combined css classes, merge will overwrite attrs.class with it
         processCssClasses(attrs, item)
 
         attrs = merge(attrs, item)
@@ -177,18 +182,19 @@ processAttributes = (items) ->
 # move children up if their first child is not a tag
 # combine attributes into one (merge styles)
 process = (template, data) ->
-  return process(template(data), data) if isFunction(template)
+  output = processFunctions(template, data)
+  normalize(output)
 
   if isArray template
     for i, item of template
       template[i] = process(item, data)
-    
-    # TODO, parse first into tag name and id/classes
+
+    # What
+    # parse first into tag name and id/classes
     # combine multiple attributes hash into one 
     # attributes does not have to be immediately after tag element
     # merge css classes, styles
     # overwrite others
-    # What about event handlers?
 
   else if isObject(template)
     for own key, value of template
@@ -199,7 +205,7 @@ process = (template, data) ->
 
 render = (template, data) ->
   return template if typeof (template) is "string"
-  return "" + template  unless isArray(template)
+  return "" + template unless isArray(template)
   return if template.length is 0
 
   first  = template.shift()
@@ -237,6 +243,7 @@ T.process = process
 T.render  = render
 T.utils   =
   isEmpty          : isEmpty
+  processFirst     : processFirst
   processFunctions : processFunctions
   normalize        : normalize
   processAttributes: processAttributes
