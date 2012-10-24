@@ -3,7 +3,7 @@ isFunction = (o) -> typeof (o) is "function"
 isObject   = (o) -> typeof (o) is "object" and (o not instanceof Array)
 isEmpty    = (o) ->
   return true unless o
-  for key in o
+  for key of o
     return false if o.hasOwnProperty key
   return true
 merge      = (o1, o2) ->
@@ -135,6 +135,7 @@ processStyles = (attrs) ->
 
   delete attrs.styles
   attrs.style = newStyles unless isEmpty newStyles
+  attrs
 
 # Combine attributes into one hash and move to second position of array
 processAttributes = (items) ->
@@ -222,10 +223,12 @@ T.include = include
 T.process = process
 T.render  = render
 T.utils   =
+  isEmpty          : isEmpty
   processFunctions : processFunctions
   normalize        : normalize
   processAttributes: processAttributes
   parseStyleString : parseStyleString
+  processStyles    : processStyles
 
 this.T = T
 

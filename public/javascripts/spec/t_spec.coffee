@@ -15,6 +15,12 @@ describe "T.utils.parseStyleString", ->
     output = {a: 'a-value', b: 'b-value'}
     expect(T.utils.parseStyleString(input)).toEqual(output)
 
+describe "T.utils.processStyles", ->
+  it "should work", ->
+    input  = {style: 'a:a-value;b:b-value;', styles: {c: 'c-value'}}
+    output = {style: {a: 'a-value', b: 'b-value', c: 'c-value'}}
+    expect(T.utils.processStyles(input)).toEqual(output)
+
 describe "T.utils.processAttributes", ->
   it "should merge attributes", ->
     input  = ['div', {a: 1}, {a: 11, b: 2}]

@@ -28,6 +28,26 @@
     });
   });
 
+  describe("T.utils.processStyles", function() {
+    return it("should work", function() {
+      var input, output;
+      input = {
+        style: 'a:a-value;b:b-value;',
+        styles: {
+          c: 'c-value'
+        }
+      };
+      output = {
+        style: {
+          a: 'a-value',
+          b: 'b-value',
+          c: 'c-value'
+        }
+      };
+      return expect(T.utils.processStyles(input)).toEqual(output);
+    });
+  });
+
   describe("T.utils.processAttributes", function() {
     it("should merge attributes", function() {
       var input, output;

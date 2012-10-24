@@ -17,12 +17,11 @@
   };
 
   isEmpty = function(o) {
-    var key, _i, _len;
+    var key;
     if (!o) {
       return true;
     }
-    for (_i = 0, _len = o.length; _i < _len; _i++) {
-      key = o[_i];
+    for (key in o) {
       if (o.hasOwnProperty(key)) {
         return false;
       }
@@ -210,8 +209,9 @@
     }
     delete attrs.styles;
     if (!isEmpty(newStyles)) {
-      return attrs.style = newStyles;
+      attrs.style = newStyles;
     }
+    return attrs;
   };
 
   processAttributes = function(items) {
@@ -317,10 +317,12 @@
   T.render = render;
 
   T.utils = {
+    isEmpty: isEmpty,
     processFunctions: processFunctions,
     normalize: normalize,
     processAttributes: processAttributes,
-    parseStyleString: parseStyleString
+    parseStyleString: parseStyleString,
+    processStyles: processStyles
   };
 
   this.T = T;
