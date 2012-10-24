@@ -9,6 +9,12 @@ describe "T.utils.normalize", ->
     output = ['div', 'text', 'text2']
     expect(T.utils.normalize(input)).toEqual(output)
 
+describe "T.utils.parseStyleString", ->
+  it "should parse styles", ->
+    input  = "a:a-value;b:b-value;"
+    output = {a: 'a-value', b: 'b-value'}
+    expect(T.utils.parseStyleString(input)).toEqual(output)
+
 describe "T.utils.processAttributes", ->
   it "should merge attributes", ->
     input  = ['div', {a: 1}, {a: 11, b: 2}]

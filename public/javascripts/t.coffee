@@ -1,6 +1,20 @@
 isArray    = (o) -> o instanceof Array
 isFunction = (o) -> typeof (o) is "function"
 isObject   = (o) -> typeof (o) is "object" and (o not instanceof Array)
+isEmpty    = (o) ->
+  return true unless o
+  for key in o
+    return false if o.hasOwnProperty key
+  return true
+merge      = (o1, o2) ->
+  return o1 unless o2
+  return o2 unless o1
+
+  for key, value of o2
+    if o2.hasOwnProperty key
+      o1[key] = value
+
+  o1
 
 parseFirstPattern = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 parseFirst = (first) ->
@@ -48,7 +62,7 @@ include = (template, mapper) ->
   wrapFunc
 
 processFunctions = (template, data) ->
-  return processFunctions(template(data), data)  if isFunction(template)
+  return processFunctions(template(data), data) if isFunction(template)
 
   if isArray template
     (processFunctions(item, data) for i, item of template)
@@ -95,12 +109,32 @@ normalize = (items) ->
   items
 
 parseStyleString = (str) ->
+  styles = {}
+  for part in str.split(';')
+    [name, value] = part.split(':')
+    if name and value
+      styles[name.trim()] = value.trim()
+  styles
 
-mergeStyles = (styles, newStyles) ->
+processStyles = (attrs) ->
+  newStyles = {}
 
-mergeAttributes = (attrs, newAttrs) ->
-  for key, value of newAttrs
-    attrs[key] = value
+  style = attrs.style
+  if typeof style is 'string'
+    newStyles = merge(newStyles, parseStyleString(style))
+
+  styles = attrs.styles
+  if typeof styles is 'string'
+    newStyles = merge(newStyles, parseStyleString(styles))
+
+  if isObject style
+    newStyles = merge(newStyles, style)
+
+  if isObject styles
+    newStyles = merge(newStyles, styles)
+
+  delete attrs.styles
+  attrs.style = newStyles unless isEmpty newStyles
 
 # Combine attributes into one hash and move to second position of array
 processAttributes = (items) ->
@@ -110,10 +144,15 @@ processAttributes = (items) ->
       if isArray item
         processAttributes item
       else if isObject item
-        mergeAttributes(attrs, item)
+        processStyles item
+        styles = attrs.style
+        newStyles = item.style
+        attrs = merge(attrs, item)
+        styles = merge(styles, newStyles)
+        attrs.style = styles unless isEmpty styles
 
     for i in [items.length - 1..0]
-      items.splice i, 1  if isObject items[i]
+      items.splice i, 1 if isObject items[i]
 
     items.splice 1, 0, attrs
   items
@@ -124,7 +163,7 @@ processAttributes = (items) ->
 # move children up if their first child is not a tag
 # combine attributes into one (merge styles)
 process = (template, data) ->
-  return process(template(data), data)  if isFunction(template)
+  return process(template(data), data) if isFunction(template)
 
   if isArray template
     for i, item of template
@@ -145,14 +184,14 @@ process = (template, data) ->
   template
 
 render = (template, data) ->
-  return template  if typeof (template) is "string"
+  return template if typeof (template) is "string"
   return "" + template  unless isArray(template)
-  return  if template.length is 0
+  return if template.length is 0
 
   first  = template.shift()
 
-  return renderChildren template, data  if first is ""
-  return "<" + first + "/>"  if template.length is 0
+  return renderChildren template, data if first is ""
+  return "<" + first + "/>" if template.length is 0
 
   result = "<" + first
 
@@ -186,6 +225,7 @@ T.utils   =
   processFunctions : processFunctions
   normalize        : normalize
   processAttributes: processAttributes
+  parseStyleString : parseStyleString
 
 this.T = T
 

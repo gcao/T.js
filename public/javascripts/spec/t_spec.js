@@ -16,6 +16,18 @@
     });
   });
 
+  describe("T.utils.parseStyleString", function() {
+    return it("should parse styles", function() {
+      var input, output;
+      input = "a:a-value;b:b-value;";
+      output = {
+        a: 'a-value',
+        b: 'b-value'
+      };
+      return expect(T.utils.parseStyleString(input)).toEqual(output);
+    });
+  });
+
   describe("T.utils.processAttributes", function() {
     it("should merge attributes", function() {
       var input, output;
