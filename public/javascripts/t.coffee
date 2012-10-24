@@ -166,7 +166,8 @@ processCssClasses = (attrs, newAttrs) ->
 processAttributes = (items) ->
   if isArray items
     attrs = {}
-    for i, item of items
+    processFirst items
+    for item in items
       if isArray item
         processAttributes item
       else if isObject item

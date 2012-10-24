@@ -257,11 +257,12 @@
   };
 
   processAttributes = function(items) {
-    var attrs, i, item, newStyles, styles, _i, _ref;
+    var attrs, i, item, newStyles, styles, _i, _j, _len, _ref;
     if (isArray(items)) {
       attrs = {};
-      for (i in items) {
-        item = items[i];
+      processFirst(items);
+      for (_i = 0, _len = items.length; _i < _len; _i++) {
+        item = items[_i];
         if (isArray(item)) {
           processAttributes(item);
         } else if (isObject(item)) {
@@ -276,7 +277,7 @@
           }
         }
       }
-      for (i = _i = _ref = items.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) {
+      for (i = _j = _ref = items.length - 1; _ref <= 0 ? _j <= 0 : _j >= 0; i = _ref <= 0 ? ++_j : --_j) {
         if (isObject(items[i])) {
           items.splice(i, 1);
         }

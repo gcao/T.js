@@ -2,13 +2,23 @@
 (function() {
 
   describe("T.utils.processFirst", function() {
-    return it("should parse first item into an array", function() {
+    it("should parse div#this.class1.class2", function() {
       var input, output;
       input = ['div#this.class1.class2', 'text'];
       output = [
         'div', {
           id: 'this',
           'class': 'class1 class2'
+        }, 'text'
+      ];
+      return expect(T.utils.processFirst(input)).toEqual(output);
+    });
+    return it("should parse div#this", function() {
+      var input, output;
+      input = ['div#this', 'text'];
+      output = [
+        'div', {
+          id: 'this'
         }, 'text'
       ];
       return expect(T.utils.processFirst(input)).toEqual(output);
@@ -140,10 +150,10 @@
   });
 
   describe("T.process", function() {
-    it("should create ready-to-render data from template and input", function() {
-      var input, output;
-      input = [
-        'div', {
+    it("should create ready-to-be-rendered data structure from template and data", function() {
+      var output, template;
+      template = [
+        'div#test', {
           'class': 'first second'
         }, {
           'class': 'third'
@@ -151,10 +161,11 @@
       ];
       output = [
         'div', {
+          id: 'test',
           'class': 'first second third'
         }
       ];
-      return expect(T.process(input)).toEqual(output);
+      return expect(T.process(template)).toEqual(output);
     });
     return it("can be called with different data", function() {
       var template;

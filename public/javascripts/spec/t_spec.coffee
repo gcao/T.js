@@ -1,7 +1,12 @@
 describe "T.utils.processFirst", ->
-  it "should parse first item into an array", ->
+  it "should parse div#this.class1.class2", ->
     input  = ['div#this.class1.class2', 'text']
     output = ['div', {id: 'this', 'class': 'class1 class2'}, 'text']
+    expect(T.utils.processFirst(input)).toEqual(output)
+
+  it "should parse div#this", ->
+    input  = ['div#this', 'text']
+    output = ['div', {id: 'this'}, 'text']
     expect(T.utils.processFirst(input)).toEqual(output)
 
 describe "T.utils.normalize", ->
@@ -49,15 +54,19 @@ describe "T.utils.processAttributes", ->
     expect(T.utils.processAttributes(input)).toEqual(output)
 
 describe "T.process", ->
-  it "should create ready-to-render data from template and input", ->
-    input  = [
-      'div'
+  it "should create ready-to-be-rendered data structure from template and data", ->
+    template = [
+      'div#test'
         'class': 'first second'
       ,
         'class': 'third'
     ]
-    output = ['div', {'class': 'first second third'}]
-    expect(T.process(input)).toEqual(output)
+    output = [
+      'div'
+        id: 'test'
+        'class': 'first second third'
+    ]
+    expect(T.process(template)).toEqual(output)
 
   it "can be called with different data", ->
     template = ['div', (data) -> data ]
