@@ -72,3 +72,13 @@ describe "T.process", ->
     template = ['div', (data) -> data ]
     expect(T.process(template, 'test')).toEqual(['div', 'test'])
     expect(T.process(template, 'test1')).toEqual(['div', 'test1'])
+
+describe "T()", ->
+  it "should take a template and a mapper function", ->
+    template = ["div", (data) -> data.name]
+    mapper = (data) -> data.account
+    t = T(template, mapper)
+    data =
+      account:
+        name: 'John Doe'
+    expect(t.process(data)).toEqual(['div', 'John Doe'])

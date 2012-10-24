@@ -179,4 +179,25 @@
     });
   });
 
+  describe("T()", function() {
+    return it("should take a template and a mapper function", function() {
+      var data, mapper, t, template;
+      template = [
+        "div", function(data) {
+          return data.name;
+        }
+      ];
+      mapper = function(data) {
+        return data.account;
+      };
+      t = T(template, mapper);
+      data = {
+        account: {
+          name: 'John Doe'
+        }
+      };
+      return expect(t.process(data)).toEqual(['div', 'John Doe']);
+    });
+  });
+
 }).call(this);

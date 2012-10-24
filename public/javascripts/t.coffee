@@ -226,7 +226,18 @@ render = (template, data) ->
 
   result
 
-T         = ->
+Template = (@template, @mapper) ->
+Template.prototype.process = (data) ->
+  data = @mapper data if @mapper
+  output = prepareOutput(@template, data)
+  output = normalize output
+  processAttributes output
+
+Template.prototype.render = ->
+
+T = (template, mapper) ->
+  new Template(template, mapper)
+
 T.include = include
 T.process = process
 T.render  = render
