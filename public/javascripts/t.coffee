@@ -87,11 +87,11 @@ include = (template, mapper) ->
   wrapFunc
 
 # Normalize children and their decendants
-normalizeChildren = (items) ->
+normalize = (items) ->
   return items unless isArray items
 
   for i in [items.length - 1..0]
-    item = normalizeChildren items[i]
+    item = normalize items[i]
     if isArray item
       if item[0] is ''
         item.shift()
@@ -102,12 +102,6 @@ normalizeChildren = (items) ->
       items[i] = item
 
   items
-
-# Normalize top level array
-normalize = (items) ->
-  return items unless isArray items
-
-  normalizeChildren(items)
 
 parseStyleString = (str) ->
   styles = {}
@@ -195,8 +189,8 @@ prepareOutput = (template, data) ->
 
 process = (template, data) ->
   output = prepareOutput(template, data)
-  output = normalize(output)
-  output = processAttributes(output)
+  output = normalize output
+  processAttributes output
 
 render = (template, data) ->
   return template if typeof (template) is "string"
