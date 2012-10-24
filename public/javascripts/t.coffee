@@ -86,21 +86,6 @@ include = (template, mapper) ->
   wrapFunc.mapper = mapper
   wrapFunc
 
-processFunctions = (template, data) ->
-  return processFunctions(template(data), data) if isFunction(template)
-
-  if isArray template
-    (processFunctions(item, data) for i, item of template)
-  else if isObject template
-    result = {}
-    for own key, value of template
-      if isFunction value
-        result[key] = processFunctions(value(data), data)
-      else
-        result[key] = value
-  else
-    template
-
 # Normalize children and their decendants
 normalizeChildren = (items) ->
   return items unless isArray items
@@ -254,7 +239,6 @@ T.render  = render
 T.utils   =
   isEmpty          : isEmpty
   processFirst     : processFirst
-  processFunctions : processFunctions
   normalize        : normalize
   processAttributes: processAttributes
   parseStyleString : parseStyleString
