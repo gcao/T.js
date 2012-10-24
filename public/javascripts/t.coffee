@@ -190,28 +190,23 @@ processAttributes = (items) ->
 
 prepareOutput = (template, data) ->
   if isFunction template
-    prepareOutput(template(data))
+    prepareOutput(template(data), data)
   else if isArray template
     if hasFunction template
-      (prepareOutput(item) for item in template)
+      (prepareOutput(item, data) for item in template)
     else
       template
   else if isObject template
     if hasFunction template
       output = {}
       for key, value of template
-        output[key] = prepareOutput(value)
+        output[key] = prepareOutput(value, data)
       output
     else
       template
   else
     template
 
-# process could be splitted into several steps: 
-# run all functions and generated functions
-# parse first item 'div#id.class1.class2' into 'div', {id: 'id', 'class': 'class1 class2'}
-# move children up if their first child is not a tag
-# combine attributes into one (merge styles)
 process = (template, data) ->
   output = prepareOutput(template, data)
   output = normalize(output)

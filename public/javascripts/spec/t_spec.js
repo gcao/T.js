@@ -140,7 +140,7 @@
   });
 
   describe("T.process", function() {
-    return it("should create ready-to-render data from template and input", function() {
+    it("should create ready-to-render data from template and input", function() {
       var input, output;
       input = [
         'div', {
@@ -155,6 +155,16 @@
         }
       ];
       return expect(T.process(input)).toEqual(output);
+    });
+    return it("can be called with different data", function() {
+      var template;
+      template = [
+        'div', function(data) {
+          return data;
+        }
+      ];
+      expect(T.process(template, 'test')).toEqual(['div', 'test']);
+      return expect(T.process(template, 'test1')).toEqual(['div', 'test1']);
     });
   });
 

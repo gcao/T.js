@@ -58,3 +58,8 @@ describe "T.process", ->
     ]
     output = ['div', {'class': 'first second third'}]
     expect(T.process(input)).toEqual(output)
+
+  it "can be called with different data", ->
+    template = ['div', (data) -> data ]
+    expect(T.process(template, 'test')).toEqual(['div', 'test'])
+    expect(T.process(template, 'test1')).toEqual(['div', 'test1'])

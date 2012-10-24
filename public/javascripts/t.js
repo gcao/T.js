@@ -291,13 +291,13 @@
   prepareOutput = function(template, data) {
     var item, key, output, value, _i, _len, _results;
     if (isFunction(template)) {
-      return prepareOutput(template(data));
+      return prepareOutput(template(data), data);
     } else if (isArray(template)) {
       if (hasFunction(template)) {
         _results = [];
         for (_i = 0, _len = template.length; _i < _len; _i++) {
           item = template[_i];
-          _results.push(prepareOutput(item));
+          _results.push(prepareOutput(item, data));
         }
         return _results;
       } else {
@@ -308,7 +308,7 @@
         output = {};
         for (key in template) {
           value = template[key];
-          output[key] = prepareOutput(value);
+          output[key] = prepareOutput(value, data);
         }
         return output;
       } else {
