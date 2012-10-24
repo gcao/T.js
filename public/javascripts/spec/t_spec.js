@@ -2,11 +2,94 @@
 (function() {
 
   describe("T.utils.normalize", function() {
-    return it("should normalize array", function() {
+    it("should normalize array", function() {
       var input, output;
       input = ['div', ['', 'text']];
       output = ['div', 'text'];
       return expect(T.utils.normalize(input)).toEqual(output);
+    });
+    return it("should normalize array recursively", function() {
+      var input, output;
+      input = ['div', ['', 'text', ['', 'text2']]];
+      output = ['div', 'text', 'text2'];
+      return expect(T.utils.normalize(input)).toEqual(output);
+    });
+  });
+
+  describe("T.utils.processAttributes", function() {
+    it("should merge attributes", function() {
+      var input, output;
+      input = [
+        'div', {
+          a: 1
+        }, {
+          a: 11,
+          b: 2
+        }
+      ];
+      output = [
+        'div', {
+          a: 11,
+          b: 2
+        }
+      ];
+      return expect(T.utils.processAttributes(input)).toEqual(output);
+    });
+    it("should merge attributes and keep other items untouched", function() {
+      var input, output;
+      input = [
+        'div', {
+          a: 1
+        }, 'first', {
+          b: 2
+        }, 'second'
+      ];
+      output = [
+        'div', {
+          a: 1,
+          b: 2
+        }, 'first', 'second'
+      ];
+      return expect(T.utils.processAttributes(input)).toEqual(output);
+    });
+    it("should merge styles", function() {
+      var input, output;
+      input = [
+        'div', {
+          style: 'a:old-a;b:b-value;',
+          styles: {
+            c: 'c-value'
+          }
+        }, {
+          style: 'a:new-a'
+        }
+      ];
+      output = [
+        'div', {
+          style: {
+            a: 'new-a',
+            b: 'b-value',
+            c: 'c-value'
+          }
+        }
+      ];
+      return expect(T.utils.processAttributes(input)).toEqual(output);
+    });
+    return it("should merge css classes", function() {
+      var input, output;
+      input = [
+        'div', {
+          'class': 'first second'
+        }, {
+          'class': 'third'
+        }
+      ];
+      output = [
+        'div', {
+          'class': 'first second third'
+        }
+      ];
+      return expect(T.utils.processAttributes(input)).toEqual(output);
     });
   });
 

@@ -66,8 +66,8 @@ processFunctions = (template, data) ->
 normalizeChildren = (items) ->
   return items  unless isArray items
 
-  console.log 'normalizeChildren'
-  console.log items
+  #console.log 'normalizeChildren'
+  #console.log items
 
   for i in [items.length - 1..0]
     item = normalizeChildren items[i]
@@ -80,8 +80,8 @@ normalizeChildren = (items) ->
     else
       items[i] = item
 
-  console.log 'after normalizeChildren'
-  console.log items
+  #console.log 'after normalizeChildren'
+  #console.log items
   items
 
 # Normalize top level array
@@ -90,16 +90,39 @@ normalize = (items) ->
 
   items = normalizeChildren(items)
 
-  console.log items
+  #console.log 'after normalize'
+  #console.log items
   items
 
+parseStyleString = (str) ->
+
+mergeStyles = (styles, newStyles) ->
+
+mergeAttributes = (attrs, newAttrs) ->
+  for key, value of newAttrs
+    attrs[key] = value
+
 # Combine attributes into one hash and move to second position of array
-processAttributes = (output) ->
+processAttributes = (items) ->
+  if isArray items
+    attrs = {}
+    for i, item of items
+      if isArray item
+        processAttributes item
+      else if isObject item
+        mergeAttributes(attrs, item)
+
+    for i in [items.length - 1..0]
+      items.splice i, 1  if isObject items[i]
+
+    items.splice 1, 0, attrs
+  items
 
 # process could be splitted into several steps: 
 # run all functions and generated functions
+# parse first item 'div#id.class1.class2' into 'div', {id: 'id', 'class': 'class1 class2'}
 # move children up if their first child is not a tag
-# combine attributes into one
+# combine attributes into one (merge styles)
 process = (template, data) ->
   return process(template(data), data)  if isFunction(template)
 
