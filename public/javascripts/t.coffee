@@ -137,6 +137,15 @@ processStyles = (attrs) ->
   attrs.style = newStyles unless isEmpty newStyles
   attrs
 
+processCssClasses = (attrs, newAttrs) ->
+  if attrs.class
+    if newAttrs.class
+      newAttrs.class = attrs.class + ' ' + newAttrs.class
+    else
+      newAttrs.class = attrs.class
+
+  newAttrs
+
 # Combine attributes into one hash and move to second position of array
 processAttributes = (items) ->
   if isArray items
@@ -148,14 +157,18 @@ processAttributes = (items) ->
         processStyles item
         styles = attrs.style
         newStyles = item.style
+
+        processCssClasses(attrs, item)
+
         attrs = merge(attrs, item)
+
         styles = merge(styles, newStyles)
         attrs.style = styles unless isEmpty styles
 
     for i in [items.length - 1..0]
       items.splice i, 1 if isObject items[i]
 
-    items.splice 1, 0, attrs
+    items.splice 1, 0, attrs unless isEmpty attrs
   items
 
 # process could be splitted into several steps: 
