@@ -20,11 +20,11 @@ describe "T.utils.normalize", ->
     result = ['div', 'text', 'text2']
     expect(T.utils.normalize(input)).toEqual(result)
 
-describe "T.utils.parseStyleString", ->
+describe "T.utils.parseStyles", ->
   it "should parse styles", ->
     input  = "a:a-value;b:b-value;"
     result = {a: 'a-value', b: 'b-value'}
-    expect(T.utils.parseStyleString(input)).toEqual(result)
+    expect(T.utils.parseStyles(input)).toEqual(result)
 
 describe "T.utils.processStyles", ->
   it "should work", ->
@@ -85,7 +85,7 @@ describe "T.render", do
     expect(T.render(template)).toEqual(result)
 
 describe "T()", ->
-  it "should take a template and a mapper function", ->
+  it "process should work", ->
     template = ["div", (data) -> data.name]
     mapper = (data) -> data.account
     t = T(template, mapper)

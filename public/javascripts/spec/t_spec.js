@@ -40,7 +40,7 @@
     });
   });
 
-  describe("T.utils.parseStyleString", function() {
+  describe("T.utils.parseStyles", function() {
     return it("should parse styles", function() {
       var input, result;
       input = "a:a-value;b:b-value;";
@@ -48,7 +48,7 @@
         a: 'a-value',
         b: 'b-value'
       };
-      return expect(T.utils.parseStyleString(input)).toEqual(result);
+      return expect(T.utils.parseStyles(input)).toEqual(result);
     });
   });
 
@@ -193,7 +193,7 @@
   })());
 
   describe("T()", function() {
-    return it("should take a template and a mapper function", function() {
+    return it("process should work", function() {
       var data, mapper, t, template;
       template = [
         "div", function(data) {

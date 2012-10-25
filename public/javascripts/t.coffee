@@ -1,5 +1,4 @@
 isArray    = (o) -> o instanceof Array
-isFunction = (o) -> typeof (o) is "function"
 isObject   = (o) -> typeof (o) is "object" and (o not instanceof Array)
 
 isEmpty    = (o) ->
@@ -9,7 +8,7 @@ isEmpty    = (o) ->
   return true
 
 hasFunction = (o) ->
-  return true if isFunction o
+  return true if typeof (o) is 'function'
 
   if isArray o
     for item in o
@@ -67,7 +66,7 @@ normalize = (items) ->
 
   items
 
-parseStyleString = (str) ->
+parseStyles = (str) ->
   styles = {}
   for part in str.split(';')
     [name, value] = part.split(':')
@@ -80,11 +79,11 @@ processStyles = (attrs) ->
 
   style = attrs.style
   if typeof style is 'string'
-    newStyles = merge(newStyles, parseStyleString(style))
+    newStyles = merge(newStyles, parseStyles(style))
 
   styles = attrs.styles
   if typeof styles is 'string'
-    newStyles = merge(newStyles, parseStyleString(styles))
+    newStyles = merge(newStyles, parseStyles(styles))
 
   if isObject style
     newStyles = merge(newStyles, style)
@@ -133,7 +132,7 @@ processAttributes = (items) ->
   items
 
 prepareOutput = (template, data) ->
-  if isFunction template
+  if typeof (template) is 'function'
     prepareOutput(template(data), data)
   else if isArray template
     if hasFunction template
@@ -223,10 +222,10 @@ T.render  = (template, data) ->
 
 T.utils   =
   isEmpty          : isEmpty
-  processFirst     : processFirst
   normalize        : normalize
+  processFirst     : processFirst
   processAttributes: processAttributes
-  parseStyleString : parseStyleString
+  parseStyles      : parseStyles
   processStyles    : processStyles
 
 this.T = T
