@@ -50,42 +50,6 @@ processFirst = (items) ->
 
   items
 
-renderAttributes = (attributes, data) ->
-  result = ""
-
-  for own key, value of attributes
-    if key is "style"
-      styles = attributes.style
-      if isObject(styles)
-        s = ""
-        for own name, style of styles
-          s += name + ":" + style + ";"
-        result += " style=\"" + s + "\""
-      else
-        result += " style=\"" + styles + "\""
-    else result += " " + key + "=\"" + value + "\""
-
-  result
-
-renderChildren = (children, data) ->
-  return children unless isArray children
-  result = ""
-  for item in children
-    result += render(item)
-  result
-
-include = (template, mapper) ->
-  wrapFunc = (data) ->
-    if mapper
-      process(template, mapper(data))
-    else
-      process(template, data)
-
-  # Keep a reference to the template and the mapper so that compilation could access them
-  wrapFunc.template = template
-  wrapFunc.mapper = mapper
-  wrapFunc
-
 # Normalize children and their decendants
 normalize = (items) ->
   return items unless isArray items
@@ -187,60 +151,76 @@ prepareOutput = (template, data) ->
   else
     template
 
-process = (template, data) ->
-  output = prepareOutput(template, data)
-  output = normalize output
-  processAttributes output
+renderAttributes = (attributes) ->
+  result = ""
 
-render = (template, data) ->
-  return template if typeof (template) is "string"
-  return "" + template unless isArray(template)
-  return if template.length is 0
+  for own key, value of attributes
+    if key is "style"
+      styles = attributes.style
+      if isObject(styles)
+        s = ""
+        for own name, style of styles
+          s += name + ":" + style + ";"
+        result += " style=\"" + s + "\""
+      else
+        result += " style=\"" + styles + "\""
+    else result += " " + key + "=\"" + value + "\""
 
-  first  = template.shift()
+  result
 
-  return renderChildren template, data if first is ""
-  return "<" + first + "/>" if template.length is 0
+render = (output) ->
+  return output.toString() unless isArray output
+  return '' if output.length is 0
+
+  first = output.shift()
+
+  return render output if first is ""
+  return "<" + first + "/>" if output.length is 0
 
   result = "<" + first
 
-  second = template.shift()
+  second = output.shift()
   if isObject(second)
     result += renderAttributes(second)
 
-    if template.length is 0
+    if output.length is 0
       result += "/>"
       return result
     else
       result += ">"
   else
     result += ">"
-    result += renderChildren([second], data)
-    if template.length is 0
+    result += render([second])
+    if output.length is 0
       result += "</" + first + ">"
       return result
 
-  if template.length > 0
-    result += renderChildren(template, data)
+  if output.length > 0
+    result += render output
     result += "</" + first + ">"
 
   result
 
 Template = (@template, @mapper) ->
+
 Template.prototype.process = (data) ->
-  data = @mapper data if @mapper
+  data   = @mapper data if @mapper
   output = prepareOutput(@template, data)
   output = normalize output
   processAttributes output
 
-Template.prototype.render = ->
+Template.prototype.render = (data) ->
+  render(@process(data))
 
 T = (template, mapper) ->
   new Template(template, mapper)
 
-T.include = include
-T.process = process
-T.render  = render
+T.process = (template, data) ->
+  new Template(template).process(data)
+
+T.render  = (template, data) ->
+  new Template(template).render(data)
+
 T.utils   =
   isEmpty          : isEmpty
   processFirst     : processFirst

@@ -3,78 +3,78 @@
 
   describe("T.utils.processFirst", function() {
     it("should parse div#this.class1.class2", function() {
-      var input, output;
+      var input, result;
       input = ['div#this.class1.class2', 'text'];
-      output = [
+      result = [
         'div', {
           id: 'this',
           'class': 'class1 class2'
         }, 'text'
       ];
-      return expect(T.utils.processFirst(input)).toEqual(output);
+      return expect(T.utils.processFirst(input)).toEqual(result);
     });
     return it("should parse div#this", function() {
-      var input, output;
+      var input, result;
       input = ['div#this', 'text'];
-      output = [
+      result = [
         'div', {
           id: 'this'
         }, 'text'
       ];
-      return expect(T.utils.processFirst(input)).toEqual(output);
+      return expect(T.utils.processFirst(input)).toEqual(result);
     });
   });
 
   describe("T.utils.normalize", function() {
     it("should normalize array", function() {
-      var input, output;
+      var input, result;
       input = ['div', ['', 'text']];
-      output = ['div', 'text'];
-      return expect(T.utils.normalize(input)).toEqual(output);
+      result = ['div', 'text'];
+      return expect(T.utils.normalize(input)).toEqual(result);
     });
     return it("should normalize array recursively", function() {
-      var input, output;
+      var input, result;
       input = ['div', ['', 'text', ['', 'text2']]];
-      output = ['div', 'text', 'text2'];
-      return expect(T.utils.normalize(input)).toEqual(output);
+      result = ['div', 'text', 'text2'];
+      return expect(T.utils.normalize(input)).toEqual(result);
     });
   });
 
   describe("T.utils.parseStyleString", function() {
     return it("should parse styles", function() {
-      var input, output;
+      var input, result;
       input = "a:a-value;b:b-value;";
-      output = {
+      result = {
         a: 'a-value',
         b: 'b-value'
       };
-      return expect(T.utils.parseStyleString(input)).toEqual(output);
+      return expect(T.utils.parseStyleString(input)).toEqual(result);
     });
   });
 
   describe("T.utils.processStyles", function() {
     return it("should work", function() {
-      var input, output;
+      var input, result;
       input = {
         style: 'a:a-value;b:b-value;',
         styles: {
           c: 'c-value'
         }
       };
-      output = {
+      result = {
         style: {
           a: 'a-value',
           b: 'b-value',
           c: 'c-value'
         }
       };
-      return expect(T.utils.processStyles(input)).toEqual(output);
+      return expect(T.utils.processStyles(input)).toEqual(result);
     });
   });
 
   describe("T.utils.processAttributes", function() {
     it("should merge attributes", function() {
-      var input, output;
+      var input, result;
       input = [
         'div', {
           a: 1
@@ -83,16 +83,16 @@
           b: 2
         }
       ];
-      output = [
+      result = [
         'div', {
           a: 11,
           b: 2
         }
       ];
-      return expect(T.utils.processAttributes(input)).toEqual(output);
+      return expect(T.utils.processAttributes(input)).toEqual(result);
     });
     it("should merge attributes and keep other items untouched", function() {
-      var input, output;
+      var input, result;
       input = [
         'div', {
           a: 1
@@ -100,16 +100,16 @@
           b: 2
         }, 'second'
       ];
-      output = [
+      result = [
         'div', {
           a: 1,
           b: 2
         }, 'first', 'second'
       ];
-      return expect(T.utils.processAttributes(input)).toEqual(output);
+      return expect(T.utils.processAttributes(input)).toEqual(result);
     });
     it("should merge styles", function() {
-      var input, output;
+      var input, result;
       input = [
         'div', {
           style: 'a:old-a;b:b-value;',
@@ -120,7 +120,7 @@
           style: 'a:new-a'
         }
       ];
-      output = [
+      result = [
         'div', {
           style: {
             a: 'new-a',
@@ -129,10 +129,10 @@
           }
         }
       ];
-      return expect(T.utils.processAttributes(input)).toEqual(output);
+      return expect(T.utils.processAttributes(input)).toEqual(result);
     });
     return it("should merge css classes", function() {
-      var input, output;
+      var input, result;
       input = [
         'div', {
           'class': 'first second'
@@ -140,18 +140,18 @@
           'class': 'third'
         }
       ];
-      output = [
+      result = [
         'div', {
           'class': 'first second third'
         }
       ];
-      return expect(T.utils.processAttributes(input)).toEqual(output);
+      return expect(T.utils.processAttributes(input)).toEqual(result);
     });
   });
 
   describe("T.process", function() {
     it("should create ready-to-be-rendered data structure from template and data", function() {
-      var output, template;
+      var result, template;
       template = [
         'div#test', {
           'class': 'first second'
@@ -159,13 +159,13 @@
           'class': 'third'
         }
       ];
-      output = [
+      result = [
         'div', {
           id: 'test',
           'class': 'first second third'
         }
       ];
-      return expect(T.process(template)).toEqual(output);
+      return expect(T.process(template)).toEqual(result);
     });
     return it("can be called with different data", function() {
       var template;
@@ -178,6 +178,19 @@
       return expect(T.process(template, 'test1')).toEqual(['div', 'test1']);
     });
   });
+
+  describe("T.render", it("should render template", function() {
+    var result, template;
+    template = [
+      'div#test', {
+        'class': 'first second'
+      }, {
+        'class': 'third'
+      }
+    ];
+    result = '<div id="test" class="first second third"/>';
+    return expect(T.render(template)).toEqual(result);
+  })());
 
   describe("T()", function() {
     return it("should take a template and a mapper function", function() {
