@@ -15,6 +15,8 @@ hasFunction = (o) ->
       return true if hasFunction item
 
   else if isObject o
+    return true if o.isTemplate
+
     for own key, value of o
       return true if hasFunction value
 
@@ -140,7 +142,9 @@ prepareOutput = (template, data) ->
     else
       template
   else if isObject template
-    if hasFunction template
+    if template.isTemplate
+      prepareOutput(template.process(data), data)
+    else if hasFunction template
       output = {}
       for key, value of template
         output[key] = prepareOutput(value, data)
@@ -201,6 +205,7 @@ render = (output) ->
   result
 
 Template = (@template, @mapper) ->
+  @isTemplate = true
 
 Template.prototype.process = (data) ->
   data   = @mapper data if @mapper
@@ -209,7 +214,10 @@ Template.prototype.process = (data) ->
   processAttributes output
 
 Template.prototype.render = (data) ->
-  render(@process(data))
+  output = @process(data)
+  console.log output[0]
+  console.log output[1]
+  render output
 
 T = (template, mapper) ->
   new Template(template, mapper)
@@ -229,4 +237,6 @@ T.utils   =
   processStyles    : processStyles
 
 this.T = T
+this.Template = Template # remove this out after testing is done
+
 

@@ -37,6 +37,9 @@
         }
       }
     } else if (isObject(o)) {
+      if (o.isTemplate) {
+        return true;
+      }
       for (key in o) {
         if (!__hasProp.call(o, key)) continue;
         value = o[key];
@@ -211,7 +214,9 @@
         return template;
       }
     } else if (isObject(template)) {
-      if (hasFunction(template)) {
+      if (template.isTemplate) {
+        return prepareOutput(template.process(data), data);
+      } else if (hasFunction(template)) {
         output = {};
         for (key in template) {
           value = template[key];
@@ -295,6 +300,7 @@
   Template = function(template, mapper) {
     this.template = template;
     this.mapper = mapper;
+    return this.isTemplate = true;
   };
 
   Template.prototype.process = function(data) {
@@ -308,7 +314,11 @@
   };
 
   Template.prototype.render = function(data) {
-    return render(this.process(data));
+    var output;
+    output = this.process(data);
+    console.log(output[0]);
+    console.log(output[1]);
+    return render(output);
   };
 
   T = function(template, mapper) {
@@ -333,5 +343,7 @@
   };
 
   this.T = T;
+
+  this.Template = Template;
 
 }).call(this);

@@ -16,7 +16,7 @@ describe "T.utils.normalize", ->
     expect(T.utils.normalize(input)).toEqual(result)
 
   it "should normalize array recursively", ->
-    input = ['div', ['', 'text', ['', 'text2']]]
+    input  = ['div', ['', 'text', ['', 'text2']]]
     result = ['div', 'text', 'text2']
     expect(T.utils.normalize(input)).toEqual(result)
 
@@ -73,7 +73,7 @@ describe "T.process", ->
     expect(T.process(template, 'test')).toEqual(['div', 'test'])
     expect(T.process(template, 'test1')).toEqual(['div', 'test1'])
 
-describe "T.render", do
+describe "T.render", ->
   it "should render template", ->
     template = [
       'div#test'
@@ -87,10 +87,21 @@ describe "T.render", do
 describe "T()", ->
   it "process should work", ->
     template = ["div", (data) -> data.name]
-    mapper = (data) -> data.account
-    t = T(template, mapper)
+    mapper   = (data) -> data.account
+    t        = T(template, mapper)
     data =
       account:
         name: 'John Doe'
     expect(t.process(data)).toEqual(['div', 'John Doe'])
 
+  it "include template as partial should work", ->
+    partial  = ["div", (data) -> data.name]
+    template = ["div", T(partial, (data) -> data.account)]
+    result   = ['div', ['div', 'John Doe']]
+    expect(T(template).process({account: {name: 'John Doe'}})).toEqual(result)
+
+  it "include template as partial should work", ->
+    partial  = ["div", (data) -> data.name]
+    template = ["div", T(partial, (data) -> data.account)]
+    result   = '<div><div>John Doe</div></div> '
+    expect(T(template).render({account: {name: 'John Doe'}})).toEqual(result)

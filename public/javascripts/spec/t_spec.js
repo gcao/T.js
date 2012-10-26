@@ -179,21 +179,23 @@
     });
   });
 
-  describe("T.render", it("should render template", function() {
-    var result, template;
-    template = [
-      'div#test', {
-        'class': 'first second'
-      }, {
-        'class': 'third'
-      }
-    ];
-    result = '<div id="test" class="first second third"/>';
-    return expect(T.render(template)).toEqual(result);
-  })());
+  describe("T.render", function() {
+    return it("should render template", function() {
+      var result, template;
+      template = [
+        'div#test', {
+          'class': 'first second'
+        }, {
+          'class': 'third'
+        }
+      ];
+      result = '<div id="test" class="first second third"/>';
+      return expect(T.render(template)).toEqual(result);
+    });
+  });
 
   describe("T()", function() {
-    return it("process should work", function() {
+    it("process should work", function() {
       var data, mapper, t, template;
       template = [
         "div", function(data) {
@@ -210,6 +212,44 @@
         }
       };
       return expect(t.process(data)).toEqual(['div', 'John Doe']);
+    });
+    it("include template as partial should work", function() {
+      var partial, result, template;
+      partial = [
+        "div", function(data) {
+          return data.name;
+        }
+      ];
+      template = [
+        "div", T(partial, function(data) {
+          return data.account;
+        })
+      ];
+      result = ['div', ['div', 'John Doe']];
+      return expect(T(template).process({
+        account: {
+          name: 'John Doe'
+        }
+      })).toEqual(result);
+    });
+    return it("include template as partial should work", function() {
+      var partial, result, template;
+      partial = [
+        "div", function(data) {
+          return data.name;
+        }
+      ];
+      template = [
+        "div", T(partial, function(data) {
+          return data.account;
+        })
+      ];
+      result = '<div><div>John Doe</div></div> ';
+      return expect(T(template).render({
+        account: {
+          name: 'John Doe'
+        }
+      })).toEqual(result);
     });
   });
 
