@@ -244,7 +244,7 @@
           return data.account;
         })
       ];
-      result = '<div><div>John Doe</div></div> ';
+      result = '<div><div>John Doe</div></div>';
       return expect(T(template).render({
         account: {
           name: 'John Doe'

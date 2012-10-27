@@ -103,5 +103,5 @@ describe "T()", ->
   it "include template as partial should work", ->
     partial  = ["div", (data) -> data.name]
     template = ["div", T(partial, (data) -> data.account)]
-    result   = '<div><div>John Doe</div></div> '
+    result   = '<div><div>John Doe</div></div>'
     expect(T(template).render({account: {name: 'John Doe'}})).toEqual(result)

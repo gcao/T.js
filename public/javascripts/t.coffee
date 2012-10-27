@@ -160,7 +160,7 @@ renderAttributes = (attributes) ->
   for own key, value of attributes
     if key is "style"
       styles = attributes.style
-      if isObject(styles)
+      if isObject styles
         s = ""
         for own name, style of styles
           s += name + ":" + style + ";"
@@ -183,8 +183,8 @@ render = (output) ->
   result = "<" + first
 
   second = output.shift()
-  if isObject(second)
-    result += renderAttributes(second)
+  if isObject second
+    result += renderAttributes second
 
     if output.length is 0
       result += "/>"
@@ -193,7 +193,7 @@ render = (output) ->
       result += ">"
   else
     result += ">"
-    result += render([second])
+    result += render second
     if output.length is 0
       result += "</" + first + ">"
       return result
@@ -214,29 +214,25 @@ Template.prototype.process = (data) ->
   processAttributes output
 
 Template.prototype.render = (data) ->
-  output = @process(data)
-  console.log output[0]
-  console.log output[1]
+  output = @process data
   render output
 
 T = (template, mapper) ->
   new Template(template, mapper)
 
 T.process = (template, data) ->
-  new Template(template).process(data)
+  new Template(template).process data
 
 T.render  = (template, data) ->
-  new Template(template).render(data)
+  new Template(template).render data
 
 T.utils   =
-  isEmpty          : isEmpty
   normalize        : normalize
   processFirst     : processFirst
-  processAttributes: processAttributes
   parseStyles      : parseStyles
   processStyles    : processStyles
+  processAttributes: processAttributes
+  render           : render
 
 this.T = T
-this.Template = Template # remove this out after testing is done
-
 

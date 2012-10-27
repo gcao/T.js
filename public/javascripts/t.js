@@ -284,7 +284,7 @@
       }
     } else {
       result += ">";
-      result += render([second]);
+      result += render(second);
       if (output.length === 0) {
         result += "</" + first + ">";
         return result;
@@ -316,8 +316,6 @@
   Template.prototype.render = function(data) {
     var output;
     output = this.process(data);
-    console.log(output[0]);
-    console.log(output[1]);
     return render(output);
   };
 
@@ -334,16 +332,14 @@
   };
 
   T.utils = {
-    isEmpty: isEmpty,
     normalize: normalize,
     processFirst: processFirst,
-    processAttributes: processAttributes,
     parseStyles: parseStyles,
-    processStyles: processStyles
+    processStyles: processStyles,
+    processAttributes: processAttributes,
+    render: render
   };
 
   this.T = T;
-
-  this.Template = Template;
 
 }).call(this);
