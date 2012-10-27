@@ -234,11 +234,7 @@
     });
     return it("include template as partial should work", function() {
       var partial, result, template;
-      partial = [
-        "div", function(data) {
-          return data.name;
-        }
-      ];
+      partial = ["div", T.v('name')];
       template = [
         "div", T(partial, function(data) {
           return data.account;

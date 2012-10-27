@@ -259,8 +259,11 @@
 
   render = function(output) {
     var first, result, second;
+    if (typeof output === 'undefined' || output === null) {
+      return '';
+    }
     if (!isArray(output)) {
-      return output.toString();
+      return '' + output;
     }
     if (output.length === 0) {
       return '';
@@ -329,6 +332,24 @@
 
   T.render = function(template, data) {
     return new Template(template).render(data);
+  };
+
+  T.v = function(name) {
+    return function(data) {
+      var part, parts, _i, _len;
+      if (!data) {
+        return null;
+      }
+      parts = name.split('.');
+      for (_i = 0, _len = parts.length; _i < _len; _i++) {
+        part = parts[_i];
+        data = data[part];
+        if (!data) {
+          return null;
+        }
+      }
+      return data;
+    };
   };
 
   T.utils = {

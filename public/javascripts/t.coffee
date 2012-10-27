@@ -1,5 +1,5 @@
 isArray    = (o) -> o instanceof Array
-isObject   = (o) -> typeof (o) is "object" and (o not instanceof Array)
+isObject   = (o) -> typeof o is "object" and (o not instanceof Array)
 
 isEmpty    = (o) ->
   return true unless o
@@ -8,7 +8,7 @@ isEmpty    = (o) ->
   return true
 
 hasFunction = (o) ->
-  return true if typeof (o) is 'function'
+  return true if typeof o is 'function'
 
   if isArray o
     for item in o
@@ -35,7 +35,7 @@ FirstFieldPattern = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 processFirst = (items) ->
   first = items[0]
 
-  throw "Invalid first argument #{first}" unless typeof (first) is 'string'
+  throw "Invalid first argument #{first}" unless typeof first is 'string'
 
   if matches = first.match(FirstFieldPattern)
     tag     = matches[1]
@@ -134,7 +134,7 @@ processAttributes = (items) ->
   items
 
 prepareOutput = (template, data) ->
-  if typeof (template) is 'function'
+  if typeof template is 'function'
     prepareOutput(template(data), data)
   else if isArray template
     if hasFunction template
@@ -172,7 +172,8 @@ renderAttributes = (attributes) ->
   result
 
 render = (output) ->
-  return output.toString() unless isArray output
+  return '' if typeof output is 'undefined' or output is null
+  return '' + output unless isArray output
   return '' if output.length is 0
 
   first = output.shift()
@@ -225,6 +226,17 @@ T.process = (template, data) ->
 
 T.render  = (template, data) ->
   new Template(template).render data
+
+T.v = (name) ->
+  (data) ->
+    return null unless data
+
+    parts = name.split '.'
+    for part in parts
+      data = data[part]
+      return null unless data
+
+    data
 
 T.utils   =
   normalize        : normalize
