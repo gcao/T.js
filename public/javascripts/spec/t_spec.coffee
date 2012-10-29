@@ -84,6 +84,16 @@ describe "T.render", ->
     result = '<div id="test" class="first second third"/>'
     expect(T.render(template)).toEqual(result)
 
+describe "T.v", ->
+  it "should work", ->
+    v = T.v('name')
+    data = name: 'John Doe'
+    expect(v(data)).toEqual(data.name)
+
+  it "Should take default value", ->
+    v = T.v('name', 'Default')
+    expect(v()).toEqual('Default')
+
 describe "T()", ->
   it "process should work", ->
     template = ["div", (data) -> data.name]
@@ -105,3 +115,4 @@ describe "T()", ->
     template = ["div", T(partial, (data) -> data.account)]
     result   = '<div><div>John Doe</div></div>'
     expect(T(template).render({account: {name: 'John Doe'}})).toEqual(result)
+

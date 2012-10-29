@@ -334,21 +334,28 @@
     return new Template(template).render(data);
   };
 
-  T.v = function(name) {
+  T.v = T.value = function(name, defaultValue) {
+    if (typeof defaultValue === 'undefined') {
+      defaultValue = null;
+    }
     return function(data) {
       var part, parts, _i, _len;
       if (!data) {
-        return null;
+        return defaultValue;
       }
       parts = name.split('.');
       for (_i = 0, _len = parts.length; _i < _len; _i++) {
         part = parts[_i];
         data = data[part];
-        if (!data) {
-          return null;
+        if (typeof data === 'undefined' || data === null) {
+          return defaultValue;
         }
       }
-      return data;
+      if (typeof data === 'undefined' || data === null) {
+        return defaultValue;
+      } else {
+        return data;
+      }
     };
   };
 

@@ -219,6 +219,10 @@ Template.prototype.render = (data) ->
   render output
 
 T = (template, mapper) ->
+  # TODO: is this a good idea?
+  #if typeof template is 'string'
+  #  T.value(template, mapper)
+  #else
   new Template(template, mapper)
 
 T.process = (template, data) ->
@@ -227,16 +231,22 @@ T.process = (template, data) ->
 T.render  = (template, data) ->
   new Template(template).render data
 
-T.v = (name) ->
+T.v = T.value = (name, defaultValue) ->
+  defaultValue = null if typeof defaultValue is 'undefined'
+
   (data) ->
-    return null unless data
+    return defaultValue unless data
 
     parts = name.split '.'
     for part in parts
       data = data[part]
-      return null unless data
+      if typeof data is 'undefined' or data is null
+        return defaultValue
 
-    data
+    if typeof data is 'undefined' or data is null
+      defaultValue
+    else
+      data
 
 T.utils   =
   normalize        : normalize

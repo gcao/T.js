@@ -194,6 +194,22 @@
     });
   });
 
+  describe("T.v", function() {
+    it("should work", function() {
+      var data, v;
+      v = T.v('name');
+      data = {
+        name: 'John Doe'
+      };
+      return expect(v(data)).toEqual(data.name);
+    });
+    return it("Should take default value", function() {
+      var v;
+      v = T.v('name', 'Default');
+      return expect(v()).toEqual('Default');
+    });
+  });
+
   describe("T()", function() {
     it("process should work", function() {
       var data, mapper, t, template;
