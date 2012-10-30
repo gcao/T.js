@@ -74,6 +74,11 @@ describe "T.process", ->
     expect(T.process(template, 'test1')).toEqual(['div', 'test1'])
 
 describe "T.render", ->
+  it "should work", ->
+    template = ['div', 'a', 'b']
+    result = '<div>ab</div>'
+    expect(T.render(template)).toEqual(result)
+
   it "should render template", ->
     template = [
       'div#test'

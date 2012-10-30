@@ -1,14 +1,3 @@
-processTemplate = (template) ->
-  console.log template
-
-  window.processed = T.process template
-  console.log processed
-
-  html = T.render processed
-  console.log html
-
-  html
-
 window.test1 = (container) ->
   partial1 = ['div', 'partial1']
   partial2 = ['div', 'partial2']
@@ -24,20 +13,25 @@ window.test1 = (container) ->
       class: 'blue-theme'
       style:
         display: 'absolute'
-    ['div', 'header']
+    (data) ->
+      if true
+        ['div', 'header']
+    #(data) -> (['div', child] for child in [])
     partial1
     -> partial3
     ['div', 'footer']
   ]
 
-  container.html processTemplate template
+  container.html T(template).render()
 
 window.test2 = (container) ->
-  partial = ['div', (data) -> data.name ]
+  partial = ['div', T('name') ]
 
   template = [
     'div'
-    T.include(partial, -> {name: 'John Doe'})
+    'test' if true
+    (i for i in ['a', 'b'])...
+    T(partial, -> {name: 'John Doe'})
   ]
-
-  container.html processTemplate template
+  console.log(template)
+  container.html T(template).render()

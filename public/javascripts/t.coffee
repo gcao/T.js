@@ -171,23 +171,26 @@ renderAttributes = (attributes) ->
 
   result
 
-render = (output) ->
-  return '' if typeof output is 'undefined' or output is null
-  return '' + output unless isArray output
-  return '' if output.length is 0
+renderRest = (input) ->
+  (render(item) for item in input).join('')
 
-  first = output.shift()
+render = (input) ->
+  return '' if typeof input is 'undefined' or input is null
+  return '' + input unless isArray input
+  return '' if input.length is 0
 
-  return render output if first is ""
-  return "<" + first + "/>" if output.length is 0
+  first = input.shift()
+
+  return renderRest input if first is ""
+  return "<" + first + "/>" if input.length is 0
 
   result = "<" + first
 
-  second = output.shift()
+  second = input.shift()
   if isObject second
     result += renderAttributes second
 
-    if output.length is 0
+    if input.length is 0
       result += "/>"
       return result
     else
@@ -195,12 +198,12 @@ render = (output) ->
   else
     result += ">"
     result += render second
-    if output.length is 0
+    if input.length is 0
       result += "</" + first + ">"
       return result
 
-  if output.length > 0
-    result += render output
+  if input.length > 0
+    result += renderRest input
     result += "</" + first + ">"
 
   result

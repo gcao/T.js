@@ -180,6 +180,12 @@
   });
 
   describe("T.render", function() {
+    it("should work", function() {
+      var result, template;
+      template = ['div', 'a', 'b'];
+      result = '<div>ab</div>';
+      return expect(T.render(template)).toEqual(result);
+    });
     return it("should render template", function() {
       var result, template;
       template = [
