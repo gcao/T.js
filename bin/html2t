@@ -1,0 +1,8 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', 'lib'))
+
+require 'html2t'
+
+p Html2t.parse_string ARGF.read
+
