@@ -1,7 +1,11 @@
 require 'nokogiri'
 
 class Html2t
-  def self.parse_html html_string
+  def self.parse_file file_name
+    parse_string File.open(file_name).read
+  end
+
+  def self.parse_string html_string
     result = []
     document = Nokogiri::HTML::Document.parse html_string
     document.children.each do |node|
