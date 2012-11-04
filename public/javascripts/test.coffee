@@ -30,8 +30,14 @@ window.test2 = (container) ->
   template = [
     'div'
     'test' if true
-    (i for i in ['a', 'b'])...
-    T(partial, -> {name: 'John Doe'})
+    [
+      'header'
+      (for i in ['a', 'b']
+        i
+      )...
+      'footer'
+    ]...
+    T(partial, -> name: 'John Doe')
   ]
-  console.log(template)
+  console.log template
   container.html T(template).render()

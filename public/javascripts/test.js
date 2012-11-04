@@ -32,16 +32,16 @@
   window.test2 = function(container) {
     var i, partial, template;
     partial = ['div', T('name')];
-    template = ['div', true ? 'test' : void 0].concat(__slice.call((function() {
-        var _i, _len, _ref, _results;
-        _ref = ['a', 'b'];
-        _results = [];
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          i = _ref[_i];
-          _results.push(i);
-        }
-        return _results;
-      })()), [T(partial, function() {
+    template = ['div', true ? 'test' : void 0].concat(__slice.call(['header'].concat(__slice.call((function() {
+          var _i, _len, _ref, _results;
+          _ref = ['a', 'b'];
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            i = _ref[_i];
+            _results.push(i);
+          }
+          return _results;
+        })()), ['footer'])), [T(partial, function() {
         return {
           name: 'John Doe'
         };

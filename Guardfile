@@ -4,6 +4,10 @@ guard 'bundler' do
   watch('Gemfile')
 end
 
+guard 'rspec' do
+  watch(%r{^(lib|spec)/.+\.rb$})
+end
+
 guard 'shell' do
   watch(%r{^public/javascripts/(.+\.coffee)$}) { `coffee -c public/javascripts/$1` }
 end
