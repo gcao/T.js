@@ -9,7 +9,7 @@ describe "html2t" do
       "html",
       "<!-- comment -->",
       ["body",
-        {:class => 'blue-theme'},
+        {'class' => 'blue-theme'},
         "Text goes here"
       ]
     ]
@@ -26,7 +26,7 @@ describe "html2t" do
       "html",
       "<!-- comment -->",
       ["body",
-        {:class => 'blue-theme'},
+        {'class' => 'blue-theme'},
         "Text goes here"
       ]
     ]

@@ -1,0 +1,11 @@
+#!/usr/bin/env node
+
+fs = require("fs");
+jsonString = fs.readFileSync('/dev/stdin').toString();
+json = eval(jsonString);
+
+//console.log(json);
+
+T = require("../public/javascripts/t");
+console.log(T.render(json));
+

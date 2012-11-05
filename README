@@ -20,3 +20,5 @@ cd public && python -m SimpleHTTPServer
 open http://localhost:8000
 open http://localhost:8000/spec_runner.html
 
+cat spec/fixtures/test.html | bin/html2t | bin/t2html
+

@@ -261,3 +261,6 @@ T.utils   =
 
 this.T = T
 
+# Node.js exports
+module?.exports = T
+

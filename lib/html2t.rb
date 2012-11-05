@@ -36,7 +36,7 @@ class Html2t
   def self.attrs_to_data attrs
     result = {}
     attrs.each do |name, attr|
-      result[name.to_sym] = attr.value
+      result[name] = attr.value
     end
     result
   end

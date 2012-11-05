@@ -383,4 +383,8 @@
 
   this.T = T;
 
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = T;
+  }
+
 }).call(this);

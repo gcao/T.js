@@ -4,5 +4,17 @@ $LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', 'lib'))
 
 require 'html2t'
 
+Hash.class_eval do
+  def inspect
+    return "" if empty?
+
+    pairs = []
+    each do |k, v| 
+      pairs << "\"#{k}\": \"#{v.gsub('"', '\"')}\""
+    end
+    "{#{pairs.join(',')}}"
+  end
+end
+
 p Html2t.parse_string ARGF.read
 
