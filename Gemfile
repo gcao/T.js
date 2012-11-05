@@ -13,5 +13,6 @@ group :development do
   gem 'thin'
   gem 'rack-livereload'
   gem 'guard-livereload'
+  gem 'haml2erb', :git => 'https://github.com/elia/haml2erb.git'
 end
 

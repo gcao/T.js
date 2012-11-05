@@ -1,3 +1,10 @@
+GIT
+  remote: https://github.com/elia/haml2erb.git
+  revision: 5eaaacf3134891f924da539dab31086167f0733f
+  specs:
+    haml2erb (0.3.0.pre.3)
+      haml (~> 3.1.3)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -22,6 +29,7 @@ GEM
       guard (>= 0.8.4)
     guard-shell (0.4.0)
       guard (>= 0.2.0)
+    haml (3.1.7)
     multi_json (1.0.4)
     nokogiri (1.5.5)
     rack (1.4.1)
@@ -67,6 +75,7 @@ DEPENDENCIES
   guard-livereload
   guard-rspec (~> 0.5.2)
   guard-shell
+  haml2erb!
   nokogiri
   rack-livereload
   rb-fsevent (~> 0.4.3.1)

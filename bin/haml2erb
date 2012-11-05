@@ -1,7 +1,7 @@
-#!/usr/bin/env ruby -w
+#!/usr/bin/env ruby
 
 require 'rubygems'
 require 'haml2erb'
 
-print Haml2Erb.convert(ARGF.read)
+print Haml2Erb.convert(ARGF.read, :ugly => false)
 
