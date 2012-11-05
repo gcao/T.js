@@ -1,13 +1,19 @@
 require 'nokogiri'
 
 class Html2t
-  def self.parse_file file_name
+
+  def initialize is_fragment = false
+    @is_fragment = is_fragment
+  end
+
+  def parse_file file_name
     parse_string File.open(file_name).read
   end
 
-  def self.parse_string html_string
+  def parse_string html_string
     result = []
-    document = Nokogiri::HTML::Document.parse html_string
+    klass = @is_fragment ? Nokogiri::HTML::DocumentFragment : Nokogiri::HTML::Document
+    document = klass.parse html_string
     document.children.each do |node|
       node_data = node_to_data(node)
       result << node_data if node_data
@@ -16,7 +22,7 @@ class Html2t
     result
   end
 
-  def self.node_to_data node
+  def node_to_data node
     case node.node_type
     when Nokogiri::XML::Node::ELEMENT_NODE
       result = [node.name]
@@ -33,7 +39,7 @@ class Html2t
     end
   end
 
-  def self.attrs_to_data attrs
+  def attrs_to_data attrs
     result = {}
     attrs.each do |name, attr|
       result[name] = attr.value

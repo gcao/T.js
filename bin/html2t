@@ -2,6 +2,7 @@
 
 $LOAD_PATH.push(File.join(File.dirname(__FILE__), '..', 'lib'))
 
+require 'rubygems'
 require 'html2t'
 
 Hash.class_eval do
@@ -16,5 +17,7 @@ Hash.class_eval do
   end
 end
 
-p Html2t.parse_string ARGF.read
+is_fragment = ENV['HTML_FRAGMENT'] == 'true'
+
+p Html2t.new(is_fragment).parse_string ARGF.read
 

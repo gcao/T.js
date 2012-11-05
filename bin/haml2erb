@@ -1,0 +1,7 @@
+#!/usr/bin/env ruby -w
+
+require 'rubygems'
+require 'haml2erb'
+
+print Haml2Erb.convert(ARGF.read)
+

@@ -22,3 +22,10 @@ open http://localhost:8000/spec_runner.html
 
 cat spec/fixtures/test.html | bin/html2t | bin/t2html
 
+To convert haml to html to T template to html
+
+rvm use 1.8.7@t
+bundle
+gem install haml2erb
+bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t | bin/t2html
+
