@@ -24,6 +24,8 @@ cat spec/fixtures/test.html | bin/html2t
 cat spec/fixtures/test.html | bin/html2t | js2coffee
 cat spec/fixtures/test.html | bin/html2t | bin/t2html
 
+cat spec/fixtures/test.js | bin/t2html
+
 To convert haml to html to T template to html
 bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t | bin/t2html
 
