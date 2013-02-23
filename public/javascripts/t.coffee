@@ -1,5 +1,5 @@
 isArray    = (o) -> o instanceof Array
-isObject   = (o) -> typeof o is "object" and (o not instanceof Array)
+isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
 
 isEmpty    = (o) ->
   return true unless o
@@ -208,8 +208,13 @@ render = (input) ->
 
   result
 
-Template = (@template, @mapper) ->
+Template = (@template...) ->
   @isTemplate = true
+  @template = @template[0] if @template.length is 1 and isArray(@template[0])
+  this
+
+Template.prototype.map = (@mapper) ->
+  this
 
 Template.prototype.process = (data) ->
   data   = @mapper data if @mapper
@@ -221,12 +226,8 @@ Template.prototype.render = (data) ->
   output = @process data
   render output
 
-T = (template, mapper) ->
-  # TODO: is this a good idea?
-  #if typeof template is 'string'
-  #  T.value(template, mapper)
-  #else
-  new Template(template, mapper)
+T = (template...) ->
+  new Template(template...)
 
 T.process = (template, data) ->
   new Template(template).process data
