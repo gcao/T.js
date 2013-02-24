@@ -238,7 +238,7 @@ T.process = (template, data) ->
 T.render  = (template, data) ->
   new Template(template).render data
 
-T.v = T.value = (name, defaultValue) ->
+T.value = (name, defaultValue) ->
   defaultValue = null if typeof defaultValue is 'undefined'
 
   (data) ->
@@ -254,6 +254,22 @@ T.v = T.value = (name, defaultValue) ->
       defaultValue
     else
       data
+
+T.escape = (str) ->
+  str
+   .replace(/&/g, "&amp;" )
+   .replace(/</g, "&lt;"  )
+   .replace(/>/g, "&gt;"  )
+   .replace(/"/g, "&quot;")
+   .replace(/'/g, "&#039;")
+
+T.unescape = (str) ->
+  str
+   .replace(/&amp;/ , '&')
+   .replace(/&lt;/  , '<')
+   .replace(/&gt;/  , '>')
+   .replace(/&quot;/, '"')
+   .replace(/&#039;/, "'")
 
 T.utils   =
   normalize        : normalize

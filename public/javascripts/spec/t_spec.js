@@ -200,10 +200,10 @@
     });
   });
 
-  describe("T.v", function() {
+  describe("T.value", function() {
     it("should work", function() {
       var data, v;
-      v = T.v('name');
+      v = T.value('name');
       data = {
         name: 'John Doe'
       };
@@ -211,7 +211,7 @@
     });
     it("should work with nested attribute", function() {
       var data, v;
-      v = T.v('account.name');
+      v = T.value('account.name');
       data = {
         account: {
           name: 'John Doe'
@@ -221,8 +221,20 @@
     });
     return it("Should take default value", function() {
       var v;
-      v = T.v('name', 'Default');
+      v = T.value('name', 'Default');
       return expect(v()).toEqual('Default');
+    });
+  });
+
+  describe("T.escape", function() {
+    return it("should work", function() {
+      return expect(T.escape('<>&')).toEqual('&lt;&gt;&amp;');
+    });
+  });
+
+  describe("T.unescape", function() {
+    return it("should work", function() {
+      return expect(T.unescape('&lt;&gt;&amp;')).toEqual('<>&');
     });
   });
 
@@ -234,24 +246,6 @@
       return expect(t1).toEqual(t);
     });
     it("process should work", function() {
-      var data, mapper, t, template;
-      template = [
-        "div", function(data) {
-          return data.name;
-        }
-      ];
-      mapper = function(data) {
-        return data.account;
-      };
-      t = T(template).map(mapper);
-      data = {
-        account: {
-          name: 'John Doe'
-        }
-      };
-      return expect(t.process(data)).toEqual(['div', 'John Doe']);
-    });
-    it("process should work (old)", function() {
       var data, mapper, t, template;
       template = [
         "div", function(data) {
@@ -288,9 +282,9 @@
         }
       })).toEqual(result);
     });
-    return it("include template as partial should work", function() {
+    it("include template as partial should work", function() {
       var partial, result, template;
-      partial = ["div", T.v('name')];
+      partial = ["div", T.value('name')];
       template = [
         "div", T(partial).map(function(data) {
           return data.account;
@@ -302,6 +296,19 @@
           name: 'John Doe'
         }
       })).toEqual(result);
+    });
+    return it("data is empty", function() {
+      var mapper, t, template;
+      template = [
+        "div", function(data) {
+          return data != null ? data.name : void 0;
+        }
+      ];
+      mapper = function(data) {
+        return data != null ? data.account : void 0;
+      };
+      t = T(template).map(mapper);
+      return expect(t.process()).toEqual(['div', void 0]);
     });
   });
 

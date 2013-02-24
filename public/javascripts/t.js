@@ -367,7 +367,7 @@
     return new Template(template).render(data);
   };
 
-  T.v = T.value = function(name, defaultValue) {
+  T.value = function(name, defaultValue) {
     if (typeof defaultValue === 'undefined') {
       defaultValue = null;
     }
@@ -390,6 +390,14 @@
         return data;
       }
     };
+  };
+
+  T.escape = function(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  };
+
+  T.unescape = function(str) {
+    return str.replace(/&amp;/, '&').replace(/&lt;/, '<').replace(/&gt;/, '>').replace(/&quot;/, '"').replace(/&#039;/, "'");
   };
 
   T.utils = {

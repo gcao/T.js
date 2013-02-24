@@ -89,20 +89,28 @@ describe "T.render", ->
     result = '<div id="test" class="first second third"/>'
     expect(T.render(template)).toEqual(result)
 
-describe "T.v", ->
+describe "T.value", ->
   it "should work", ->
-    v = T.v('name')
+    v = T.value('name')
     data = name: 'John Doe'
     expect(v(data)).toEqual(data.name)
 
   it "should work with nested attribute", ->
-    v = T.v('account.name')
+    v = T.value('account.name')
     data = account: name: 'John Doe'
     expect(v(data)).toEqual(data.account.name)
 
   it "Should take default value", ->
-    v = T.v('name', 'Default')
+    v = T.value('name', 'Default')
     expect(v()).toEqual('Default')
+
+describe "T.escape", ->
+  it "should work", ->
+    expect(T.escape('<>&')).toEqual('&lt;&gt;&amp;')
+
+describe "T.unescape", ->
+  it "should work", ->
+    expect(T.unescape('&lt;&gt;&amp;')).toEqual('<>&')
 
 describe "T()", ->
   it "T(T()) should return same Template object", ->
@@ -119,15 +127,6 @@ describe "T()", ->
         name: 'John Doe'
     expect(t.process(data)).toEqual(['div', 'John Doe'])
 
-  it "process should work (old)", ->
-    template = ["div", (data) -> data.name]
-    mapper   = (data) -> data.account
-    t        = T(template).map(mapper)
-    data =
-      account:
-        name: 'John Doe'
-    expect(t.process(data)).toEqual(['div', 'John Doe'])
-
   it "include template as partial should work", ->
     partial  = ["div", (data) -> data.name]
     template = ["div", T(partial).map((data) -> data.account)]
@@ -135,8 +134,14 @@ describe "T()", ->
     expect(T(template).process({account: {name: 'John Doe'}})).toEqual(result)
 
   it "include template as partial should work", ->
-    partial  = ["div", T.v('name')]
+    partial  = ["div", T.value('name')]
     template = ["div", T(partial).map((data) -> data.account)]
     result   = '<div><div>John Doe</div></div>'
     expect(T(template).render({account: {name: 'John Doe'}})).toEqual(result)
+
+  it "data is empty", ->
+    template = ["div", (data) -> data?.name]
+    mapper   = (data) -> data?.account
+    t        = T(template).map(mapper)
+    expect(t.process()).toEqual(['div', undefined])
 
