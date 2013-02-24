@@ -227,6 +227,12 @@
   });
 
   describe("T()", function() {
+    it("T(T()) should return same Template object", function() {
+      var t, t1;
+      t = T("div", "text");
+      t1 = T(t);
+      return expect(t1).toEqual(t);
+    });
     it("process should work", function() {
       var data, mapper, t, template;
       template = [

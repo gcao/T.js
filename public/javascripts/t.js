@@ -348,11 +348,15 @@
   T = function() {
     var template;
     template = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    return (function(func, args, ctor) {
-      ctor.prototype = func.prototype;
-      var child = new ctor, result = func.apply(child, args);
-      return Object(result) === result ? result : child;
-    })(Template, template, function(){});
+    if (template.length === 1 && template[0].isTemplate) {
+      return template[0];
+    } else {
+      return (function(func, args, ctor) {
+        ctor.prototype = func.prototype;
+        var child = new ctor, result = func.apply(child, args);
+        return Object(result) === result ? result : child;
+      })(Template, template, function(){});
+    }
   };
 
   T.process = function(template, data) {

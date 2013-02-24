@@ -105,6 +105,11 @@ describe "T.v", ->
     expect(v()).toEqual('Default')
 
 describe "T()", ->
+  it "T(T()) should return same Template object", ->
+    t  = T("div", "text")
+    t1 = T(t)
+    expect(t1).toEqual(t)
+
   it "process should work", ->
     template = ["div", (data) -> data.name]
     mapper   = (data) -> data.account

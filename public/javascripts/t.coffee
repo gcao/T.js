@@ -227,7 +227,10 @@ Template.prototype.render = (data) ->
   render output
 
 T = (template...) ->
-  new Template(template...)
+  if template.length is 1 and template[0].isTemplate
+    template[0]
+  else
+    new Template(template...)
 
 T.process = (template, data) ->
   new Template(template).process data
