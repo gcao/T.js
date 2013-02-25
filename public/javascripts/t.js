@@ -88,9 +88,6 @@
         }
         items.splice(0, 1, tag, attrs);
       }
-    } else {
-      first;
-
     }
     return items;
   };

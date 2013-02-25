@@ -9,6 +9,16 @@ describe "T.utils.processFirst", ->
     result = ['div', {id: 'this'}, 'text']
     expect(T.utils.processFirst(input)).toEqual(result)
 
+  it "should parse 'div#this div.child'", ->
+    input  = ['div#this div.child', 'text']
+    result = ['div', {id: 'this'}, ['div', {'class': 'child'}, 'text']]
+    expect(T.utils.processFirst(input)).toEqual(result)
+
+  it "should treat < specially", ->
+    input  = ['<!DOCTYPE html>', '...']
+    result = input
+    expect(T.utils.processFirst(input)).toEqual(result)
+
 describe "T.utils.normalize", ->
   it "should normalize array", ->
     input  = ['div', ['', 'text']]

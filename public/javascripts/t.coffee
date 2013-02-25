@@ -29,6 +29,7 @@ merge      = (o1, o2) ->
 
   o1
 
+#FirstFieldPattern = /^([^#.]+)?([#\.][^\s]+)*$/
 FirstFieldPattern = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 
 # Parse first item and add parsed data to array
@@ -46,8 +47,6 @@ processFirst = (items) ->
       attrs.id    = id if id
       attrs.class = classes.replace('.', ' ') if classes
       items.splice 0, 1, tag, attrs
-  else
-    first
 
   items
 

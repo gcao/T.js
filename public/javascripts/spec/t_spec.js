@@ -13,7 +13,7 @@
       ];
       return expect(T.utils.processFirst(input)).toEqual(result);
     });
-    return it("should parse div#this", function() {
+    it("should parse div#this", function() {
       var input, result;
       input = ['div#this', 'text'];
       result = [
@@ -21,6 +21,26 @@
           id: 'this'
         }, 'text'
       ];
+      return expect(T.utils.processFirst(input)).toEqual(result);
+    });
+    it("should parse 'div#this div.child'", function() {
+      var input, result;
+      input = ['div#this div.child', 'text'];
+      result = [
+        'div', {
+          id: 'this'
+        }, [
+          'div', {
+            'class': 'child'
+          }, 'text'
+        ]
+      ];
+      return expect(T.utils.processFirst(input)).toEqual(result);
+    });
+    return it("should treat < specially", function() {
+      var input, result;
+      input = ['<!DOCTYPE html>', '...'];
+      result = input;
       return expect(T.utils.processFirst(input)).toEqual(result);
     });
   });
