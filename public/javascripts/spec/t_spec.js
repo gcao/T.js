@@ -339,10 +339,10 @@
         return ['div', T.include('title')];
       };
       return expect(T.prepare(template, {
-        title: 'Page Title'
-      }).process()).toEqual(['div', 'Page Title']);
+        title: 'Title'
+      }).process()).toEqual(['div', 'Title']);
     });
-    return it("nested include/prepare should work", function() {
+    it("nested include/prepare should work", function() {
       var template, template2;
       template = function() {
         return ['div', T.include('title')];
@@ -355,6 +355,35 @@
         ];
       };
       return expect(T.prepare(template2, {
+        body: 'Body'
+      }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
+    });
+    return it("include can take default value", function() {
+      var template;
+      template = function() {
+        return ['div', T.include('title', 'Default Title')];
+      };
+      return expect(T.prepare(template).process()).toEqual(['div', 'Default Title']);
+    });
+  });
+
+  describe("T().prepare/T.include", function() {
+    it("should work", function() {
+      var template;
+      template = new T(['div', T.include('title')]);
+      return expect(template.prepare({
+        title: 'Title'
+      }).process()).toEqual(['div', 'Title']);
+    });
+    return it("nested include/prepare should work", function() {
+      var template, template2;
+      template = new T(['div', T.include('title')]);
+      template2 = new T([
+        'div', template.prepare({
+          title: 'Title'
+        }), T.include('body')
+      ]);
+      return expect(template2.prepare({
         body: 'Body'
       }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
     });

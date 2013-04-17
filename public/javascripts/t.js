@@ -336,6 +336,29 @@
     return render(output);
   };
 
+  Template.prototype.prepare = function(extras) {
+    this.extras = extras;
+    this.process = function(data) {
+      var oldExtras;
+      try {
+        if (T.extras) {
+          oldExtras = T.extras;
+        }
+        if (extras) {
+          T.extras = extras;
+        }
+        return Template.prototype.process.call(this, data);
+      } finally {
+        if (oldExtras) {
+          T.extras = oldExtras;
+        } else {
+          delete T.extras;
+        }
+      }
+    };
+    return this;
+  };
+
   T = function(template) {
     if (typeof template === 'object' && template.isTemplate) {
       return template;
@@ -385,10 +408,10 @@
     return str.replace(/&amp;/, '&').replace(/&lt;/, '<').replace(/&gt;/, '>').replace(/&quot;/, '"').replace(/&#039;/, "'");
   };
 
-  T.include = function(name) {
+  T.include = function(name, defaultValue) {
     return function(data) {
       var _ref;
-      return (_ref = T.extras) != null ? _ref[name] : void 0;
+      return ((_ref = T.extras) != null ? _ref[name] : void 0) || defaultValue;
     };
   };
 

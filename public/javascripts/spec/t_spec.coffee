@@ -158,10 +158,24 @@ describe "T()", ->
 describe "T.prepare/T.include", ->
   it "should work", ->
     template = -> ['div', T.include('title')]
-    expect(T.prepare(template, title: 'Page Title').process()).toEqual(['div', 'Page Title'])
+    expect(T.prepare(template, title: 'Title').process()).toEqual(['div', 'Title'])
 
   it "nested include/prepare should work", ->
     template  = -> ['div', T.include('title')]
     template2 = -> ['div', T.prepare(template, title: 'Title'), T.include('body')]
     expect(T.prepare(template2, body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
+
+  it "include can take default value", ->
+    template = -> ['div', T.include('title', 'Default Title')]
+    expect(T.prepare(template).process()).toEqual(['div', 'Default Title'])
+
+describe "T().prepare/T.include", ->
+  it "should work", ->
+    template = new T(['div', T.include('title')])
+    expect(template.prepare(title: 'Title').process()).toEqual(['div', 'Title'])
+
+  it "nested include/prepare should work", ->
+    template  = new T(['div', T.include('title')])
+    template2 = new T(['div', template.prepare(title: 'Title'), T.include('body')])
+    expect(template2.prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
 

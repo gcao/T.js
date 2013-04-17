@@ -223,6 +223,21 @@ Template.prototype.render = (data) ->
   output = @process data
   render output
 
+Template.prototype.prepare = (@extras) ->
+  @process = (data) ->
+    try
+      oldExtras = T.extras if T.extras
+      T.extras  = extras if extras
+
+      Template.prototype.process.call(this, data)     
+    finally
+      if oldExtras
+        T.extras = oldExtras
+      else
+        delete T.extras
+
+  this
+
 T = (template) ->
   if typeof template is 'object' and template.isTemplate
     template
@@ -268,9 +283,9 @@ T.unescape = (str) ->
    .replace(/&quot;/, '"')
    .replace(/&#039;/, "'")
 
-T.include = (name) ->
+T.include = (name, defaultValue) ->
   (data) ->
-    T.extras?[name]
+    T.extras?[name] or defaultValue
 
 T.prepare = (template, extras) ->
   t = new T(template)
