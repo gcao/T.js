@@ -109,7 +109,7 @@ processCssClasses = (attrs, newAttrs) ->
 processAttributes = (items) ->
   if isArray items
     attrs = {}
-    processFirst items
+    items = processFirst items
     for item in items
       if isArray item
         processAttributes item
@@ -207,10 +207,8 @@ render = (input) ->
 
   result
 
-Template = (@template...) ->
+Template = (@template) ->
   @isTemplate = true
-  @template = @template[0] if @template.length is 1 and isArray(@template[0])
-  this
 
 Template.prototype.map = (@mapper) ->
   this
@@ -225,11 +223,11 @@ Template.prototype.render = (data) ->
   output = @process data
   render output
 
-T = (template...) ->
-  if template.length is 1 and template[0].isTemplate
-    template[0]
+T = (template) ->
+  if typeof template is 'object' and template.isTemplate
+    template
   else
-    new Template(template...)
+    new Template(template)
 
 T.process = (template, data) ->
   new Template(template).process data
@@ -269,6 +267,26 @@ T.unescape = (str) ->
    .replace(/&gt;/  , '>')
    .replace(/&quot;/, '"')
    .replace(/&#039;/, "'")
+
+T.include = (name) ->
+  (data) ->
+    T.extras?[name]
+
+T.prepare = (template, extras) ->
+  t = new T(template)
+  t.process = (data) ->
+    try
+      oldExtras = T.extras if T.extras
+      T.extras  = extras if extras
+
+      Template.prototype.process.call(this, data)     
+    finally
+      if oldExtras
+        T.extras = oldExtras
+      else
+        delete T.extras
+
+  t
 
 T.utils   =
   normalize        : normalize

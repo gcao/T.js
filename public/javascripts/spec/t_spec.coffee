@@ -155,3 +155,13 @@ describe "T()", ->
     t        = T(template).map(mapper)
     expect(t.process()).toEqual(['div', undefined])
 
+describe "T.prepare/T.include", ->
+  it "should work", ->
+    template = -> ['div', T.include('title')]
+    expect(T.prepare(template, title: 'Page Title').process()).toEqual(['div', 'Page Title'])
+
+  it "nested include/prepare should work", ->
+    template  = -> ['div', T.include('title')]
+    template2 = -> ['div', T.prepare(template, title: 'Title'), T.include('body')]
+    expect(T.prepare(template2, body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
+

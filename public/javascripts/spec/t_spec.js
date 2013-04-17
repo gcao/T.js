@@ -332,4 +332,32 @@
     });
   });
 
+  describe("T.prepare/T.include", function() {
+    it("should work", function() {
+      var template;
+      template = function() {
+        return ['div', T.include('title')];
+      };
+      return expect(T.prepare(template, {
+        title: 'Page Title'
+      }).process()).toEqual(['div', 'Page Title']);
+    });
+    return it("nested include/prepare should work", function() {
+      var template, template2;
+      template = function() {
+        return ['div', T.include('title')];
+      };
+      template2 = function() {
+        return [
+          'div', T.prepare(template, {
+            title: 'Title'
+          }), T.include('body')
+        ];
+      };
+      return expect(T.prepare(template2, {
+        body: 'Body'
+      }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
+    });
+  });
+
 }).call(this);

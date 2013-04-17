@@ -166,7 +166,7 @@
     var attrs, i, item, newStyles, styles, _i, _j, _len, _ref;
     if (isArray(items)) {
       attrs = {};
-      processFirst(items);
+      items = processFirst(items);
       for (_i = 0, _len = items.length; _i < _len; _i++) {
         item = items[_i];
         if (isArray(item)) {
@@ -310,15 +310,9 @@
     return result;
   };
 
-  Template = function() {
-    var template;
-    template = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+  Template = function(template) {
     this.template = template;
-    this.isTemplate = true;
-    if (this.template.length === 1 && isArray(this.template[0])) {
-      this.template = this.template[0];
-    }
-    return this;
+    return this.isTemplate = true;
   };
 
   Template.prototype.map = function(mapper) {
@@ -342,17 +336,11 @@
     return render(output);
   };
 
-  T = function() {
-    var template;
-    template = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-    if (template.length === 1 && template[0].isTemplate) {
-      return template[0];
+  T = function(template) {
+    if (typeof template === 'object' && template.isTemplate) {
+      return template;
     } else {
-      return (function(func, args, ctor) {
-        ctor.prototype = func.prototype;
-        var child = new ctor, result = func.apply(child, args);
-        return Object(result) === result ? result : child;
-      })(Template, template, function(){});
+      return new Template(template);
     }
   };
 
@@ -395,6 +383,37 @@
 
   T.unescape = function(str) {
     return str.replace(/&amp;/, '&').replace(/&lt;/, '<').replace(/&gt;/, '>').replace(/&quot;/, '"').replace(/&#039;/, "'");
+  };
+
+  T.include = function(name) {
+    return function(data) {
+      var _ref;
+      return (_ref = T.extras) != null ? _ref[name] : void 0;
+    };
+  };
+
+  T.prepare = function(template, extras) {
+    var t;
+    t = new T(template);
+    t.process = function(data) {
+      var oldExtras;
+      try {
+        if (T.extras) {
+          oldExtras = T.extras;
+        }
+        if (extras) {
+          T.extras = extras;
+        }
+        return Template.prototype.process.call(this, data);
+      } finally {
+        if (oldExtras) {
+          T.extras = oldExtras;
+        } else {
+          delete T.extras;
+        }
+      }
+    };
+    return t;
   };
 
   T.utils = {
