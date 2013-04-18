@@ -245,10 +245,10 @@ T = (template) ->
     new Template(template)
 
 T.process = (template, data) ->
-  new Template(template).process data
+  T(template).process data
 
 T.render  = (template, data) ->
-  new Template(template).render data
+  T(template).render data
 
 T.value = (name, defaultValue) ->
   defaultValue = null if typeof defaultValue is 'undefined'
@@ -288,11 +288,11 @@ T.include = (name, defaultValue) ->
     T.extras?[name] or defaultValue
 
 T.prepare = (template, extras) ->
-  t = new T(template)
+  t = T(template)
   t.process = (data) ->
     try
       oldExtras = T.extras if T.extras
-      T.extras  = extras if extras
+      T.extras  = extras   if extras
 
       Template.prototype.process.call(this, data)     
     finally

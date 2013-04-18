@@ -370,15 +370,15 @@
   describe("T().prepare/T.include", function() {
     it("should work", function() {
       var template;
-      template = new T(['div', T.include('title')]);
+      template = T(['div', T.include('title')]);
       return expect(template.prepare({
         title: 'Title'
       }).process()).toEqual(['div', 'Title']);
     });
-    return it("nested include/prepare should work", function() {
+    it("nested include/prepare should work", function() {
       var template, template2;
-      template = new T(['div', T.include('title')]);
-      template2 = new T([
+      template = T(['div', T.include('title')]);
+      template2 = T([
         'div', template.prepare({
           title: 'Title'
         }), T.include('body')
@@ -386,6 +386,19 @@
       return expect(template2.prepare({
         body: 'Body'
       }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
+    });
+    return it("mapper should work", function() {
+      var layout, partial, template;
+      layout = T(['div', T.include('title')]);
+      partial = function(data) {
+        return data.title;
+      };
+      template = layout.prepare({
+        title: partial
+      });
+      return expect(template.process({
+        title: 'Title'
+      })).toEqual(['div', 'Title']);
     });
   });
 

@@ -171,11 +171,17 @@ describe "T.prepare/T.include", ->
 
 describe "T().prepare/T.include", ->
   it "should work", ->
-    template = new T(['div', T.include('title')])
+    template = T(['div', T.include('title')])
     expect(template.prepare(title: 'Title').process()).toEqual(['div', 'Title'])
 
   it "nested include/prepare should work", ->
-    template  = new T(['div', T.include('title')])
-    template2 = new T(['div', template.prepare(title: 'Title'), T.include('body')])
+    template  = T(['div', T.include('title')])
+    template2 = T(['div', template.prepare(title: 'Title'), T.include('body')])
     expect(template2.prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
+
+  it "mapper should work", ->
+    layout   = T(['div', T.include('title')])
+    partial  = (data) -> data.title
+    template = layout.prepare(title: partial)
+    expect(template.process(title: 'Title')).toEqual(['div', 'Title'])
 

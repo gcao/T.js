@@ -368,11 +368,11 @@
   };
 
   T.process = function(template, data) {
-    return new Template(template).process(data);
+    return T(template).process(data);
   };
 
   T.render = function(template, data) {
-    return new Template(template).render(data);
+    return T(template).render(data);
   };
 
   T.value = function(name, defaultValue) {
@@ -417,7 +417,7 @@
 
   T.prepare = function(template, extras) {
     var t;
-    t = new T(template);
+    t = T(template);
     t.process = function(data) {
       var oldExtras;
       try {
