@@ -12,12 +12,13 @@ guard 'shell' do
   watch(%r{^public/javascripts/(.+\.coffee)$}) { `coffee -c public/javascripts/$1` }
 end
 
-guard 'livereload' do
-  watch(%r{.+\.js})
-  watch(%r{.+\.erb})
-end
+#guard 'livereload' do
+#  watch(%r{.+\.js})
+#  watch(%r{.+\.erb})
+#end
 
-guard 'jasmine-headless-webkit' do
-  watch(%r{^public/javascripts/(.*)\..*}) { |m| newest_js_file("public/javascripts/spec/#{m[1]}_spec") }
+guard 'jasmine-headless-webkit', :jasmine_config => 'public/javascripts/spec/jasmine.yml' do
+  #watch(%r{^public/javascripts/(.*)\..*}) { |m| newest_js_file("public/javascripts/spec/#{m[1]}_spec") }
+  watch(%r{^public/javascripts/(.*)\.coffee}) { |m| "public/javascripts/spec/#{m[1]}_spec" }
 end
 
