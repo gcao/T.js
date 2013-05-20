@@ -14,5 +14,8 @@ group :development do
   gem 'rack-livereload'
   gem 'guard-livereload'
   gem 'haml2erb', :git => 'https://github.com/elia/haml2erb.git'
+
+  gem 'jasmine-headless-webkit'
+  gem 'guard-jasmine-headless-webkit'
 end
 

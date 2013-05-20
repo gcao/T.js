@@ -17,3 +17,7 @@ guard 'livereload' do
   watch(%r{.+\.erb})
 end
 
+guard 'jasmine-headless-webkit' do
+  watch(%r{^public/javascripts/(.*)\..*}) { |m| newest_js_file("public/javascripts/spec/#{m[1]}_spec") }
+end
+
