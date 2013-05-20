@@ -29,3 +29,7 @@ cat spec/fixtures/test.js | bin/t2html
 To convert haml to html to T template to html
 bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t | bin/t2html
 
+Jasmine Headless WebKit 
+Config file is located at public/javascripts/spec/jasmine.yml
+jasmine-headless-webkit -c -j public/javascripts/spec/jasmine.yml
+
