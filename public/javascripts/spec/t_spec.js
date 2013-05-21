@@ -384,6 +384,13 @@
         title: 'Title'
       }).process()).toEqual(['div', 'Title']);
     });
+    it("prepare2 should work", function() {
+      var template;
+      template = T(['div', T.include2(), T.include('title')]);
+      return expect(template.prepare2('first', {
+        title: 'Title'
+      }).process()).toEqual(['div', 'first', 'Title']);
+    });
     it("nested include/prepare should work", function() {
       var template, template2;
       template = T(['div', T.include('title')]);

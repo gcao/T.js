@@ -178,6 +178,10 @@ describe "T().prepare/T.include", ->
     template = T(['div', T.include('title')])
     expect(template.prepare(title: 'Title').process()).toEqual(['div', 'Title'])
 
+  it "prepare2 should work", ->
+    template = T(['div', T.include2(), T.include('title')])
+    expect(template.prepare2('first', title: 'Title').process()).toEqual(['div', 'first', 'Title'])
+
   it "nested include/prepare should work", ->
     template  = T(['div', T.include('title')])
     template2 = T(['div', template.prepare(title: 'Title'), T.include('body')])

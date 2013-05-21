@@ -43,7 +43,7 @@ processFirst = (items) ->
 
   parts = first.split ' '
   if parts.length > 1
-    i = parts.length - 1
+    i    = parts.length - 1
     rest = items.slice 1
     while i >= 0
       part = parts[i]
@@ -241,11 +241,42 @@ Template.prototype.render = (data) ->
 Template.prototype.prepare = (@extras) ->
   @process = (data) ->
     try
+      old_default_param = T.default_param if T.default_param
+      delete T.default_param
+
       old_extras = T.extras if T.extras
       T.extras  = extras if extras
 
       Template.prototype.process.call(this, data)     
     finally
+      if old_default_param
+        T.default_param = old_default_param
+      else
+        delete T.default_param
+
+      if old_extras
+        T.extras = old_extras
+      else
+        delete T.extras
+
+  this
+
+Template.prototype.prepare2 = (default_param, @extras) ->
+  @process = (data) ->
+    try
+      old_default_param = T.default_param if T.default_param
+      T.default_param = default_param if default_param
+
+      old_extras = T.extras if T.extras
+      T.extras  = extras if extras
+
+      Template.prototype.process.call(this, data)     
+    finally
+      if old_default_param
+        T.default_param = old_default_param
+      else
+        delete T.default_param
+
       if old_extras
         T.extras = old_extras
       else
