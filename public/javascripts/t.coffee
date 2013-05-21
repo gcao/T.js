@@ -226,13 +226,13 @@ Template.prototype.render = (data) ->
 Template.prototype.prepare = (@extras) ->
   @process = (data) ->
     try
-      oldExtras = T.extras if T.extras
+      old_extras = T.extras if T.extras
       T.extras  = extras if extras
 
       Template.prototype.process.call(this, data)     
     finally
-      if oldExtras
-        T.extras = oldExtras
+      if old_extras
+        T.extras = old_extras
       else
         delete T.extras
 
@@ -287,17 +287,53 @@ T.include = (name, defaultValue) ->
   (data) ->
     T.extras?[name] or defaultValue
 
+T.include2 = (defaultValue) ->
+  (data) ->
+    T.default_param or defaultValue
+
 T.prepare = (template, extras) ->
   t = T(template)
   t.process = (data) ->
     try
-      oldExtras = T.extras if T.extras
+      old_default_param = T.default_param if T.default_param
+      delete T.default_param
+
+      old_extras = T.extras if T.extras
       T.extras  = extras   if extras
 
       Template.prototype.process.call(this, data)     
     finally
-      if oldExtras
-        T.extras = oldExtras
+      if old_default_param
+        T.default_param = old_default_param
+      else
+        delete T.default_param
+
+      if old_extras
+        T.extras = old_extras
+      else
+        delete T.extras
+
+  t
+
+T.prepare2 = (template, default_param, extras) ->
+  t = T(template)
+  t.process = (data) ->
+    try
+      old_default_param = T.default_param if T.default_param
+      T.default_param = default_param if default_param
+
+      old_extras = T.extras if T.extras
+      T.extras  = extras   if extras
+
+      Template.prototype.process.call(this, data)     
+    finally
+      if old_default_param
+        T.default_param = old_default_param
+      else
+        delete T.default_param
+
+      if old_extras
+        T.extras = old_extras
       else
         delete T.extras
 

@@ -339,18 +339,18 @@
   Template.prototype.prepare = function(extras) {
     this.extras = extras;
     this.process = function(data) {
-      var oldExtras;
+      var old_extras;
       try {
         if (T.extras) {
-          oldExtras = T.extras;
+          old_extras = T.extras;
         }
         if (extras) {
           T.extras = extras;
         }
         return Template.prototype.process.call(this, data);
       } finally {
-        if (oldExtras) {
-          T.extras = oldExtras;
+        if (old_extras) {
+          T.extras = old_extras;
         } else {
           delete T.extras;
         }
@@ -415,22 +415,72 @@
     };
   };
 
+  T.include2 = function(defaultValue) {
+    return function(data) {
+      return T.default_param || defaultValue;
+    };
+  };
+
   T.prepare = function(template, extras) {
     var t;
     t = T(template);
     t.process = function(data) {
-      var oldExtras;
+      var old_default_param, old_extras;
       try {
+        if (T.default_param) {
+          old_default_param = T.default_param;
+        }
+        delete T.default_param;
         if (T.extras) {
-          oldExtras = T.extras;
+          old_extras = T.extras;
         }
         if (extras) {
           T.extras = extras;
         }
         return Template.prototype.process.call(this, data);
       } finally {
-        if (oldExtras) {
-          T.extras = oldExtras;
+        if (old_default_param) {
+          T.default_param = old_default_param;
+        } else {
+          delete T.default_param;
+        }
+        if (old_extras) {
+          T.extras = old_extras;
+        } else {
+          delete T.extras;
+        }
+      }
+    };
+    return t;
+  };
+
+  T.prepare2 = function(template, default_param, extras) {
+    var t;
+    t = T(template);
+    t.process = function(data) {
+      var old_default_param, old_extras;
+      try {
+        if (T.default_param) {
+          old_default_param = T.default_param;
+        }
+        if (default_param) {
+          T.default_param = default_param;
+        }
+        if (T.extras) {
+          old_extras = T.extras;
+        }
+        if (extras) {
+          T.extras = extras;
+        }
+        return Template.prototype.process.call(this, data);
+      } finally {
+        if (old_default_param) {
+          T.default_param = old_default_param;
+        } else {
+          delete T.default_param;
+        }
+        if (old_extras) {
+          T.extras = old_extras;
         } else {
           delete T.extras;
         }
