@@ -29,8 +29,8 @@ merge      = (o1, o2) ->
 
   o1
 
-#FirstFieldPattern = /^([^#.]+)?([#\.][^\s]+)*$/
-FirstFieldPattern = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
+FIRST_NO_PROCESS_PATTERN = /^<.*/
+FIRST_FIELD_PATTERN = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 
 # Parse first item and add parsed data to array
 processFirst = (items) ->
@@ -38,7 +38,22 @@ processFirst = (items) ->
 
   throw "Invalid first argument #{first}" unless typeof first is 'string'
 
-  if matches = first.match(FirstFieldPattern)
+  if first.match(FIRST_NO_PROCESS_PATTERN)
+    return items
+
+  parts = first.split ' '
+  if parts.length > 1
+    i = parts.length - 1
+    rest = items.slice 1
+    while i >= 0
+      part = parts[i]
+      rest.unshift part
+      rest = [processFirst(rest)]
+      i--
+
+    return rest[0]
+
+  if matches = first.match(FIRST_FIELD_PATTERN)
     tag     = matches[1]
     id      = matches[3]
     classes = matches[5]
