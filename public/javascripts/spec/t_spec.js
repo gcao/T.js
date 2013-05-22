@@ -206,6 +206,22 @@
       result = '<div>ab</div>';
       return expect(T.render(template)).toEqual(result);
     });
+    it("empty script should not self-close", function() {
+      var result, template;
+      template = ['script'];
+      result = '<script></script>';
+      return expect(T.render(template)).toEqual(result);
+    });
+    it("script should not self-close", function() {
+      var result, template;
+      template = [
+        'script', {
+          src: 'test.js'
+        }
+      ];
+      result = '<script src="test.js"></script>';
+      return expect(T.render(template)).toEqual(result);
+    });
     return it("should render template", function() {
       var result, template;
       template = [

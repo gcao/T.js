@@ -13,7 +13,7 @@ describe "html2t" do
         "Text goes here"
       ]
     ]
-    Html2t.parse_string(input).should eql(output)
+    Html2t.parse(input).should eql(output)
   end
 
   it "should work on file" do

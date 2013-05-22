@@ -17,7 +17,9 @@ Hash.class_eval do
   end
 end
 
-is_fragment = ENV['HTML_FRAGMENT'] == 'true'
+options = {
+  :fragment => ENV['HTML_FRAGMENT'] == 'true'
+}
 
-p Html2t.new(is_fragment).parse_string ARGF.read
+p Html2t.new(options).parse ARGF.read
 

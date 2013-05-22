@@ -196,7 +196,11 @@ render = (input) ->
   first = input.shift()
 
   return renderRest input if first is ""
-  return "<" + first + "/>" if input.length is 0
+  if input.length is 0
+    if first is 'script'
+      return "<#{first}></#{first}>"
+    else
+      return "<" + first + "/>"
 
   result = "<" + first
 
@@ -205,7 +209,10 @@ render = (input) ->
     result += renderAttributes second
 
     if input.length is 0
-      result += "/>"
+      if first is 'script'
+        result += "></#{first}>"
+      else
+        result += "/>"
       return result
     else
       result += ">"

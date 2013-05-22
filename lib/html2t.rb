@@ -2,18 +2,26 @@ require 'nokogiri'
 
 class Html2t
 
-  def initialize is_fragment = false
-    @is_fragment = is_fragment
+  def self.parse html, options = {}
+    new(options).parse html
+  end
+
+  def self.parse_file file, options = {}
+    new(options).parse_file file
+  end
+
+  def initialize options = {}
+    @options = options
   end
 
   def parse_file file_name
-    parse_string File.open(file_name).read
+    parse File.open(file_name).read
   end
 
-  def parse_string html_string
+  def parse html
     result = []
-    klass = @is_fragment ? Nokogiri::HTML::DocumentFragment : Nokogiri::HTML::Document
-    document = klass.parse html_string
+    klass = @options[:fragment] ? Nokogiri::HTML::DocumentFragment : Nokogiri::HTML::Document
+    document = klass.parse html
     document.children.each do |node|
       node_data = node_to_data(node)
       result << node_data if node_data
@@ -21,6 +29,8 @@ class Html2t
     result = result.first if result.size == 1 and result.first.is_a? Array
     result
   end
+
+  private
 
   def node_to_data node
     case node.node_type
@@ -46,6 +56,5 @@ class Html2t
     end
     result
   end
-
 end
 

@@ -300,14 +300,22 @@
       return renderRest(input);
     }
     if (input.length === 0) {
-      return "<" + first + "/>";
+      if (first === 'script') {
+        return "<" + first + "></" + first + ">";
+      } else {
+        return "<" + first + "/>";
+      }
     }
     result = "<" + first;
     second = input.shift();
     if (isObject(second)) {
       result += renderAttributes(second);
       if (input.length === 0) {
-        result += "/>";
+        if (first === 'script') {
+          result += "></" + first + ">";
+        } else {
+          result += "/>";
+        }
         return result;
       } else {
         result += ">";

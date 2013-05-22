@@ -86,7 +86,17 @@ describe "T.process", ->
 describe "T.render", ->
   it "should work", ->
     template = ['div', 'a', 'b']
-    result = '<div>ab</div>'
+    result   = '<div>ab</div>'
+    expect(T.render(template)).toEqual(result)
+
+  it "empty script should not self-close", ->
+    template = ['script']
+    result   = '<script></script>'
+    expect(T.render(template)).toEqual(result)
+
+  it "script should not self-close", ->
+    template = ['script', src: 'test.js']
+    result   = '<script src="test.js"></script>'
     expect(T.render(template)).toEqual(result)
 
   it "should render template", ->
@@ -101,12 +111,12 @@ describe "T.render", ->
 
 describe "T.value", ->
   it "should work", ->
-    v = T.value('name')
+    v    = T.value('name')
     data = name: 'John Doe'
     expect(v(data)).toEqual(data.name)
 
   it "should work with nested attribute", ->
-    v = T.value('account.name')
+    v    = T.value('account.name')
     data = account: name: 'John Doe'
     expect(v(data)).toEqual(data.account.name)
 
@@ -132,9 +142,7 @@ describe "T()", ->
     template = ["div", (data) -> data.name]
     mapper   = (data) -> data.account
     t        = T(template).map(mapper)
-    data =
-      account:
-        name: 'John Doe'
+    data     = account: name: 'John Doe'
     expect(t.process(data)).toEqual(['div', 'John Doe'])
 
   it "include template as partial should work", ->
