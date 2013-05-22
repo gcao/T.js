@@ -39,7 +39,8 @@ class Html2t
       attrs_data = attrs_to_data(node.attributes)
       result << attrs_data unless attrs_data.empty?
       node.children.each do |child|
-        result << node_to_data(child)
+        data = node_to_data(child)
+        result << data if data
       end
       result
     when Nokogiri::XML::Node::TEXT_NODE
