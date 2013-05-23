@@ -1,39 +1,44 @@
-# T - template engine for Javascript
+# T.js - a simple & powerful template engine for Javascript
 
 ## DESCRIPTION
 
-T is a template engine that uses simple data structure to represent html/xml
-data.
+T.js is a template engine that uses simple Javascript data structure to 
+represent html/xml data.
 
 ### BASIC RULES
 
 * A tag is represented by an array;
-* First item is treated as the tag name, optionally it could contain id and css
-  classes, e.g. 'div#id.class1.class2';
+* First item is the tag name, optionally it could contain id and css classes,
+  e.g. 'div#id.class1.class2';
 * Rest of the array contains the tag's attributes, text or child tags;
 * Attributes are stored in hash, e.g. {"name": "username", "type": "text"};
 * Text values are strings, e.g. "This is sample content";
 * Child tags are in child arrays;
 * Attributes can appear anywhere after tag name;
-* Texts and child tags are rendered in the same order as their position in the
-  parent.
+* Texts and child tags are rendered sequentially.
 
 #### EXAMPLE 1
 
 * INPUT
-> `var template = ["a.edit", {"href": "/edit"}, "Edit"]`
+```javascript
+var template = ["a.edit", {"href": "/edit"}, "Edit"]
+```
 
 * RUN
-> `T(template).render()`
+```javascript
+T(template).render()
+```
 
 * RESULT
-> `<a href="/edit">Edit</a>`
+```html
+<a href="/edit">Edit</a>
+```
 
 ### ADVANCED FEATURES
 
 * Functions can be used everywhere, they'll be invoked and their results will
   be used to generate final output, e.g. 
-  ['div.now', function(){return new Date();}];
+  ['div.now', function(){return new Date();}]
 
 * A data argument can be passed on rendering the template, it will then be
   passed to functions inside the template, e.g.
@@ -49,7 +54,10 @@ data.
   T(layout).prepare({'body': body}).render()
   ```
 
-## DEVELOPMENT SETUP
+## DEVELOPMENT SETUP (MAC)
+
+  git clone git://github.com/gcao/T.js.git  
+  cd T.js
 
   brew install node  
   npm install coffee-script  
