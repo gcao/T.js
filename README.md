@@ -17,23 +17,6 @@ represent html/xml data.
 * Attributes can appear anywhere after tag name;
 * Texts and child tags are rendered sequentially.
 
-#### EXAMPLE 1
-
-* INPUT
-```javascript
-var template = ["a.edit", {"href": "/edit"}, "Edit"]
-```
-
-* RUN
-```javascript
-T(template).render()
-```
-
-* RESULT
-```html
-<a class="edit" href="/edit">Edit</a>
-```
-
 ### ADVANCED FEATURES
 
 * Functions can be used everywhere, they'll be invoked and their results will
@@ -42,8 +25,8 @@ T(template).render()
   ['div.now', function(){return new Date();}]
   ```
 
-* A data argument can be passed on rendering the template, it will then be
-  passed to functions inside the template, e.g.
+* render() takes an optional data argument, that argument will then be passed 
+  to functions inside the template, e.g.
   ```javascript
   var template = ['div.total', function(data){return data.total;}];
   T(template).render({total: 100});
@@ -52,9 +35,31 @@ T(template).render()
 * Layout, e.g.
   ```javascript
   var layout = ['div', ['div', 'Title'], T.include('body')]
-  var body = ['div', 'Body']
+  var body   = ['div', 'Content goes here']
   T(layout).prepare({'body': body}).render()
   ```
+
+## USAGE
+
+* Include T.js on top of HTML
+```html
+<script src="https://raw.github.com/gcao/T.js/master/public/javascripts/t.js"></script>
+```
+
+* Define template
+```javascript
+var template = ["a.edit", {"href": "/edit"}, "Edit"]
+```
+
+* Render
+```javascript
+var result = T(template).render()
+```
+
+* Result is like
+```html
+<a class="edit" href="/edit">Edit</a>
+```
 
 ## DEVELOPMENT SETUP (MAC)
 
