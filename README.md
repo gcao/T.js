@@ -48,41 +48,42 @@ data.
   var body = ['div', 'Body']
   T(layout).prepare({'body': body}).render()
   ```
-## SETUP
 
-brew install node  
-npm install coffee-script  
+## DEVELOPMENT SETUP
 
-gem install bundler  
-bundle  
-guard  
+  brew install node  
+  npm install coffee-script  
+
+  gem install bundler  
+  bundle  
+  guard  
 
 ## NOTES
 
-* Run with LiveReload support:
+* Run with LiveReload support:  
 thin -p 8000 start
 
-* Run with no external dependency:
+* Run with no external dependency:  
 cd public && python -m SimpleHTTPServer
 
-* Open Demo Page:
+* Open Demo Page:  
 open http://localhost:8000
 
-* Run Jasmine tests in browser:
+* Run Jasmine tests in browser:  
 open http://localhost:8000/spec_runner.html
 
-* Convert between html and T:
+* Convert between html and T:  
 bin/html2t spec/fixtures/test.html  
 bin/html2t spec/fixtures/test.html | bin/t2html  
 cat spec/fixtures/test.js | bin/t2html
 
-* Convert T to CoffeeScript (js2coffee has to be installed):
+* Convert T to CoffeeScript (js2coffee has to be installed):  
 bin/html2t spec/fixtures/test.html | js2coffee
 
-* Convert haml to html to T template to html:
+* Convert haml to html to T template to html:  
 bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t | bin/t2html
 
-* Integrate with Jasmine Headless WebKit:
+* Integrate with Jasmine Headless WebKit:  
 Config file is located at public/javascripts/spec/jasmine.yml  
 jasmine-headless-webkit -c -j public/javascripts/spec/jasmine.yml
 
