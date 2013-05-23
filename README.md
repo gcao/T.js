@@ -1,4 +1,4 @@
-# T.js - a simple & powerful template engine for Javascript
+# T.js - a simple & powerful template engine
 
 ## DESCRIPTION
 
@@ -31,14 +31,16 @@ T(template).render()
 
 * RESULT
 ```html
-<a href="/edit">Edit</a>
+<a class="edit" href="/edit">Edit</a>
 ```
 
 ### ADVANCED FEATURES
 
 * Functions can be used everywhere, they'll be invoked and their results will
   be used to generate final output, e.g. 
+  ```javascript
   ['div.now', function(){return new Date();}]
+  ```
 
 * A data argument can be passed on rendering the template, it will then be
   passed to functions inside the template, e.g.
@@ -56,15 +58,15 @@ T(template).render()
 
 ## DEVELOPMENT SETUP (MAC)
 
-  git clone git://github.com/gcao/T.js.git  
-  cd T.js
+  $ git clone git://github.com/gcao/T.js.git  
+  $ cd T.js
 
-  brew install node  
-  npm install coffee-script  
+  $ brew install node  
+  $ npm install coffee-script  
 
-  gem install bundler  
-  bundle  
-  guard  
+  $ gem install bundler  
+  $ bundle  
+  $ guard  
 
 ## NOTES
 
