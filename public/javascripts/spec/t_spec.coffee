@@ -117,19 +117,19 @@ describe "T.render", ->
     result = '<div id="test" class="first second third"/>'
     expect(T.render(template)).toEqual(result)
 
-describe "T.value", ->
+describe "T.get", ->
   it "should work", ->
-    v    = T.value('name')
+    v    = T.get('name')
     data = name: 'John Doe'
     expect(v(data)).toEqual(data.name)
 
   it "should work with nested attribute", ->
-    v    = T.value('account.name')
+    v    = T.get('account.name')
     data = account: name: 'John Doe'
     expect(v(data)).toEqual(data.account.name)
 
   it "Should take default value", ->
-    v = T.value('name', 'Default')
+    v = T.get('name', 'Default')
     expect(v()).toEqual('Default')
 
 describe "T.escape", ->
@@ -160,7 +160,7 @@ describe "T()", ->
     expect(T(template).process({account: {name: 'John Doe'}})).toEqual(result)
 
   it "include template as partial should work", ->
-    partial  = ["div", T.value('name')]
+    partial  = ["div", T.get('name')]
     template = ["div", T(partial).map((data) -> data.account)]
     result   = '<div><div>John Doe</div></div>'
     expect(T(template).render({account: {name: 'John Doe'}})).toEqual(result)

@@ -449,7 +449,7 @@
     return T(template).render(data);
   };
 
-  T.value = function(name, defaultValue) {
+  T.get = function(name, defaultValue) {
     if (typeof defaultValue === 'undefined') {
       defaultValue = null;
     }

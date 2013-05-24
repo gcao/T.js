@@ -308,7 +308,7 @@ T.process = (template, data) ->
 T.render  = (template, data) ->
   T(template).render data
 
-T.value = (name, defaultValue) ->
+T.get = (name, defaultValue) ->
   defaultValue = null if typeof defaultValue is 'undefined'
 
   (data) ->

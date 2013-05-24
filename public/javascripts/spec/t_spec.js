@@ -248,10 +248,10 @@
     });
   });
 
-  describe("T.value", function() {
+  describe("T.get", function() {
     it("should work", function() {
       var data, v;
-      v = T.value('name');
+      v = T.get('name');
       data = {
         name: 'John Doe'
       };
@@ -259,7 +259,7 @@
     });
     it("should work with nested attribute", function() {
       var data, v;
-      v = T.value('account.name');
+      v = T.get('account.name');
       data = {
         account: {
           name: 'John Doe'
@@ -269,7 +269,7 @@
     });
     return it("Should take default value", function() {
       var v;
-      v = T.value('name', 'Default');
+      v = T.get('name', 'Default');
       return expect(v()).toEqual('Default');
     });
   });
@@ -332,7 +332,7 @@
     });
     it("include template as partial should work", function() {
       var partial, result, template;
-      partial = ["div", T.value('name')];
+      partial = ["div", T.get('name')];
       template = [
         "div", T(partial).map(function(data) {
           return data.account;
