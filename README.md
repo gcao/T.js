@@ -67,15 +67,15 @@ var result = T(template).render()
 
 ## DEVELOPMENT SETUP (MAC)
 
-  $ git clone git://github.com/gcao/T.js.git  
-  $ cd T.js
+$ git clone git://github.com/gcao/T.js.git  
+$ cd T.js
 
-  $ brew install node  
-  $ npm install coffee-script  
+$ brew install node  
+$ npm install coffee-script  
 
-  $ gem install bundler  
-  $ bundle  
-  $ guard  
+$ gem install bundler  
+$ bundle  
+$ guard  
 
 ## NOTES
 
@@ -104,10 +104,4 @@ bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t
 * Integrate with Jasmine Headless WebKit:  
 Config file is located at public/javascripts/spec/jasmine.yml  
 jasmine-headless-webkit -c -j public/javascripts/spec/jasmine.yml
-
-T.include("name") => T("name")
-T() = T('default')
-T('default', "Default content"): default include with default content
-T(...).prepare({default: ''}) prepare(...)
-T.v("a.b")        => T.get("a.b")
 
