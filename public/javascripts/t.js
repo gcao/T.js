@@ -73,6 +73,9 @@
   processFirst = function(items) {
     var attrs, classes, first, i, id, matches, part, parts, rest, tag;
     first = items[0];
+    if (isArray(first)) {
+      return items;
+    }
     if (typeof first !== 'string') {
       throw "Invalid first argument " + first;
     }
@@ -110,15 +113,18 @@
   };
 
   normalize = function(items) {
-    var i, item, _i, _ref;
+    var first, i, item, _i, _ref;
     if (!isArray(items)) {
       return items;
     }
     for (i = _i = _ref = items.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) {
       item = normalize(items[i]);
       if (isArray(item)) {
-        if (item[0] === '') {
+        first = item[0];
+        if (first === '') {
           item.shift();
+          items.splice.apply(items, [i, 1].concat(__slice.call(item)));
+        } else if (isArray(first)) {
           items.splice.apply(items, [i, 1].concat(__slice.call(item)));
         }
       } else if (typeof item === 'undefined' || item === null || item === '') {

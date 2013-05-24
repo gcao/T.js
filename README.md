@@ -61,6 +61,10 @@ var result = T(template).render()
 <a class="edit" href="/edit">Edit</a>
 ```
 
+## EXAMPLES
+
+[A simple TODO list that uses reactor.js for data binding](http://jsfiddle.net/gcao/E4syH/)
+
 ## DEVELOPMENT SETUP (MAC)
 
   $ git clone git://github.com/gcao/T.js.git  
@@ -90,7 +94,6 @@ open http://localhost:8000/spec_runner.html
 * Convert between html and T:  
 bin/html2t spec/fixtures/test.html  
 bin/html2t spec/fixtures/test.html | bin/t2html  
-cat spec/fixtures/test.js | bin/t2html
 
 * Convert T to CoffeeScript (js2coffee has to be installed):  
 bin/html2t spec/fixtures/test.html | js2coffee
@@ -101,4 +104,10 @@ bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t
 * Integrate with Jasmine Headless WebKit:  
 Config file is located at public/javascripts/spec/jasmine.yml  
 jasmine-headless-webkit -c -j public/javascripts/spec/jasmine.yml
+
+T.include("name") => T("name")
+T() = T('default')
+T('default', "Default content"): default include with default content
+T(...).prepare({default: ''}) prepare(...)
+T.v("a.b")        => T.get("a.b")
 

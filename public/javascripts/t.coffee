@@ -36,6 +36,8 @@ FIRST_FIELD_PATTERN = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 processFirst = (items) ->
   first = items[0]
 
+  return items if isArray first
+
   throw "Invalid first argument #{first}" unless typeof first is 'string'
 
   if first.match(FIRST_NO_PROCESS_PATTERN)
@@ -72,8 +74,11 @@ normalize = (items) ->
   for i in [items.length - 1..0]
     item = normalize items[i]
     if isArray item
-      if item[0] is ''
+      first = item[0]
+      if first is ''
         item.shift()
+        items.splice i, 1, item...
+      else if isArray first
         items.splice i, 1, item...
     else if typeof item is 'undefined' or item is null or item is ''
       #items.splice i, 1

@@ -37,9 +37,15 @@
       ];
       return expect(T.utils.processFirst(input)).toEqual(result);
     });
-    return it("should treat < specially", function() {
+    it("should return as is if first starts with '<'", function() {
       var input, result;
       input = ['<!DOCTYPE html>', '...'];
+      result = input;
+      return expect(T.utils.processFirst(input)).toEqual(result);
+    });
+    return it("should return as is if first is an array", function() {
+      var input, result;
+      input = [[], '...'];
       result = input;
       return expect(T.utils.processFirst(input)).toEqual(result);
     });
@@ -50,6 +56,12 @@
       var input, result;
       input = ['div', ['', 'text']];
       result = ['div', 'text'];
+      return expect(T.utils.normalize(input)).toEqual(result);
+    });
+    it("should normalize array if first item is an array", function() {
+      var input, result;
+      input = ['div', [['div'], 'text']];
+      result = ['div', ['div'], 'text'];
       return expect(T.utils.normalize(input)).toEqual(result);
     });
     return it("should normalize array recursively", function() {

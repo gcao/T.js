@@ -14,8 +14,13 @@ describe "T.utils.processFirst", ->
     result = ['div', {id: 'this'}, ['div', {'class': 'child'}, 'text']]
     expect(T.utils.processFirst(input)).toEqual(result)
 
-  it "should treat < specially", ->
+  it "should return as is if first starts with '<'", ->
     input  = ['<!DOCTYPE html>', '...']
+    result = input
+    expect(T.utils.processFirst(input)).toEqual(result)
+
+  it "should return as is if first is an array", ->
+    input  = [[], '...']
     result = input
     expect(T.utils.processFirst(input)).toEqual(result)
 
@@ -23,6 +28,11 @@ describe "T.utils.normalize", ->
   it "should normalize array", ->
     input  = ['div', ['', 'text']]
     result = ['div', 'text']
+    expect(T.utils.normalize(input)).toEqual(result)
+
+  it "should normalize array if first item is an array", ->
+    input  = ['div', [['div'], 'text']]
+    result = ['div', ['div'], 'text']
     expect(T.utils.normalize(input)).toEqual(result)
 
   it "should normalize array recursively", ->
@@ -67,14 +77,13 @@ describe "T.process", ->
   it "should create ready-to-be-rendered data structure from template and data", ->
     template = [
       'div#test'
-        'class': 'first second'
-      ,
-        'class': 'third'
+      {'class': 'first second'}
+      {'class': 'third'}
     ]
     result = [
       'div'
-        id: 'test'
-        'class': 'first second third'
+      id: 'test'
+      'class': 'first second third'
     ]
     expect(T.process(template)).toEqual(result)
 
@@ -102,9 +111,8 @@ describe "T.render", ->
   it "should render template", ->
     template = [
       'div#test'
-        'class': 'first second'
-      ,
-        'class': 'third'
+      {'class': 'first second'}
+      {'class': 'third'}
     ]
     result = '<div id="test" class="first second third"/>'
     expect(T.render(template)).toEqual(result)
