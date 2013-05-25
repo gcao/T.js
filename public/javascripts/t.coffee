@@ -30,7 +30,7 @@ merge      = (o1, o2) ->
   o1
 
 FIRST_NO_PROCESS_PATTERN = /^<.*/
-FIRST_FIELD_PATTERN = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
+FIRST_FIELD_PATTERN      = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 
 # Parse first item and add parsed data to array
 processFirst = (items) ->
@@ -253,44 +253,44 @@ Template.prototype.render = (data) ->
 Template.prototype.prepare = (@extras) ->
   @process = (data) ->
     try
-      old_default_param = T.default_param if T.default_param
-      delete T.default_param
+      oldDefaultParam = T.defaultParam if T.defaultParam
+      delete T.defaultParam
 
-      old_extras = T.extras if T.extras
+      oldExtras = T.extras if T.extras
       T.extras  = extras if extras
 
       Template.prototype.process.call(this, data)     
     finally
-      if old_default_param
-        T.default_param = old_default_param
+      if oldDefaultParam
+        T.defaultParam = oldDefaultParam
       else
-        delete T.default_param
+        delete T.defaultParam
 
-      if old_extras
-        T.extras = old_extras
+      if oldExtras
+        T.extras = oldExtras
       else
         delete T.extras
 
   this
 
-Template.prototype.prepare2 = (default_param, @extras) ->
+Template.prototype.prepare2 = (defaultParam, @extras) ->
   @process = (data) ->
     try
-      old_default_param = T.default_param if T.default_param
-      T.default_param = default_param if default_param
+      oldDefaultParam = T.defaultParam if T.defaultParam
+      T.defaultParam = defaultParam if defaultParam
 
-      old_extras = T.extras if T.extras
+      oldExtras = T.extras if T.extras
       T.extras  = extras if extras
 
       Template.prototype.process.call(this, data)     
     finally
-      if old_default_param
-        T.default_param = old_default_param
+      if oldDefaultParam
+        T.defaultParam = oldDefaultParam
       else
-        delete T.default_param
+        delete T.defaultParam
 
-      if old_extras
-        T.extras = old_extras
+      if oldExtras
+        T.extras = oldExtras
       else
         delete T.extras
 
@@ -335,69 +335,19 @@ T.escape = (str) ->
 
 T.unescape = (str) ->
   str
-   .replace(/&amp;/ , '&')
-   .replace(/&lt;/  , '<')
-   .replace(/&gt;/  , '>')
-   .replace(/&quot;/, '"')
-   .replace(/&#039;/, "'")
+   .replace(/&amp;/g , '&')
+   .replace(/&lt;/g  , '<')
+   .replace(/&gt;/g  , '>')
+   .replace(/&quot;/g, '"')
+   .replace(/&#039;/g, "'")
 
 T.include = (name, defaultValue) ->
-  (data) ->
-    T.extras?[name] or defaultValue
+  -> T.extras?[name] or defaultValue
 
 T.include2 = (defaultValue) ->
-  (data) ->
-    T.default_param or defaultValue
+  -> T.defaultParam or defaultValue
 
-T.prepare = (template, extras) ->
-  t = T(template)
-  t.process = (data) ->
-    try
-      old_default_param = T.default_param if T.default_param
-      delete T.default_param
-
-      old_extras = T.extras if T.extras
-      T.extras  = extras   if extras
-
-      Template.prototype.process.call(this, data)     
-    finally
-      if old_default_param
-        T.default_param = old_default_param
-      else
-        delete T.default_param
-
-      if old_extras
-        T.extras = old_extras
-      else
-        delete T.extras
-
-  t
-
-T.prepare2 = (template, default_param, extras) ->
-  t = T(template)
-  t.process = (data) ->
-    try
-      old_default_param = T.default_param if T.default_param
-      T.default_param = default_param if default_param
-
-      old_extras = T.extras if T.extras
-      T.extras  = extras   if extras
-
-      Template.prototype.process.call(this, data)     
-    finally
-      if old_default_param
-        T.default_param = old_default_param
-      else
-        delete T.default_param
-
-      if old_extras
-        T.extras = old_extras
-      else
-        delete T.extras
-
-  t
-
-T.utils   =
+T.internal   =
   normalize        : normalize
   processFirst     : processFirst
   parseStyles      : parseStyles

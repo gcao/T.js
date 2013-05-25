@@ -1,77 +1,77 @@
-describe "T.utils.processFirst", ->
+describe "T.internal.processFirst", ->
   it "should parse div#this.class1.class2", ->
     input  = ['div#this.class1.class2', 'text']
     result = ['div', {id: 'this', 'class': 'class1 class2'}, 'text']
-    expect(T.utils.processFirst(input)).toEqual(result)
+    expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should parse div#this", ->
     input  = ['div#this', 'text']
     result = ['div', {id: 'this'}, 'text']
-    expect(T.utils.processFirst(input)).toEqual(result)
+    expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should parse 'div#this div.child'", ->
     input  = ['div#this div.child', 'text']
     result = ['div', {id: 'this'}, ['div', {'class': 'child'}, 'text']]
-    expect(T.utils.processFirst(input)).toEqual(result)
+    expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should return as is if first starts with '<'", ->
     input  = ['<!DOCTYPE html>', '...']
     result = input
-    expect(T.utils.processFirst(input)).toEqual(result)
+    expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should return as is if first is an array", ->
     input  = [[], '...']
     result = input
-    expect(T.utils.processFirst(input)).toEqual(result)
+    expect(T.internal.processFirst(input)).toEqual(result)
 
-describe "T.utils.normalize", ->
+describe "T.internal.normalize", ->
   it "should normalize array", ->
     input  = ['div', ['', 'text']]
     result = ['div', 'text']
-    expect(T.utils.normalize(input)).toEqual(result)
+    expect(T.internal.normalize(input)).toEqual(result)
 
   it "should normalize array if first item is an array", ->
     input  = ['div', [['div'], 'text']]
     result = ['div', ['div'], 'text']
-    expect(T.utils.normalize(input)).toEqual(result)
+    expect(T.internal.normalize(input)).toEqual(result)
 
   it "should normalize array recursively", ->
     input  = ['div', ['', 'text', ['', 'text2']]]
     result = ['div', 'text', 'text2']
-    expect(T.utils.normalize(input)).toEqual(result)
+    expect(T.internal.normalize(input)).toEqual(result)
 
-describe "T.utils.parseStyles", ->
+describe "T.internal.parseStyles", ->
   it "should parse styles", ->
     input  = "a:a-value;b:b-value;"
     result = {a: 'a-value', b: 'b-value'}
-    expect(T.utils.parseStyles(input)).toEqual(result)
+    expect(T.internal.parseStyles(input)).toEqual(result)
 
-describe "T.utils.processStyles", ->
+describe "T.internal.processStyles", ->
   it "should work", ->
     input  = {style: 'a:a-value;b:b-value;', styles: {c: 'c-value'}}
     result = {style: {a: 'a-value', b: 'b-value', c: 'c-value'}}
-    expect(T.utils.processStyles(input)).toEqual(result)
+    expect(T.internal.processStyles(input)).toEqual(result)
 
-describe "T.utils.processAttributes", ->
+describe "T.internal.processAttributes", ->
   it "should merge attributes", ->
     input  = ['div', {a: 1}, {a: 11, b: 2}]
     result = ['div', {a: 11, b: 2}]
-    expect(T.utils.processAttributes(input)).toEqual(result)
+    expect(T.internal.processAttributes(input)).toEqual(result)
 
   it "should merge attributes and keep other items untouched", ->
     input  = ['div', {a: 1}, 'first', {b: 2}, 'second']
     result = ['div', {a: 1, b: 2}, 'first', 'second']
-    expect(T.utils.processAttributes(input)).toEqual(result)
+    expect(T.internal.processAttributes(input)).toEqual(result)
 
   it "should merge styles", ->
     input  = ['div', {style: 'a:old-a;b:b-value;', styles: {c: 'c-value'}}, {style: 'a:new-a'}]
     result = ['div', {style: {a: 'new-a', b: 'b-value', c: 'c-value'}}]
-    expect(T.utils.processAttributes(input)).toEqual(result)
+    expect(T.internal.processAttributes(input)).toEqual(result)
 
   it "should merge css classes", ->
     input  = ['div', {'class': 'first second'}, {'class': 'third'}]
     result = ['div', {'class': 'first second third'}]
-    expect(T.utils.processAttributes(input)).toEqual(result)
+    expect(T.internal.processAttributes(input)).toEqual(result)
 
 describe "T.process", ->
   it "should create ready-to-be-rendered data structure from template and data", ->
@@ -142,9 +142,8 @@ describe "T.unescape", ->
 
 describe "T()", ->
   it "T(T()) should return same Template object", ->
-    t  = T("div", "text")
-    t1 = T(t)
-    expect(t1).toEqual(t)
+    template = T(["div", "text"])
+    expect(T(template)).toEqual(template)
 
   it "process should work", ->
     template = ["div", (data) -> data.name]
@@ -171,41 +170,28 @@ describe "T()", ->
     t        = T(template).map(mapper)
     expect(t.process()).toEqual(['div', undefined])
 
-describe "T.prepare/T.include", ->
-  it "should work", ->
-    template = -> ['div', T.include('title')]
-    expect(T.prepare(template, title: 'Title').process()).toEqual(['div', 'Title'])
-
-  it "include2/prepare2 should work", ->
-    template = -> ['div', T.include2(), T.include('content')]
-    expect(T.prepare2(template, 'Title', content: 'Content').process()).toEqual(['div', 'Title', 'Content'])
-
-  it "nested include/prepare should work", ->
-    template  = -> ['div', T.include('title')]
-    template2 = -> ['div', T.prepare(template, title: 'Title'), T.include('body')]
-    expect(T.prepare(template2, body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
-
-  it "include can take default value", ->
-    template = -> ['div', T.include('title', 'Default Title')]
-    expect(T.prepare(template).process()).toEqual(['div', 'Default Title'])
-
 describe "T().prepare/T.include", ->
   it "should work", ->
-    template = T(['div', T.include('title')])
-    expect(template.prepare(title: 'Title').process()).toEqual(['div', 'Title'])
+    template = ['div', T.include('title')]
+    expect(T(template).prepare(title: 'Title').process()).toEqual(['div', 'Title'])
+
+  it "should work with partial", ->
+    template = ['div', T.include('title')]
+    partial  = ['div', (data) -> data.name ]
+    expect(T(template).prepare(title: partial).process(name: 'John Doe')).toEqual(['div', ['div', 'John Doe']])
 
   it "prepare2 should work", ->
-    template = T(['div', T.include2(), T.include('title')])
-    expect(template.prepare2('first', title: 'Title').process()).toEqual(['div', 'first', 'Title'])
+    template = ['div', T.include2(), T.include('title')]
+    expect(T(template).prepare2('first', title: 'Title').process()).toEqual(['div', 'first', 'Title'])
 
   it "nested include/prepare should work", ->
-    template  = T(['div', T.include('title')])
-    template2 = T(['div', template.prepare(title: 'Title'), T.include('body')])
-    expect(template2.prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
+    template  = ['div', T.include('title')]
+    template2 = ['div', T(template).prepare(title: 'Title'), T.include('body')]
+    expect(T(template2).prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
 
   it "mapper should work", ->
-    layout   = T(['div', T.include('title')])
+    layout   = ['div', T.include('title')]
     partial  = (data) -> data.title
-    template = layout.prepare(title: partial)
+    template = T(layout).prepare(title: partial)
     expect(template.process(title: 'Title')).toEqual(['div', 'Title'])
 
