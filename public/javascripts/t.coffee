@@ -24,7 +24,7 @@ merge      = (o1, o2) ->
   return o1 unless o2
   return o2 unless o1
 
- for own key, value of o2
+  for own key, value of o2
     o1[key] = value
 
   o1
@@ -354,7 +354,13 @@ T.internal   =
   processStyles    : processStyles
   processAttributes: processAttributes
   render           : render
+  thisRef          : this
 
+T.noConflict = ->
+  if T.oldT then T.internal.thisRef.T = T.oldT
+  T
+
+if this.T then T.oldT = this.T
 this.T = T
 
 # Node.js exports
