@@ -134,11 +134,11 @@ describe "T.get", ->
 
 describe "T.escape", ->
   it "should work", ->
-    expect(T.escape('<>&')).toEqual('&lt;&gt;&amp;')
+    expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;')
 
 describe "T.unescape", ->
   it "should work", ->
-    expect(T.unescape('&lt;&gt;&amp;')).toEqual('<>&')
+    expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&')
 
 describe "T()", ->
   it "T(T()) should return same Template object", ->

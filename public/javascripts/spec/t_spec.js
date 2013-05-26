@@ -276,13 +276,13 @@
 
   describe("T.escape", function() {
     return it("should work", function() {
-      return expect(T.escape('<>&')).toEqual('&lt;&gt;&amp;');
+      return expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;');
     });
   });
 
   describe("T.unescape", function() {
     return it("should work", function() {
-      return expect(T.unescape('&lt;&gt;&amp;')).toEqual('<>&');
+      return expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&');
     });
   });
 

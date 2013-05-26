@@ -15,7 +15,7 @@ hasFunction = (o) ->
       return true if hasFunction item
 
   else if isObject o
-    return true if o.isTemplate
+    return true if o.isTjsTemplate
 
     for own key, value of o
       return true if hasFunction value
@@ -24,7 +24,7 @@ merge      = (o1, o2) ->
   return o1 unless o2
   return o2 unless o1
 
-  for own key, value of o2
+ for own key, value of o2
     o1[key] = value
 
   o1
@@ -67,7 +67,7 @@ processFirst = (items) ->
 
   items
 
-# Normalize children and their decendants
+# Normalize children recursively
 normalize = (items) ->
   return items unless isArray items
 
@@ -161,7 +161,7 @@ prepareOutput = (template, data) ->
     else
       template
   else if isObject template
-    if template.isTemplate
+    if template.isTjsTemplate
       prepareOutput(template.process(data), data)
     else if hasFunction template
       output = {}
@@ -235,7 +235,7 @@ render = (input) ->
   result
 
 Template = (@template) ->
-  @isTemplate = true
+  @isTjsTemplate = true
 
 Template.prototype.map = (@mapper) ->
   this
@@ -297,7 +297,7 @@ Template.prototype.prepare2 = (defaultParam, @extras) ->
   this
 
 T = (template) ->
-  if typeof template is 'object' and template.isTemplate
+  if typeof template is 'object' and template.isTjsTemplate
     template
   else
     new Template(template)
