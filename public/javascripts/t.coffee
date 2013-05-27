@@ -200,6 +200,10 @@ render = (input) ->
 
   first = input.shift()
 
+  # TODO: [['div'], ...]
+  if isArray first
+    return render(first) + (render(item) for item in input).join()
+
   return renderRest input if first is ""
   if input.length is 0
     if first is 'script'
@@ -347,7 +351,7 @@ T.include = (name, defaultValue) ->
 T.include2 = (defaultValue) ->
   -> T.defaultParam or defaultValue
 
-T.internal   =
+T.internal =
   normalize        : normalize
   processFirst     : processFirst
   parseStyles      : parseStyles

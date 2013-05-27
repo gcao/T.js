@@ -98,6 +98,11 @@ describe "T.render", ->
     result   = '<div>ab</div>'
     expect(T.render(template)).toEqual(result)
 
+  it "should work", ->
+    template = [['div', 'a'], ['div', 'b']]
+    result   = '<div>a</div><div>b</div>'
+    expect(T.render(template)).toEqual(result)
+
   it "empty script should not self-close", ->
     template = ['script']
     result   = '<script></script>'

@@ -218,6 +218,12 @@
       result = '<div>ab</div>';
       return expect(T.render(template)).toEqual(result);
     });
+    it("should work", function() {
+      var result, template;
+      template = [['div', 'a'], ['div', 'b']];
+      result = '<div>a</div><div>b</div>';
+      return expect(T.render(template)).toEqual(result);
+    });
     it("empty script should not self-close", function() {
       var result, template;
       template = ['script'];

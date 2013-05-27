@@ -291,7 +291,7 @@
   };
 
   render = function(input) {
-    var first, result, second;
+    var first, item, result, second;
     if (typeof input === 'undefined' || input === null) {
       return '';
     }
@@ -302,6 +302,17 @@
       return '';
     }
     first = input.shift();
+    if (isArray(first)) {
+      return render(first) + ((function() {
+        var _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = input.length; _i < _len; _i++) {
+          item = input[_i];
+          _results.push(render(item));
+        }
+        return _results;
+      })()).join();
+    }
     if (first === "") {
       return renderRest(input);
     }
