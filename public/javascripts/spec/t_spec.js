@@ -31,7 +31,7 @@
           id: 'this'
         }, [
           'div', {
-            'class': 'child'
+            "class": 'child'
           }, 'text'
         ]
       ];
@@ -88,16 +88,12 @@
     return it("should work", function() {
       var input, result;
       input = {
-        style: 'a:a-value;b:b-value;',
-        styles: {
-          c: 'c-value'
-        }
+        style: 'a:a-value;b:b-value;'
       };
       result = {
         style: {
           a: 'a-value',
-          b: 'b-value',
-          c: 'c-value'
+          b: 'b-value'
         }
       };
       return expect(T.internal.processStyles(input)).toEqual(result);
@@ -144,10 +140,7 @@
       var input, result;
       input = [
         'div', {
-          style: 'a:old-a;b:b-value;',
-          styles: {
-            c: 'c-value'
-          }
+          style: 'a:old-a;b:b-value;'
         }, {
           style: 'a:new-a'
         }
@@ -156,8 +149,7 @@
         'div', {
           style: {
             a: 'new-a',
-            b: 'b-value',
-            c: 'c-value'
+            b: 'b-value'
           }
         }
       ];
@@ -167,14 +159,14 @@
       var input, result;
       input = [
         'div', {
-          'class': 'first second'
+          "class": 'first second'
         }, {
-          'class': 'third'
+          "class": 'third'
         }
       ];
       result = [
         'div', {
-          'class': 'first second third'
+          "class": 'first second third'
         }
       ];
       return expect(T.internal.processAttributes(input)).toEqual(result);
@@ -186,15 +178,15 @@
       var result, template;
       template = [
         'div#test', {
-          'class': 'first second'
+          "class": 'first second'
         }, {
-          'class': 'third'
+          "class": 'third'
         }
       ];
       result = [
         'div', {
           id: 'test',
-          'class': 'first second third'
+          "class": 'first second third'
         }
       ];
       return expect(T.process(template)).toEqual(result);
@@ -244,9 +236,9 @@
       var result, template;
       template = [
         'div#test', {
-          'class': 'first second'
+          "class": 'first second'
         }, {
-          'class': 'third'
+          "class": 'third'
         }
       ];
       result = '<div id="test" class="first second third"/>';

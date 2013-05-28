@@ -151,25 +151,12 @@
   };
 
   processStyles = function(attrs) {
-    var newStyles, style, styles;
-    newStyles = {};
+    var style;
     style = attrs.style;
     if (typeof style === 'string') {
-      newStyles = merge(newStyles, parseStyles(style));
-    }
-    styles = attrs.styles;
-    if (typeof styles === 'string') {
-      newStyles = merge(newStyles, parseStyles(styles));
-    }
-    if (isObject(style)) {
-      newStyles = merge(newStyles, style);
-    }
-    if (isObject(styles)) {
-      newStyles = merge(newStyles, styles);
-    }
-    delete attrs.styles;
-    if (!isEmpty(newStyles)) {
-      attrs.style = newStyles;
+      attrs.style = parseStyles(style);
+    } else if (isObject(style && !isEmpty(style))) {
+      attrs.style = style;
     }
     return attrs;
   };

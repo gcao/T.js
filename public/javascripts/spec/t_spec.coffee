@@ -11,7 +11,7 @@ describe "T.internal.processFirst", ->
 
   it "should parse 'div#this div.child'", ->
     input  = ['div#this div.child', 'text']
-    result = ['div', {id: 'this'}, ['div', {'class': 'child'}, 'text']]
+    result = ['div', {id: 'this'}, ['div', {class: 'child'}, 'text']]
     expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should return as is if first starts with '<'", ->
@@ -48,8 +48,8 @@ describe "T.internal.parseStyles", ->
 
 describe "T.internal.processStyles", ->
   it "should work", ->
-    input  = {style: 'a:a-value;b:b-value;', styles: {c: 'c-value'}}
-    result = {style: {a: 'a-value', b: 'b-value', c: 'c-value'}}
+    input  = {style: 'a:a-value;b:b-value;'}
+    result = {style: {a: 'a-value', b: 'b-value'}}
     expect(T.internal.processStyles(input)).toEqual(result)
 
 describe "T.internal.processAttributes", ->
@@ -64,26 +64,26 @@ describe "T.internal.processAttributes", ->
     expect(T.internal.processAttributes(input)).toEqual(result)
 
   it "should merge styles", ->
-    input  = ['div', {style: 'a:old-a;b:b-value;', styles: {c: 'c-value'}}, {style: 'a:new-a'}]
-    result = ['div', {style: {a: 'new-a', b: 'b-value', c: 'c-value'}}]
+    input  = ['div', {style: 'a:old-a;b:b-value;'}, {style: 'a:new-a'}]
+    result = ['div', {style: {a: 'new-a', b: 'b-value'}}]
     expect(T.internal.processAttributes(input)).toEqual(result)
 
   it "should merge css classes", ->
-    input  = ['div', {'class': 'first second'}, {'class': 'third'}]
-    result = ['div', {'class': 'first second third'}]
+    input  = ['div', {class: 'first second'}, {class: 'third'}]
+    result = ['div', {class: 'first second third'}]
     expect(T.internal.processAttributes(input)).toEqual(result)
 
 describe "T.process", ->
   it "should create ready-to-be-rendered data structure from template and data", ->
     template = [
       'div#test'
-      {'class': 'first second'}
-      {'class': 'third'}
+      {class: 'first second'}
+      {class: 'third'}
     ]
     result = [
       'div'
       id: 'test'
-      'class': 'first second third'
+      class: 'first second third'
     ]
     expect(T.process(template)).toEqual(result)
 
@@ -116,8 +116,8 @@ describe "T.render", ->
   it "should render template", ->
     template = [
       'div#test'
-      {'class': 'first second'}
-      {'class': 'third'}
+      {class: 'first second'}
+      {class: 'third'}
     ]
     result = '<div id="test" class="first second third"/>'
     expect(T.render(template)).toEqual(result)

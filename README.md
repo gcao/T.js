@@ -8,19 +8,19 @@ represent html/xml data.
 ### BASIC RULES
 
 * A tag is represented by an array;
-* First item is the tag name, optionally it could contain id and css classes,
-  e.g. 'div#id.class1.class2';
+* First item is the tag name, and id and css classes if present, e.g.
+  'div#id.class1.class2';
 * Rest of the array contains the tag's attributes, text or child tags;
 * Attributes are stored in hash, e.g. {"name": "username", "type": "text"};
 * Text values are strings, e.g. "This is sample content";
 * Child tags are in child arrays;
-* Attributes can appear anywhere after tag name;
+* Attributes can appear anywhere after tag name and are merged into one hash;
 * Texts and child tags are rendered sequentially.
 
 ### ADVANCED FEATURES
 
 * Functions can be used everywhere, they'll be invoked and their results will
-  be used to generate final output, e.g. 
+  be used to generate final output, e.g.
   ```javascript
   ['div.now', function(){return new Date();}]
   ```
@@ -32,7 +32,7 @@ represent html/xml data.
   T(template).render({total: 100});
   ```
 
-* Layout, e.g.
+* Support layout, e.g.
   ```javascript
   var layout = ['div', ['div', 'Title'], T.include('body')]
   var body   = ['div', 'Content goes here']

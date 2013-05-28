@@ -96,24 +96,13 @@ parseStyles = (str) ->
   styles
 
 processStyles = (attrs) ->
-  newStyles = {}
-
   style = attrs.style
+
   if typeof style is 'string'
-    newStyles = merge(newStyles, parseStyles(style))
+    attrs.style = parseStyles(style)
+  else if isObject style and not isEmpty style
+    attrs.style = style
 
-  styles = attrs.styles
-  if typeof styles is 'string'
-    newStyles = merge(newStyles, parseStyles(styles))
-
-  if isObject style
-    newStyles = merge(newStyles, style)
-
-  if isObject styles
-    newStyles = merge(newStyles, styles)
-
-  delete attrs.styles
-  attrs.style = newStyles unless isEmpty newStyles
   attrs
 
 processCssClasses = (attrs, newAttrs) ->
