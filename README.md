@@ -43,7 +43,7 @@ represent html/xml data.
 
 * Include T.js on top of HTML
 ```html
-<script src="https://raw.github.com/gcao/T.js/master/public/javascripts/t.js"></script>
+<script src="PATH_TO/t.js"></script>
 ```
 
 * Define template
@@ -63,7 +63,34 @@ var result = T(template).render()
 
 ## EXAMPLES
 
-[A simple TODO list that uses reactor.js for data binding](http://jsfiddle.net/gcao/E4syH/)
+### EXAMPLE 1: A simple template that uses data
+```javascript
+var template = function(account){
+  return [
+    'div.account', 
+    ['div.header', 'Account Info'],
+    ['div.label', 'Name'],
+    ['div', account.name],
+    ['div.label', 'Age'],
+    ['div', account.age]
+  ];
+};
+var account = {
+  name: 'John Doe',
+  age: 25
+};
+var result = T(template).render(account);
+// result is like below (after formatted)
+// <div class="account">
+//   <div class="header">Account Info</div>
+//   <div class="label">Name</div>
+//   <div>John Doe</div>
+//   <div class="label">Age</div>
+//   <div>25</div>
+// </div>
+```
+
+### [EXAMPLE 2: A simple TODO list](http://jsfiddle.net/gcao/gRzNP/)
 
 ## DEVELOPMENT SETUP (MAC)
 
