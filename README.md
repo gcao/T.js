@@ -14,7 +14,6 @@ represent html/xml data.
 * Attributes are stored in hash, e.g. {"name": "username", "type": "text"};
 * Text values are strings, e.g. "This is sample content";
 * Child tags are in child arrays;
-* Attributes can appear anywhere after tag name and are merged into one hash;
 * Texts and child tags are rendered sequentially.
 
 ### ADVANCED FEATURES
@@ -131,4 +130,13 @@ bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t
 * Integrate with Jasmine Headless WebKit:  
 Config file is located at public/javascripts/spec/jasmine.yml  
 jasmine-headless-webkit -c -j public/javascripts/spec/jasmine.yml
+
+## CREDITS
+
+* I got the basic idea of T.js from [LM.JS](https://github.com/rudenoise/LM.JS)
+but has implemented from scratch with several additional interesting features.
+
+## COPYRIGHT
+
+Copyright (c) 2013 Guoliang Cao. See LICENSE.txt for further details.
 
