@@ -367,7 +367,7 @@
   };
 
   Template.prototype.process = function(data) {
-    var item, output, _i, _len, _results;
+    var i, item, oldIndex, output, _results;
     if (this.applyToEach) {
       if (data === null) {
         return;
@@ -375,17 +375,25 @@
       if (!isArray(data)) {
         throw "Invalid Argument: expect an array but got " + (typeof data);
       }
-      _results = [];
-      for (_i = 0, _len = data.length; _i < _len; _i++) {
-        item = data[_i];
-        if (this.mapper) {
-          item = this.mapper(item);
+      try {
+        oldIndex = T.index;
+        _results = [];
+        for (i in data) {
+          item = data[i];
+          T.index = function() {
+            return i;
+          };
+          if (this.mapper) {
+            item = this.mapper(item);
+          }
+          output = prepareOutput(this.template, item);
+          output = normalize(output);
+          _results.push(processAttributes(output));
         }
-        output = prepareOutput(this.template, item);
-        output = normalize(output);
-        _results.push(processAttributes(output));
+        return _results;
+      } finally {
+        T.index = oldIndex;
       }
-      return _results;
     } else {
       if (this.mapper) {
         data = this.mapper(data);
@@ -528,6 +536,10 @@
     return function() {
       return T.defaultParam || defaultValue;
     };
+  };
+
+  T.index = function() {
+    return 0;
   };
 
   T.internal = {

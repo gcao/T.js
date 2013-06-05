@@ -249,11 +249,19 @@ Template.prototype.process = (data) ->
 
     throw "Invalid Argument: expect an array but got #{typeof data}" unless isArray data
 
-    for item in data
-      item   = @mapper item if @mapper
-      output = prepareOutput(@template, item)
-      output = normalize output
-      processAttributes output
+    try
+      oldIndex = T.index
+
+      for i, item of data
+        T.index = -> i
+
+        item   = @mapper item if @mapper
+        output = prepareOutput(@template, item)
+        output = normalize output
+        processAttributes output
+    finally
+      T.index = oldIndex
+
   else
     data   = @mapper data if @mapper
     output = prepareOutput(@template, data)
@@ -360,6 +368,8 @@ T.include = (name, defaultValue) ->
 
 T.include2 = (defaultValue) ->
   -> T.defaultParam or defaultValue
+
+T.index = -> 0
 
 T.internal =
   normalize        : normalize

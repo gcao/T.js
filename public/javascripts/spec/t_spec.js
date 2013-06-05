@@ -308,12 +308,20 @@
       };
       return expect(t.process(data)).toEqual(['div', 'John Doe']);
     });
+    it("each & T.index() should work", function() {
+      var result, template;
+      template = function(data) {
+        return ['div', T.index(), data];
+      };
+      result = [['div', '0', 'a'], ['div', '1', 'b']];
+      return expect(T(template).each().process(['a', 'b'])).toEqual(result);
+    });
     it("each should work", function() {
       var result, template;
       template = function(data) {
-        return ['div'];
+        return ['div', data];
       };
-      result = [['div'], ['div']];
+      result = [['div', 'a'], ['div', 'b']];
       return expect(T(template).each().process(['a', 'b'])).toEqual(result);
     });
     it("include template as partial should work", function() {
