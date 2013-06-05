@@ -233,19 +233,32 @@ Template = (@template) ->
 Template.prototype.map = (@mapper) ->
   this
 
-Template.prototype.process_each = (data) ->
-  return if data is null
+Template.prototype.clone = (@mapper) ->
+  newInstance = new Template(@template)
+  newInstance.map(@mapper) if @mapper
+  newInstance
 
-  throw "Invalid Argument: expect an array but got #{typeof data}" unless isArray data
-
-  for item in data
-    @process item
+Template.prototype.each = ->
+  newInstance = @clone()
+  newInstance.applyToEach = true
+  newInstance
 
 Template.prototype.process = (data) ->
-  data   = @mapper data if @mapper
-  output = prepareOutput(@template, data)
-  output = normalize output
-  processAttributes output
+  if @applyToEach
+    return if data is null
+
+    throw "Invalid Argument: expect an array but got #{typeof data}" unless isArray data
+
+    for item in data
+      item   = @mapper item if @mapper
+      output = prepareOutput(@template, item)
+      output = normalize output
+      processAttributes output
+  else
+    data   = @mapper data if @mapper
+    output = prepareOutput(@template, data)
+    output = normalize output
+    processAttributes output
 
 Template.prototype.render = (data) ->
   output = @process data

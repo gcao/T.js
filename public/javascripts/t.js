@@ -349,30 +349,51 @@
     return this;
   };
 
-  Template.prototype.process_each = function(data) {
-    var item, _i, _len, _results;
-    if (data === null) {
-      return;
+  Template.prototype.clone = function(mapper) {
+    var newInstance;
+    this.mapper = mapper;
+    newInstance = new Template(this.template);
+    if (this.mapper) {
+      newInstance.map(this.mapper);
     }
-    if (!isArray(data)) {
-      throw "Invalid Argument: expect an array but got " + (typeof data);
-    }
-    _results = [];
-    for (_i = 0, _len = data.length; _i < _len; _i++) {
-      item = data[_i];
-      _results.push(this.process(item));
-    }
-    return _results;
+    return newInstance;
+  };
+
+  Template.prototype.each = function() {
+    var newInstance;
+    newInstance = this.clone();
+    newInstance.applyToEach = true;
+    return newInstance;
   };
 
   Template.prototype.process = function(data) {
-    var output;
-    if (this.mapper) {
-      data = this.mapper(data);
+    var item, output, _i, _len, _results;
+    if (this.applyToEach) {
+      if (data === null) {
+        return;
+      }
+      if (!isArray(data)) {
+        throw "Invalid Argument: expect an array but got " + (typeof data);
+      }
+      _results = [];
+      for (_i = 0, _len = data.length; _i < _len; _i++) {
+        item = data[_i];
+        if (this.mapper) {
+          item = this.mapper(item);
+        }
+        output = prepareOutput(this.template, item);
+        output = normalize(output);
+        _results.push(processAttributes(output));
+      }
+      return _results;
+    } else {
+      if (this.mapper) {
+        data = this.mapper(data);
+      }
+      output = prepareOutput(this.template, data);
+      output = normalize(output);
+      return processAttributes(output);
     }
-    output = prepareOutput(this.template, data);
-    output = normalize(output);
-    return processAttributes(output);
   };
 
   Template.prototype.render = function(data) {

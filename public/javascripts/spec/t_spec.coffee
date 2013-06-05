@@ -157,14 +157,14 @@ describe "T()", ->
     data     = account: name: 'John Doe'
     expect(t.process(data)).toEqual(['div', 'John Doe'])
 
-  it "process_each should work", ->
+  it "each should work", ->
     template = (data) ->
       ['div']
     result = [
       ['div']
       ['div']
     ]
-    expect(T(template).process_each(['a', 'b'])).toEqual(result)
+    expect(T(template).each().process(['a', 'b'])).toEqual(result)
 
   it "include template as partial should work", ->
     partial  = ["div", (data) -> data.name]

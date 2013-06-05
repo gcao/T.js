@@ -308,13 +308,13 @@
       };
       return expect(t.process(data)).toEqual(['div', 'John Doe']);
     });
-    it("process_each should work", function() {
+    it("each should work", function() {
       var result, template;
       template = function(data) {
         return ['div'];
       };
       result = [['div'], ['div']];
-      return expect(T(template).process_each(['a', 'b'])).toEqual(result);
+      return expect(T(template).each().process(['a', 'b'])).toEqual(result);
     });
     it("include template as partial should work", function() {
       var partial, result, template;
