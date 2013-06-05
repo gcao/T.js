@@ -313,7 +313,7 @@
       template = function(data) {
         return ['div', T.index(), data];
       };
-      result = [['div', '0', 'a'], ['div', '1', 'b']];
+      result = [['div', 0, 'a'], ['div', 1, 'b']];
       return expect(T(template).each().process(['a', 'b'])).toEqual(result);
     });
     it("each should work", function() {

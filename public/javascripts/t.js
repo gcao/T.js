@@ -366,7 +366,7 @@
   };
 
   Template.prototype.process = function(data) {
-    var i, item, oldIndex, output, _results;
+    var i, item, oldIndex, output, _i, _len, _results;
     if (this.mapper) {
       data = this.mapper(data);
     }
@@ -380,7 +380,7 @@
       try {
         oldIndex = T.index;
         _results = [];
-        for (i in data) {
+        for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
           item = data[i];
           T.index = function() {
             return i;

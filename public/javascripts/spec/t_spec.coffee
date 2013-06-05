@@ -161,8 +161,8 @@ describe "T()", ->
     template = (data) ->
       ['div', T.index(), data]
     result = [
-      ['div', '0', 'a']
-      ['div', '1', 'b']
+      ['div', 0, 'a']
+      ['div', 1, 'b']
     ]
     expect(T(template).each().process(['a', 'b'])).toEqual(result)
 

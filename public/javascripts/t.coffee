@@ -254,7 +254,7 @@ Template.prototype.process = (data) ->
     try
       oldIndex = T.index
 
-      for i, item of data
+      for item, i in data
         T.index = -> i
         output = prepareOutput(@template, item)
         output = normalize output
