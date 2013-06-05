@@ -379,6 +379,9 @@ T.internal =
   render           : render
   thisRef          : this
 
+# T.noConflict() might not work with calling T.escape, T.get, T.index etc in
+# templates, a solution is
+# (function(T){...})(Tjs)
 T.noConflict = ->
   if T.oldT then T.internal.thisRef.T = T.oldT
   T
