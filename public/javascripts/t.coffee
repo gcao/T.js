@@ -233,7 +233,7 @@ Template = (@template) ->
 Template.prototype.map = (@mapper) ->
   this
 
-Template.prototype.clone = (@mapper) ->
+Template.prototype.clone = ->
   newInstance = new Template(@template)
   newInstance.map(@mapper) if @mapper
   newInstance
@@ -244,6 +244,8 @@ Template.prototype.each = ->
   newInstance
 
 Template.prototype.process = (data) ->
+  data = @mapper data if @mapper
+
   if @applyToEach
     return if data is null
 
@@ -254,8 +256,6 @@ Template.prototype.process = (data) ->
 
       for i, item of data
         T.index = -> i
-
-        item   = @mapper item if @mapper
         output = prepareOutput(@template, item)
         output = normalize output
         processAttributes output
@@ -263,7 +263,6 @@ Template.prototype.process = (data) ->
       T.index = oldIndex
 
   else
-    data   = @mapper data if @mapper
     output = prepareOutput(@template, data)
     output = normalize output
     processAttributes output

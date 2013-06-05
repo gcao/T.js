@@ -349,9 +349,8 @@
     return this;
   };
 
-  Template.prototype.clone = function(mapper) {
+  Template.prototype.clone = function() {
     var newInstance;
-    this.mapper = mapper;
     newInstance = new Template(this.template);
     if (this.mapper) {
       newInstance.map(this.mapper);
@@ -368,6 +367,9 @@
 
   Template.prototype.process = function(data) {
     var i, item, oldIndex, output, _results;
+    if (this.mapper) {
+      data = this.mapper(data);
+    }
     if (this.applyToEach) {
       if (data === null) {
         return;
@@ -383,9 +385,6 @@
           T.index = function() {
             return i;
           };
-          if (this.mapper) {
-            item = this.mapper(item);
-          }
           output = prepareOutput(this.template, item);
           output = normalize(output);
           _results.push(processAttributes(output));
@@ -395,9 +394,6 @@
         T.index = oldIndex;
       }
     } else {
-      if (this.mapper) {
-        data = this.mapper(data);
-      }
       output = prepareOutput(this.template, data);
       output = normalize(output);
       return processAttributes(output);
