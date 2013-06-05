@@ -308,6 +308,14 @@
       };
       return expect(t.process(data)).toEqual(['div', 'John Doe']);
     });
+    it("process_each should work", function() {
+      var result, template;
+      template = function(data) {
+        return ['div'];
+      };
+      result = [['div'], ['div']];
+      return expect(T(template).process_each(['a', 'b'])).toEqual(result);
+    });
     it("include template as partial should work", function() {
       var partial, result, template;
       partial = [
@@ -406,9 +414,13 @@
       };
       template = T(layout).prepare({
         title: partial
+      }).map(function(data) {
+        return data.main;
       });
       return expect(template.process({
-        title: 'Title'
+        main: {
+          title: 'Title'
+        }
       })).toEqual(['div', 'Title']);
     });
   });

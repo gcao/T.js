@@ -233,6 +233,14 @@ Template = (@template) ->
 Template.prototype.map = (@mapper) ->
   this
 
+Template.prototype.process_each = (data) ->
+  return if data is null
+
+  throw "Invalid Argument: expect an array but got #{typeof data}" unless isArray data
+
+  for item in data
+    @process item
+
 Template.prototype.process = (data) ->
   data   = @mapper data if @mapper
   output = prepareOutput(@template, data)

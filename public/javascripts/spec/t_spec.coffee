@@ -157,17 +157,26 @@ describe "T()", ->
     data     = account: name: 'John Doe'
     expect(t.process(data)).toEqual(['div', 'John Doe'])
 
+  it "process_each should work", ->
+    template = (data) ->
+      ['div']
+    result = [
+      ['div']
+      ['div']
+    ]
+    expect(T(template).process_each(['a', 'b'])).toEqual(result)
+
   it "include template as partial should work", ->
     partial  = ["div", (data) -> data.name]
     template = ["div", T(partial).map((data) -> data.account)]
     result   = ['div', ['div', 'John Doe']]
-    expect(T(template).process({account: {name: 'John Doe'}})).toEqual(result)
+    expect(T(template).process(account: name: 'John Doe')).toEqual(result)
 
   it "include template as partial should work", ->
     partial  = ["div", T.get('name')]
     template = ["div", T(partial).map((data) -> data.account)]
     result   = '<div><div>John Doe</div></div>'
-    expect(T(template).render({account: {name: 'John Doe'}})).toEqual(result)
+    expect(T(template).render(account: name: 'John Doe')).toEqual(result)
 
   it "data is empty", ->
     template = ["div", (data) -> data?.name]
@@ -197,6 +206,6 @@ describe "T().prepare/T.include", ->
   it "mapper should work", ->
     layout   = ['div', T.include('title')]
     partial  = (data) -> data.title
-    template = T(layout).prepare(title: partial)
-    expect(template.process(title: 'Title')).toEqual(['div', 'Title'])
+    template = T(layout).prepare(title: partial).map((data) -> data.main)
+    expect(template.process(main: title: 'Title')).toEqual(['div', 'Title'])
 

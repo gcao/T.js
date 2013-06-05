@@ -349,6 +349,22 @@
     return this;
   };
 
+  Template.prototype.process_each = function(data) {
+    var item, _i, _len, _results;
+    if (data === null) {
+      return;
+    }
+    if (!isArray(data)) {
+      throw "Invalid Argument: expect an array but got " + (typeof data);
+    }
+    _results = [];
+    for (_i = 0, _len = data.length; _i < _len; _i++) {
+      item = data[_i];
+      _results.push(this.process(item));
+    }
+    return _results;
+  };
+
   Template.prototype.process = function(data) {
     var output;
     if (this.mapper) {
