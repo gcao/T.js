@@ -191,7 +191,7 @@ render = (input) ->
 
   # TODO: [['div'], ...]
   if isArray first
-    return render(first) + (render(item) for item in input).join()
+    return render(first) + (render(item) for item in input).join('')
 
   return renderRest input if first is ""
   if input.length is 0

@@ -298,7 +298,7 @@
           _results.push(render(item));
         }
         return _results;
-      })()).join();
+      })()).join('');
     }
     if (first === "") {
       return renderRest(input);
