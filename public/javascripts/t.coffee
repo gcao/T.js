@@ -1,3 +1,5 @@
+VERSION = "0.5.0"
+
 isArray    = (o) -> o instanceof Array
 isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
 
@@ -380,6 +382,8 @@ T.internal =
   processAttributes: processAttributes
   render           : render
   thisRef          : this
+
+T.VERSION = VERSION
 
 T.noConflict = ->
   if T.oldT 
