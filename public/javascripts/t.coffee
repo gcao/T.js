@@ -235,15 +235,9 @@ Template = (@template) ->
 Template.prototype.map = (@mapper) ->
   this
 
-Template.prototype.clone = ->
-  newInstance = new Template(@template)
-  newInstance.map(@mapper) if @mapper
-  newInstance
-
-Template.prototype.each = ->
-  newInstance = @clone()
-  newInstance.applyToEach = true
-  newInstance
+Template.prototype.each = (@mapper) ->
+  @applyToEach = true
+  this
 
 Template.prototype.process = (data) ->
   data = @mapper data if @mapper

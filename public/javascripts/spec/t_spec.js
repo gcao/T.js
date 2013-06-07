@@ -311,20 +311,32 @@
       };
       return expect(t.process(data)).toEqual(['div', 'John Doe']);
     });
-    it("each & T.index() should work", function() {
-      var result, template;
-      template = function(data) {
-        return ['div', T.index(), data];
-      };
-      result = [['div', 0, 'a'], ['div', 1, 'b']];
-      return expect(T(template).each().process(['a', 'b'])).toEqual(result);
-    });
     it("each should work", function() {
       var result, template;
       template = function(data) {
         return ['div', data];
       };
       result = [['div', 'a'], ['div', 'b']];
+      return expect(T(template).each().process(['a', 'b'])).toEqual(result);
+    });
+    it("each with a mapper should work", function() {
+      var result, template;
+      template = function(data) {
+        return ['div', data];
+      };
+      result = [['div', 'a'], ['div', 'b']];
+      return expect(T(template).each(function(data) {
+        return data.items;
+      }).process({
+        items: ['a', 'b']
+      })).toEqual(result);
+    });
+    it("each & T.index() should work", function() {
+      var result, template;
+      template = function(data) {
+        return ['div', T.index(), data];
+      };
+      result = [['div', 0, 'a'], ['div', 1, 'b']];
       return expect(T(template).each().process(['a', 'b'])).toEqual(result);
     });
     it("include template as partial should work", function() {

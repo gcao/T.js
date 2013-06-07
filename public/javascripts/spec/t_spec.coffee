@@ -160,21 +160,30 @@ describe "T()", ->
     data     = account: name: 'John Doe'
     expect(t.process(data)).toEqual(['div', 'John Doe'])
 
-  it "each & T.index() should work", ->
-    template = (data) ->
-      ['div', T.index(), data]
-    result = [
-      ['div', 0, 'a']
-      ['div', 1, 'b']
-    ]
-    expect(T(template).each().process(['a', 'b'])).toEqual(result)
-
   it "each should work", ->
     template = (data) ->
       ['div', data]
     result = [
       ['div', 'a']
       ['div', 'b']
+    ]
+    expect(T(template).each().process(['a', 'b'])).toEqual(result)
+
+  it "each with a mapper should work", ->
+    template = (data) ->
+      ['div', data]
+    result = [
+      ['div', 'a']
+      ['div', 'b']
+    ]
+    expect(T(template).each((data) -> data.items).process(items: ['a', 'b'])).toEqual(result)
+
+  it "each & T.index() should work", ->
+    template = (data) ->
+      ['div', T.index(), data]
+    result = [
+      ['div', 0, 'a']
+      ['div', 1, 'b']
     ]
     expect(T(template).each().process(['a', 'b'])).toEqual(result)
 

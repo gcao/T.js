@@ -351,20 +351,10 @@
     return this;
   };
 
-  Template.prototype.clone = function() {
-    var newInstance;
-    newInstance = new Template(this.template);
-    if (this.mapper) {
-      newInstance.map(this.mapper);
-    }
-    return newInstance;
-  };
-
-  Template.prototype.each = function() {
-    var newInstance;
-    newInstance = this.clone();
-    newInstance.applyToEach = true;
-    return newInstance;
+  Template.prototype.each = function(mapper) {
+    this.mapper = mapper;
+    this.applyToEach = true;
+    return this;
   };
 
   Template.prototype.process = function(data) {
