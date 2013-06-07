@@ -249,6 +249,8 @@ Template.prototype.process = (data) ->
 
     try
       oldIndex = T.index
+      oldCount = T.count
+      T.count = -> data.length
 
       for item, i in data
         T.index = -> i
@@ -257,6 +259,7 @@ Template.prototype.process = (data) ->
         processAttributes output
     finally
       T.index = oldIndex
+      T.count = oldCount
 
   else
     output = prepareOutput(@template, data)
@@ -367,6 +370,10 @@ T.include2 = (defaultValue) ->
 T.index = ->
   console?.log('WARNING: not called from within an iteration.')
   0
+
+T.count = ->
+  console?.log('WARNING: not called from within an iteration.')
+  1
 
 T.internal =
   normalize        : normalize

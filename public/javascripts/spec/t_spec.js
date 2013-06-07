@@ -331,12 +331,12 @@
         items: ['a', 'b']
       })).toEqual(result);
     });
-    it("each & T.index() should work", function() {
+    it("each & T.index() & T.count() should work", function() {
       var result, template;
       template = function(data) {
-        return ['div', T.index(), data];
+        return ['div', T.index(), data, T.count()];
       };
-      result = [['div', 0, 'a'], ['div', 1, 'b']];
+      result = [['div', 0, 'a', 2], ['div', 1, 'b', 2]];
       return expect(T(template).each().process(['a', 'b'])).toEqual(result);
     });
     it("include template as partial should work", function() {

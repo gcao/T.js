@@ -178,12 +178,12 @@ describe "T()", ->
     ]
     expect(T(template).each((data) -> data.items).process(items: ['a', 'b'])).toEqual(result)
 
-  it "each & T.index() should work", ->
+  it "each & T.index() & T.count() should work", ->
     template = (data) ->
-      ['div', T.index(), data]
+      ['div', T.index(), data, T.count()]
     result = [
-      ['div', 0, 'a']
-      ['div', 1, 'b']
+      ['div', 0, 'a', 2]
+      ['div', 1, 'b', 2]
     ]
     expect(T(template).each().process(['a', 'b'])).toEqual(result)
 
