@@ -392,6 +392,9 @@ T.noConflict = ->
 if this.T then T.oldT = this.T
 this.T = T
 
+# like jQuery to $ 
+this.Tjs = T
+
 # Node.js exports
 module?.exports = T
 
