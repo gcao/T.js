@@ -1,3 +1,6 @@
+# Save a reference of "this", will be used later
+THIS = this
+
 describe "T.internal.processFirst", ->
   it "should parse div#this.class1.class2", ->
     input  = ['div#this.class1.class2', 'text']
@@ -217,4 +220,19 @@ describe "T().prepare/T.include", ->
     partial  = (data) -> data.title
     template = T(layout).prepare(title: partial).map((data) -> data.main)
     expect(template.process(main: title: 'Title')).toEqual(['div', 'Title'])
+
+describe "T.noConflict", ->
+  it "should work", ->
+    T1 = T.noConflict()
+    expect(typeof T).toEqual('undefined')
+    THIS.T = T1
+
+  it "pass reference to T in closure", ->
+    T1 = T.noConflict()
+    ((T) ->
+      template = (data) -> ["div", T.index(), data]
+      result   = [['div', 0, 'item1'], ['div', 1, 'item2']]
+      expect(T(template).each().process(['item1', 'item2'])).toEqual(result)
+    )(T1)
+    THIS.T = T1
 

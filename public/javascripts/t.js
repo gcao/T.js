@@ -535,6 +535,9 @@
   };
 
   T.index = function() {
+    if (typeof console !== "undefined" && console !== null) {
+      console.log('WARNING: not called from within an iteration.');
+    }
     return 0;
   };
 
@@ -551,6 +554,8 @@
   T.noConflict = function() {
     if (T.oldT) {
       T.internal.thisRef.T = T.oldT;
+    } else {
+      delete T.internal.thisRef.T;
     }
     return T;
   };

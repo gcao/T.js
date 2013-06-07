@@ -368,7 +368,9 @@ T.include = (name, defaultValue) ->
 T.include2 = (defaultValue) ->
   -> T.defaultParam or defaultValue
 
-T.index = -> 0
+T.index = ->
+  console?.log('WARNING: not called from within an iteration.')
+  0
 
 T.internal =
   normalize        : normalize
@@ -379,11 +381,12 @@ T.internal =
   render           : render
   thisRef          : this
 
-# T.noConflict() might not work with calling T.escape, T.get, T.index etc in
-# templates, a solution is
-# (function(T){...})(Tjs)
 T.noConflict = ->
-  if T.oldT then T.internal.thisRef.T = T.oldT
+  if T.oldT 
+    T.internal.thisRef.T = T.oldT
+  else
+    delete T.internal.thisRef.T
+
   T
 
 if this.T then T.oldT = this.T
