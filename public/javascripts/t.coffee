@@ -349,6 +349,13 @@ T.if = (cond, trueValue, falseValue)->
 
     if (cond) then trueValue else falseValue
 
+T.unless = (cond, value)->
+  (data) ->
+    if typeof cond is 'function'
+      cond = cond(data)
+
+    if (!cond) then value
+
 T.for = (collection, iterator)->
   (data) ->
     (iterator(item, i, collection.length) for item, i in collection)

@@ -164,6 +164,17 @@ describe "T.if", ->
     expect(T(template).process(cond: true)).toEqual(['div', 'true'])
     expect(T(template).process(cond: false)).toEqual(['div', 'false'])
 
+describe "T.unless", ->
+  it "should work", ->
+    template = (cond) -> ['div', T.unless(cond, 'value')]
+    result   = ['div', 'value']
+    expect(T(template).process(false)).toEqual(result)
+
+  it "should work if condition evaluates to true", ->
+    template = (cond) -> ['div', T.unless(cond, 'value')]
+    result   = ['div', undefined]
+    expect(T(template).process(true)).toEqual(result)
+
 describe "T.for", ->
   it "should work", ->
     template = (data) -> T.for(data, (item, i, count) -> ['div', item, i, count])

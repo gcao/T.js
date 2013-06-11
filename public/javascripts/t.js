@@ -508,6 +508,17 @@
     };
   };
 
+  T.unless = function(cond, value) {
+    return function(data) {
+      if (typeof cond === 'function') {
+        cond = cond(data);
+      }
+      if (!cond) {
+        return value;
+      }
+    };
+  };
+
   T["for"] = function(collection, iterator) {
     return function(data) {
       var i, item, _i, _len, _results;

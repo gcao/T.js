@@ -322,6 +322,25 @@
     });
   });
 
+  describe("T.unless", function() {
+    it("should work", function() {
+      var result, template;
+      template = function(cond) {
+        return ['div', T.unless(cond, 'value')];
+      };
+      result = ['div', 'value'];
+      return expect(T(template).process(false)).toEqual(result);
+    });
+    return it("should work if condition evaluates to true", function() {
+      var result, template;
+      template = function(cond) {
+        return ['div', T.unless(cond, 'value')];
+      };
+      result = ['div', void 0];
+      return expect(T(template).process(true)).toEqual(result);
+    });
+  });
+
   describe("T.for", function() {
     return it("should work", function() {
       var result, template;
