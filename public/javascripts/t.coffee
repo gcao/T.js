@@ -375,6 +375,14 @@ T.count = ->
   console?.log('WARNING: not called from within an iteration.')
   1
 
+T.if = (cond, trueValue, falseValue)->
+  (data) ->
+    if (T(cond).process(data)) then T(trueValue) else T(falseValue)
+
+T.for = (collection, iterFunction)->
+  (data) ->
+    (iterFunction.call(item, i, collection.length)for i, item in collection)
+
 T.internal =
   normalize        : normalize
   processFirst     : processFirst

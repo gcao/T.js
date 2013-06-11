@@ -287,6 +287,54 @@
     });
   });
 
+  describe("T.if", function() {
+    it("should work", function() {
+      var result, template;
+      template = function(cond) {
+        return ['div', T["if"](cond, 'true')];
+      };
+      result = ['div', 'true'];
+      return expect(T(template).process(true)).toEqual(result);
+    });
+    it("should work if condition evals to false", function() {
+      var result, template;
+      template = function(cond) {
+        return ['div', T["if"](cond, 'true', 'false')];
+      };
+      result = ['div', 'false'];
+      return expect(T(template).process(false)).toEqual(result);
+    });
+    return it("condition function should work", function() {
+      var template;
+      template = function(data) {
+        return [
+          'div', T["if"]((function(data) {
+            return data.cond;
+          }), 'true', 'false')
+        ];
+      };
+      expect(T(template).process({
+        cond: true
+      })).toEqual(['div', 'true']);
+      return expect(T(template).process({
+        cond: false
+      })).toEqual(['div', 'false']);
+    });
+  });
+
+  describe("T.for", function() {
+    return it("should work", function() {
+      var result, template;
+      template = function(data) {
+        return T["for"](data, function(item, i, count) {
+          return ['div', item];
+        });
+      };
+      result = [['div', 'item1'], ['div', 'item2']];
+      return expect(T(template).process(['item1', 'item2'])).toEqual(result);
+    });
+  });
+
   describe("T()", function() {
     it("T(T()) should return same Template object", function() {
       var template;

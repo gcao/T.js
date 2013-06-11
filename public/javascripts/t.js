@@ -545,6 +545,28 @@
     return 1;
   };
 
+  T["if"] = function(cond, trueValue, falseValue) {
+    return function(data) {
+      if (T(cond).process(data)) {
+        return T(trueValue);
+      } else {
+        return T(falseValue);
+      }
+    };
+  };
+
+  T["for"] = function(collection, iterFunction) {
+    return function(data) {
+      var i, item, _i, _len, _results;
+      _results = [];
+      for (item = _i = 0, _len = collection.length; _i < _len; item = ++_i) {
+        i = collection[item];
+        _results.push(iterFunction.call(item, i, collection.length));
+      }
+      return _results;
+    };
+  };
+
   T.internal = {
     normalize: normalize,
     processFirst: processFirst,

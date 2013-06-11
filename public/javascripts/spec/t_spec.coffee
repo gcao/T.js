@@ -148,6 +148,31 @@ describe "T.unescape", ->
   it "should work", ->
     expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&')
 
+describe "T.if", ->
+  it "should work", ->
+    template = (cond) -> ['div', T.if(cond, 'true')]
+    result   = ['div', 'true']
+    expect(T(template).process(true)).toEqual(result)
+
+  it "should work if condition evals to false", ->
+    template = (cond) -> ['div', T.if(cond, 'true', 'false')]
+    result   = ['div', 'false']
+    expect(T(template).process(false)).toEqual(result)
+
+  it "condition function should work", ->
+    template = (data) -> ['div', T.if(((data) -> data.cond), 'true', 'false')]
+    expect(T(template).process(cond: true)).toEqual(['div', 'true'])
+    expect(T(template).process(cond: false)).toEqual(['div', 'false'])
+
+describe "T.for", ->
+  it "should work", ->
+    template = (data) -> T.for(data, (item, i, count) -> ['div', item])
+    result   = [
+      ['div', 'item1']
+      ['div', 'item2']
+    ]
+    expect(T(template).process(['item1', 'item2'])).toEqual(result)
+
 describe "T()", ->
   it "T(T()) should return same Template object", ->
     template = T(["div", "text"])
