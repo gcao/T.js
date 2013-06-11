@@ -327,10 +327,10 @@
       var result, template;
       template = function(data) {
         return T["for"](data, function(item, i, count) {
-          return ['div', item];
+          return ['div', item, i, count];
         });
       };
-      result = [['div', 'item1'], ['div', 'item2']];
+      result = [['div', 'item1', 0, 2], ['div', 'item2', 1, 2]];
       return expect(T(template).process(['item1', 'item2'])).toEqual(result);
     });
   });

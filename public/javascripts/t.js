@@ -547,21 +547,24 @@
 
   T["if"] = function(cond, trueValue, falseValue) {
     return function(data) {
-      if (T(cond).process(data)) {
-        return T(trueValue);
+      if (typeof cond === 'function') {
+        cond = cond(data);
+      }
+      if (cond) {
+        return trueValue;
       } else {
-        return T(falseValue);
+        return falseValue;
       }
     };
   };
 
-  T["for"] = function(collection, iterFunction) {
+  T["for"] = function(collection, iterator) {
     return function(data) {
       var i, item, _i, _len, _results;
       _results = [];
-      for (item = _i = 0, _len = collection.length; _i < _len; item = ++_i) {
-        i = collection[item];
-        _results.push(iterFunction.call(item, i, collection.length));
+      for (i = _i = 0, _len = collection.length; _i < _len; i = ++_i) {
+        item = collection[i];
+        _results.push(iterator(item, i, collection.length));
       }
       return _results;
     };

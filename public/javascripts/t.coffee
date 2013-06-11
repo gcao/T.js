@@ -377,11 +377,14 @@ T.count = ->
 
 T.if = (cond, trueValue, falseValue)->
   (data) ->
-    if (T(cond).process(data)) then T(trueValue) else T(falseValue)
+    if typeof cond is 'function'
+      cond = cond(data)
 
-T.for = (collection, iterFunction)->
+    if (cond) then trueValue else falseValue
+
+T.for = (collection, iterator)->
   (data) ->
-    (iterFunction.call(item, i, collection.length)for i, item in collection)
+    (iterator(item, i, collection.length) for item, i in collection)
 
 T.internal =
   normalize        : normalize

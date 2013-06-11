@@ -166,10 +166,10 @@ describe "T.if", ->
 
 describe "T.for", ->
   it "should work", ->
-    template = (data) -> T.for(data, (item, i, count) -> ['div', item])
+    template = (data) -> T.for(data, (item, i, count) -> ['div', item, i, count])
     result   = [
-      ['div', 'item1']
-      ['div', 'item2']
+      ['div', 'item1', 0, 2]
+      ['div', 'item2', 1, 2]
     ]
     expect(T(template).process(['item1', 'item2'])).toEqual(result)
 
