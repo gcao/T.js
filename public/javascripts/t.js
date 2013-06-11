@@ -351,50 +351,14 @@
     return this;
   };
 
-  Template.prototype.each = function(mapper) {
-    this.mapper = mapper;
-    this.applyToEach = true;
-    return this;
-  };
-
   Template.prototype.process = function(data) {
-    var i, item, oldCount, oldIndex, output, _i, _len, _results;
+    var output;
     if (this.mapper) {
       data = this.mapper(data);
     }
-    if (this.applyToEach) {
-      if (data === null) {
-        return;
-      }
-      if (!isArray(data)) {
-        throw "Invalid Argument: expect an array but got " + (typeof data);
-      }
-      try {
-        oldIndex = T.index;
-        oldCount = T.count;
-        T.count = function() {
-          return data.length;
-        };
-        _results = [];
-        for (i = _i = 0, _len = data.length; _i < _len; i = ++_i) {
-          item = data[i];
-          T.index = function() {
-            return i;
-          };
-          output = prepareOutput(this.template, item);
-          output = normalize(output);
-          _results.push(processAttributes(output));
-        }
-        return _results;
-      } finally {
-        T.index = oldIndex;
-        T.count = oldCount;
-      }
-    } else {
-      output = prepareOutput(this.template, data);
-      output = normalize(output);
-      return processAttributes(output);
-    }
+    output = prepareOutput(this.template, data);
+    output = normalize(output);
+    return processAttributes(output);
   };
 
   Template.prototype.render = function(data) {
@@ -529,20 +493,6 @@
     return function() {
       return T.defaultParam || defaultValue;
     };
-  };
-
-  T.index = function() {
-    if (typeof console !== "undefined" && console !== null) {
-      console.log('WARNING: not called from within an iteration.');
-    }
-    return 0;
-  };
-
-  T.count = function() {
-    if (typeof console !== "undefined" && console !== null) {
-      console.log('WARNING: not called from within an iteration.');
-    }
-    return 1;
   };
 
   T["if"] = function(cond, trueValue, falseValue) {

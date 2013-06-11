@@ -185,33 +185,6 @@ describe "T()", ->
     data     = account: name: 'John Doe'
     expect(t.process(data)).toEqual(['div', 'John Doe'])
 
-  it "each should work", ->
-    template = (data) ->
-      ['div', data]
-    result = [
-      ['div', 'a']
-      ['div', 'b']
-    ]
-    expect(T(template).each().process(['a', 'b'])).toEqual(result)
-
-  it "each with a mapper should work", ->
-    template = (data) ->
-      ['div', data]
-    result = [
-      ['div', 'a']
-      ['div', 'b']
-    ]
-    expect(T(template).each((data) -> data.items).process(items: ['a', 'b'])).toEqual(result)
-
-  it "each & T.index() & T.count() should work", ->
-    template = (data) ->
-      ['div', T.index(), data, T.count()]
-    result = [
-      ['div', 0, 'a', 2]
-      ['div', 1, 'b', 2]
-    ]
-    expect(T(template).each().process(['a', 'b'])).toEqual(result)
-
   it "include template as partial should work", ->
     partial  = ["div", (data) -> data.name]
     template = ["div", T(partial).map((data) -> data.account)]
@@ -259,14 +232,5 @@ describe "T.noConflict", ->
   it "should work", ->
     T1 = T.noConflict()
     expect(typeof T).toEqual('undefined')
-    THIS.T = T1
-
-  it "pass reference to T in closure", ->
-    T1 = T.noConflict()
-    ((T) ->
-      template = (data) -> ["div", T.index(), data]
-      result   = [['div', 0, 'item1'], ['div', 1, 'item2']]
-      expect(T(template).each().process(['item1', 'item2'])).toEqual(result)
-    )(T1)
     THIS.T = T1
 

@@ -235,36 +235,11 @@ Template = (@template) ->
 Template.prototype.map = (@mapper) ->
   this
 
-Template.prototype.each = (@mapper) ->
-  @applyToEach = true
-  this
-
 Template.prototype.process = (data) ->
   data = @mapper data if @mapper
-
-  if @applyToEach
-    return if data is null
-
-    throw "Invalid Argument: expect an array but got #{typeof data}" unless isArray data
-
-    try
-      oldIndex = T.index
-      oldCount = T.count
-      T.count = -> data.length
-
-      for item, i in data
-        T.index = -> i
-        output = prepareOutput(@template, item)
-        output = normalize output
-        processAttributes output
-    finally
-      T.index = oldIndex
-      T.count = oldCount
-
-  else
-    output = prepareOutput(@template, data)
-    output = normalize output
-    processAttributes output
+  output = prepareOutput(@template, data)
+  output = normalize output
+  processAttributes output
 
 Template.prototype.render = (data) ->
   output = @process data
@@ -366,14 +341,6 @@ T.include = (name, defaultValue) ->
 
 T.include2 = (defaultValue) ->
   -> T.defaultParam or defaultValue
-
-T.index = ->
-  console?.log('WARNING: not called from within an iteration.')
-  0
-
-T.count = ->
-  console?.log('WARNING: not called from within an iteration.')
-  1
 
 T.if = (cond, trueValue, falseValue)->
   (data) ->

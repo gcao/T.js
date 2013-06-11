@@ -359,34 +359,6 @@
       };
       return expect(t.process(data)).toEqual(['div', 'John Doe']);
     });
-    it("each should work", function() {
-      var result, template;
-      template = function(data) {
-        return ['div', data];
-      };
-      result = [['div', 'a'], ['div', 'b']];
-      return expect(T(template).each().process(['a', 'b'])).toEqual(result);
-    });
-    it("each with a mapper should work", function() {
-      var result, template;
-      template = function(data) {
-        return ['div', data];
-      };
-      result = [['div', 'a'], ['div', 'b']];
-      return expect(T(template).each(function(data) {
-        return data.items;
-      }).process({
-        items: ['a', 'b']
-      })).toEqual(result);
-    });
-    it("each & T.index() & T.count() should work", function() {
-      var result, template;
-      template = function(data) {
-        return ['div', T.index(), data, T.count()];
-      };
-      result = [['div', 0, 'a', 2], ['div', 1, 'b', 2]];
-      return expect(T(template).each().process(['a', 'b'])).toEqual(result);
-    });
     it("include template as partial should work", function() {
       var partial, result, template;
       partial = [
@@ -497,23 +469,10 @@
   });
 
   describe("T.noConflict", function() {
-    it("should work", function() {
+    return it("should work", function() {
       var T1;
       T1 = T.noConflict();
       expect(typeof T).toEqual('undefined');
-      return THIS.T = T1;
-    });
-    return it("pass reference to T in closure", function() {
-      var T1;
-      T1 = T.noConflict();
-      (function(T) {
-        var result, template;
-        template = function(data) {
-          return ["div", T.index(), data];
-        };
-        result = [['div', 0, 'item1'], ['div', 1, 'item2']];
-        return expect(T(template).each().process(['item1', 'item2'])).toEqual(result);
-      })(T1);
       return THIS.T = T1;
     });
   });
