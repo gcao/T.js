@@ -356,9 +356,30 @@ T.unless = (cond, value)->
 
     if (!cond) then value
 
-T.for = (collection, iterator)->
+T.each = (collection, iterator)->
   (data) ->
     (iterator(item, i, collection.length) for item, i in collection)
+
+T.templates = {}
+
+T.def = (name, template)->
+  T.templates[name] = template
+
+T.redef = (name, template) ->
+  origTemplate = T.use(name)
+  T.templates[name] = (data) ->
+    try
+      backup = T.original if T.original
+      T.original = origTemplate
+      T(template).process(data)
+    finally
+      if backup
+        T.original = backup
+      else
+        delete T.original
+
+T.use = (name) ->
+  T.templates[name]
 
 T.internal =
   normalize        : normalize

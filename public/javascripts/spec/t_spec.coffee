@@ -175,14 +175,32 @@ describe "T.unless", ->
     result   = ['div', undefined]
     expect(T(template).process(true)).toEqual(result)
 
-describe "T.for", ->
+describe "T.each", ->
   it "should work", ->
-    template = (data) -> T.for(data, (item, i, count) -> ['div', item, i, count])
+    template = (data) -> T.each(data, (item, i, count) -> ['div', item, i, count])
     result   = [
       ['div', 'item1', 0, 2]
       ['div', 'item2', 1, 2]
     ]
     expect(T(template).process(['item1', 'item2'])).toEqual(result)
+
+describe "T.def/use", ->
+  it "should work", ->
+    T.def('template_name', (data) -> ['div', data])
+    template = T.use('template_name')
+    result   = ['div', 'value']
+    expect(T(template).process('value')).toEqual(result)
+
+  it "redef should work", ->
+    T.def('template_name', (data) -> ['div', data])
+    T.redef('template_name', (data) -> ['div.container', T.original(data)])
+    template = T.use('template_name')
+    result   = [
+      "div"
+      class: 'container'
+      ['div', 'value']
+    ]
+    expect(T(template).process('value')).toEqual(result)
 
 describe "T()", ->
   it "T(T()) should return same Template object", ->

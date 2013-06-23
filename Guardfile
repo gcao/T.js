@@ -10,6 +10,7 @@ end
 
 guard 'shell' do
   watch(%r{^public/javascripts/(.+\.coffee)$}) { `coffee -c public/javascripts/$1` }
+  watch(%r{^public/examples/(.+\.coffee)$}) { `coffee -b -c public/examples/$1` }
 end
 
 #guard 'livereload' do

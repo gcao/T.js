@@ -519,7 +519,7 @@
     };
   };
 
-  T["for"] = function(collection, iterator) {
+  T.each = function(collection, iterator) {
     return function(data) {
       var i, item, _i, _len, _results;
       _results = [];
@@ -529,6 +529,37 @@
       }
       return _results;
     };
+  };
+
+  T.templates = {};
+
+  T.def = function(name, template) {
+    return T.templates[name] = template;
+  };
+
+  T.redef = function(name, template) {
+    var origTemplate;
+    origTemplate = T.use(name);
+    return T.templates[name] = function(data) {
+      var backup;
+      try {
+        if (T.original) {
+          backup = T.original;
+        }
+        T.original = origTemplate;
+        return T(template).process(data);
+      } finally {
+        if (backup) {
+          T.original = backup;
+        } else {
+          delete T.original;
+        }
+      }
+    };
+  };
+
+  T.use = function(name) {
+    return T.templates[name];
   };
 
   T.internal = {

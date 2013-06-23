@@ -341,16 +341,44 @@
     });
   });
 
-  describe("T.for", function() {
+  describe("T.each", function() {
     return it("should work", function() {
       var result, template;
       template = function(data) {
-        return T["for"](data, function(item, i, count) {
+        return T.each(data, function(item, i, count) {
           return ['div', item, i, count];
         });
       };
       result = [['div', 'item1', 0, 2], ['div', 'item2', 1, 2]];
       return expect(T(template).process(['item1', 'item2'])).toEqual(result);
+    });
+  });
+
+  describe("T.def/use", function() {
+    it("should work", function() {
+      var result, template;
+      T.def('template_name', function(data) {
+        return ['div', data];
+      });
+      template = T.use('template_name');
+      result = ['div', 'value'];
+      return expect(T(template).process('value')).toEqual(result);
+    });
+    return it("redef should work", function() {
+      var result, template;
+      T.def('template_name', function(data) {
+        return ['div', data];
+      });
+      T.redef('template_name', function(data) {
+        return ['div.container', T.original(data)];
+      });
+      template = T.use('template_name');
+      result = [
+        "div", {
+          "class": 'container'
+        }, ['div', 'value']
+      ];
+      return expect(T(template).process('value')).toEqual(result);
     });
   });
 
