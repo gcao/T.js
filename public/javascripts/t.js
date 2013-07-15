@@ -224,10 +224,11 @@
       }
     } else if (isObject(template)) {
       if (template.isTjsTemplate) {
-        return prepareOutput(template.process(data), data);
+        return template.process(data);
       } else if (hasFunction(template)) {
         output = {};
         for (key in template) {
+          if (!__hasProp.call(template, key)) continue;
           value = template[key];
           output[key] = prepareOutput(value, data);
         }
@@ -346,16 +347,8 @@
     return this.isTjsTemplate = true;
   };
 
-  Template.prototype.map = function(mapper) {
-    this.mapper = mapper;
-    return this;
-  };
-
   Template.prototype.process = function(data) {
     var output;
-    if (this.mapper) {
-      data = this.mapper(data);
-    }
     output = prepareOutput(this.template, data);
     output = normalize(output);
     return processAttributes(output);
@@ -433,20 +426,22 @@
     return this;
   };
 
-  T = function(template) {
-    if (typeof template === 'object' && template.isTjsTemplate) {
-      return template;
+  T = function(template, data) {
+    var t;
+    t = T.use(template);
+    if (typeof data === 'undefined') {
+      return t;
     } else {
-      return new Template(template);
+      return t.process(data);
     }
   };
 
   T.process = function(template, data) {
-    return T(template).process(data);
+    return new Template(template).process(data);
   };
 
   T.render = function(template, data) {
-    return T(template).render(data);
+    return new Template(template).render(data);
   };
 
   T.get = function(name, defaultValue) {
@@ -533,21 +528,27 @@
 
   T.templates = {};
 
-  T.def = function(name, template) {
-    return T.templates[name] = template;
+  T.define = T.def = function(name, template) {
+    var t;
+    t = new Template(template);
+    t.templateName = name;
+    return T.templates[name] = t;
   };
 
-  T.redef = function(name, template) {
-    var origTemplate;
+  T.redefine = T.redef = function(name, template) {
+    var newTemplate, origTemplate;
     origTemplate = T.use(name);
+    newTemplate = new Template(template);
     return T.templates[name] = function(data) {
       var backup;
       try {
         if (T.original) {
           backup = T.original;
         }
-        T.original = origTemplate;
-        return T(template).process(data);
+        T.original = function(data) {
+          return origTemplate.process(data);
+        };
+        return newTemplate.process(data);
       } finally {
         if (backup) {
           T.original = backup;

@@ -125,117 +125,120 @@ describe "T.render", ->
     result = '<div id="test" class="first second third"/>'
     expect(T.render(template)).toEqual(result)
 
-describe "T.get", ->
-  it "should work", ->
-    v    = T.get('name')
-    data = name: 'John Doe'
-    expect(v(data)).toEqual(data.name)
+#describe "T.get", ->
+#  it "should work", ->
+#    v    = T.get('name')
+#    data = name: 'John Doe'
+#    expect(v(data)).toEqual(data.name)
 
-  it "should work with nested attribute", ->
-    v    = T.get('account.name')
-    data = account: name: 'John Doe'
-    expect(v(data)).toEqual(data.account.name)
+#  it "should work with nested attribute", ->
+#    v    = T.get('account.name')
+#    data = account: name: 'John Doe'
+#    expect(v(data)).toEqual(data.account.name)
 
-  it "Should take default value", ->
-    v = T.get('name', 'Default')
-    expect(v()).toEqual('Default')
+#  it "Should take default value", ->
+#    v = T.get('name', 'Default')
+#    expect(v()).toEqual('Default')
 
-describe "T.escape", ->
-  it "should work", ->
-    expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;')
+#describe "T.escape", ->
+#  it "should work", ->
+#    expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;')
 
-describe "T.unescape", ->
-  it "should work", ->
-    expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&')
+#describe "T.unescape", ->
+#  it "should work", ->
+#    expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&')
 
-describe "T.if", ->
-  it "should work", ->
-    template = (cond) -> ['div', T.if(cond, 'true')]
-    result   = ['div', 'true']
-    expect(T(template).process(true)).toEqual(result)
+#describe "T.if", ->
+#  it "should work", ->
+#    template = (cond) -> ['div', T.if(cond, 'true')]
+#    result   = ['div', 'true']
+#    expect(T(template).process(true)).toEqual(result)
 
-  it "should work if condition evals to false", ->
-    template = (cond) -> ['div', T.if(cond, 'true', 'false')]
-    result   = ['div', 'false']
-    expect(T(template).process(false)).toEqual(result)
+#  it "should work if condition evals to false", ->
+#    template = (cond) -> ['div', T.if(cond, 'true', 'false')]
+#    result   = ['div', 'false']
+#    expect(T(template).process(false)).toEqual(result)
 
-  it "condition function should work", ->
-    template = (data) -> ['div', T.if(((data) -> data.cond), 'true', 'false')]
-    expect(T(template).process(cond: true)).toEqual(['div', 'true'])
-    expect(T(template).process(cond: false)).toEqual(['div', 'false'])
+#  it "condition function should work", ->
+#    template = (data) -> ['div', T.if(((data) -> data.cond), 'true', 'false')]
+#    expect(T(template).process(cond: true)).toEqual(['div', 'true'])
+#    expect(T(template).process(cond: false)).toEqual(['div', 'false'])
 
-describe "T.unless", ->
-  it "should work", ->
-    template = (cond) -> ['div', T.unless(cond, 'value')]
-    result   = ['div', 'value']
-    expect(T(template).process(false)).toEqual(result)
+#describe "T.unless", ->
+#  it "should work", ->
+#    template = (cond) -> ['div', T.unless(cond, 'value')]
+#    result   = ['div', 'value']
+#    expect(T(template).process(false)).toEqual(result)
 
-  it "should work if condition evaluates to true", ->
-    template = (cond) -> ['div', T.unless(cond, 'value')]
-    result   = ['div', undefined]
-    expect(T(template).process(true)).toEqual(result)
+#  it "should work if condition evaluates to true", ->
+#    template = (cond) -> ['div', T.unless(cond, 'value')]
+#    result   = ['div', undefined]
+#    expect(T(template).process(true)).toEqual(result)
 
-describe "T.each", ->
-  it "should work", ->
-    template = (data) -> T.each(data, (item, i, count) -> ['div', item, i, count])
-    result   = [
-      ['div', 'item1', 0, 2]
-      ['div', 'item2', 1, 2]
-    ]
-    expect(T(template).process(['item1', 'item2'])).toEqual(result)
+#describe "T.each", ->
+#  it "should work", ->
+#    template = (data) -> T.each(data, (item, i, count) -> ['div', item, i, count])
+#    result   = [
+#      ['div', 'item1', 0, 2]
+#      ['div', 'item2', 1, 2]
+#    ]
+#    expect(T(template).process(['item1', 'item2'])).toEqual(result)
 
 describe "T.def/use", ->
   it "should work", ->
-    T.def('template_name', (data) -> ['div', data])
-    template = T.use('template_name')
+    T.def('template', (data) -> ['div', data])
     result   = ['div', 'value']
-    expect(T(template).process('value')).toEqual(result)
+    expect(T.use('template').process('value')).toEqual(result)
 
   it "redef should work", ->
-    T.def('template_name', (data) -> ['div', data])
-    T.redef('template_name', (data) -> ['div.container', T.original(data)])
-    template = T.use('template_name')
+    T.def('template', (data) -> ['div', data])
+    T.redef('template', (data) -> ['div.container', T.original(data)])
     result   = [
       "div"
       class: 'container'
       ['div', 'value']
     ]
-    expect(T(template).process('value')).toEqual(result)
+    expect(T.use('template').process('value')).toEqual(result)
 
 describe "T()", ->
-  it "T(T()) should return same Template object", ->
-    template = T(["div", "text"])
-    expect(T(template)).toEqual(template)
-
   it "process should work", ->
-    template = ["div", (data) -> data.name]
-    mapper   = (data) -> data.account
-    t        = T(template).map(mapper)
-    data     = account: name: 'John Doe'
-    expect(t.process(data)).toEqual(['div', 'John Doe'])
+    T.def('template', (data) -> ["div", data.name])
+    data = name: 'John Doe'
+    expect(T('template').process(data)).toEqual(['div', 'John Doe'])
+
+  it "T(template, data) should call process", ->
+    T.def('template', (data) -> ["div", data.name])
+    data = name: 'John Doe'
+    expect(T('template', data)).toEqual(['div', 'John Doe'])
 
   it "include template as partial should work", ->
-    partial  = ["div", (data) -> data.name]
-    template = ["div", T(partial).map((data) -> data.account)]
-    result   = ['div', ['div', 'John Doe']]
-    expect(T(template).process(account: name: 'John Doe')).toEqual(result)
+    T.def('partial', (data) -> ["div", data.name])
+    T.def('template', (data) -> ["div", T('partial', data.account)])
+    data   = account: name: 'John Doe'
+    result = ['div', ['div', 'John Doe']]
+    expect(T('template', data)).toEqual(result)
 
-  it "include template as partial should work", ->
-    partial  = ["div", T.get('name')]
-    template = ["div", T(partial).map((data) -> data.account)]
-    result   = '<div><div>John Doe</div></div>'
-    expect(T(template).render(account: name: 'John Doe')).toEqual(result)
-
-  it "data is empty", ->
-    template = ["div", (data) -> data?.name]
-    mapper   = (data) -> data?.account
-    t        = T(template).map(mapper)
-    expect(t.process()).toEqual(['div', undefined])
+  it "complex template should work", ->
+    T.def('profileTemplate', (data) -> ['div', data.username])
+    T.def('accountTemplate', (data) -> ['div', data.name, T('profileTemplate', data.profile)])
+    T.def('template', (data) -> ['div', T('accountTemplate', data.account)])
+    result          = ['div'
+      [ 'div'
+        'John Doe'
+        ['div', 'johndoe']
+      ]
+    ]
+    data =
+      account:
+        name: 'John Doe'
+        profile:
+          username: 'johndoe'
+    expect(T('template', data)).toEqual(result)
 
 describe "T().prepare/T.include", ->
   it "should work", ->
-    template = ['div', T.include('title')]
-    expect(T(template).prepare(title: 'Title').process()).toEqual(['div', 'Title'])
+    T.def('template', ['div', T.include('title')])
+    expect(T('template').prepare(title: 'Title').process()).toEqual(['div', 'Title'])
 
   it "should work with partial", ->
     template = ['div', T.include('title')]
@@ -250,12 +253,6 @@ describe "T().prepare/T.include", ->
     template  = ['div', T.include('title')]
     template2 = ['div', T(template).prepare(title: 'Title'), T.include('body')]
     expect(T(template2).prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
-
-  it "mapper should work", ->
-    layout   = ['div', T.include('title')]
-    partial  = (data) -> data.title
-    template = T(layout).prepare(title: partial).map((data) -> data.main)
-    expect(template.process(main: title: 'Title')).toEqual(['div', 'Title'])
 
 describe "T.noConflict", ->
   it "should work", ->

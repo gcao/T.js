@@ -153,10 +153,10 @@ prepareOutput = (template, data) ->
       template
   else if isObject template
     if template.isTjsTemplate
-      prepareOutput(template.process(data), data)
+      template.process(data)
     else if hasFunction template
       output = {}
-      for key, value of template
+      for own key, value of template
         output[key] = prepareOutput(value, data)
       output
     else
@@ -232,11 +232,7 @@ render = (input) ->
 Template = (@template) ->
   @isTjsTemplate = true
 
-Template.prototype.map = (@mapper) ->
-  this
-
 Template.prototype.process = (data) ->
-  data = @mapper data if @mapper
   output = prepareOutput(@template, data)
   output = normalize output
   processAttributes output
@@ -291,17 +287,20 @@ Template.prototype.prepare2 = (defaultParam, @extras) ->
 
   this
 
-T = (template) ->
-  if typeof template is 'object' and template.isTjsTemplate
-    template
+T = (template, data) ->
+  #template = new Template(template)
+  t = T.use(template)
+
+  if typeof data is 'undefined'
+    t
   else
-    new Template(template)
+    t.process(data)
 
 T.process = (template, data) ->
-  T(template).process data
+  new Template(template).process data
 
 T.render  = (template, data) ->
-  T(template).render data
+  new Template(template).render data
 
 T.get = (name, defaultValue) ->
   defaultValue = null if typeof defaultValue is 'undefined'
@@ -362,16 +361,19 @@ T.each = (collection, iterator)->
 
 T.templates = {}
 
-T.def = (name, template)->
-  T.templates[name] = template
+T.define = T.def = (name, template)->
+  t = new Template(template)
+  t.templateName = name
+  T.templates[name] = t
 
-T.redef = (name, template) ->
+T.redefine = T.redef = (name, template) ->
   origTemplate = T.use(name)
+  newTemplate = new Template(template)
   T.templates[name] = (data) ->
     try
       backup = T.original if T.original
-      T.original = origTemplate
-      T(template).process(data)
+      T.original = (data) -> origTemplate.process(data)
+      newTemplate.process(data)
     finally
       if backup
         T.original = backup

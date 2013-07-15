@@ -249,217 +249,97 @@
     });
   });
 
-  describe("T.get", function() {
-    it("should work", function() {
-      var data, v;
-      v = T.get('name');
-      data = {
-        name: 'John Doe'
-      };
-      return expect(v(data)).toEqual(data.name);
-    });
-    it("should work with nested attribute", function() {
-      var data, v;
-      v = T.get('account.name');
-      data = {
-        account: {
-          name: 'John Doe'
-        }
-      };
-      return expect(v(data)).toEqual(data.account.name);
-    });
-    return it("Should take default value", function() {
-      var v;
-      v = T.get('name', 'Default');
-      return expect(v()).toEqual('Default');
-    });
-  });
-
-  describe("T.escape", function() {
-    return it("should work", function() {
-      return expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;');
-    });
-  });
-
-  describe("T.unescape", function() {
-    return it("should work", function() {
-      return expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&');
-    });
-  });
-
-  describe("T.if", function() {
-    it("should work", function() {
-      var result, template;
-      template = function(cond) {
-        return ['div', T["if"](cond, 'true')];
-      };
-      result = ['div', 'true'];
-      return expect(T(template).process(true)).toEqual(result);
-    });
-    it("should work if condition evals to false", function() {
-      var result, template;
-      template = function(cond) {
-        return ['div', T["if"](cond, 'true', 'false')];
-      };
-      result = ['div', 'false'];
-      return expect(T(template).process(false)).toEqual(result);
-    });
-    return it("condition function should work", function() {
-      var template;
-      template = function(data) {
-        return [
-          'div', T["if"]((function(data) {
-            return data.cond;
-          }), 'true', 'false')
-        ];
-      };
-      expect(T(template).process({
-        cond: true
-      })).toEqual(['div', 'true']);
-      return expect(T(template).process({
-        cond: false
-      })).toEqual(['div', 'false']);
-    });
-  });
-
-  describe("T.unless", function() {
-    it("should work", function() {
-      var result, template;
-      template = function(cond) {
-        return ['div', T.unless(cond, 'value')];
-      };
-      result = ['div', 'value'];
-      return expect(T(template).process(false)).toEqual(result);
-    });
-    return it("should work if condition evaluates to true", function() {
-      var result, template;
-      template = function(cond) {
-        return ['div', T.unless(cond, 'value')];
-      };
-      result = ['div', void 0];
-      return expect(T(template).process(true)).toEqual(result);
-    });
-  });
-
-  describe("T.each", function() {
-    return it("should work", function() {
-      var result, template;
-      template = function(data) {
-        return T.each(data, function(item, i, count) {
-          return ['div', item, i, count];
-        });
-      };
-      result = [['div', 'item1', 0, 2], ['div', 'item2', 1, 2]];
-      return expect(T(template).process(['item1', 'item2'])).toEqual(result);
-    });
-  });
-
   describe("T.def/use", function() {
     it("should work", function() {
-      var result, template;
-      T.def('template_name', function(data) {
+      var result;
+      T.def('template', function(data) {
         return ['div', data];
       });
-      template = T.use('template_name');
       result = ['div', 'value'];
-      return expect(T(template).process('value')).toEqual(result);
+      return expect(T.use('template').process('value')).toEqual(result);
     });
     return it("redef should work", function() {
-      var result, template;
-      T.def('template_name', function(data) {
+      var result;
+      T.def('template', function(data) {
         return ['div', data];
       });
-      T.redef('template_name', function(data) {
+      T.redef('template', function(data) {
         return ['div.container', T.original(data)];
       });
-      template = T.use('template_name');
       result = [
         "div", {
           "class": 'container'
         }, ['div', 'value']
       ];
-      return expect(T(template).process('value')).toEqual(result);
+      return expect(T.use('template').process('value')).toEqual(result);
     });
   });
 
   describe("T()", function() {
-    it("T(T()) should return same Template object", function() {
-      var template;
-      template = T(["div", "text"]);
-      return expect(T(template)).toEqual(template);
-    });
     it("process should work", function() {
-      var data, mapper, t, template;
-      template = [
-        "div", function(data) {
-          return data.name;
-        }
-      ];
-      mapper = function(data) {
-        return data.account;
+      var data;
+      T.def('template', function(data) {
+        return ["div", data.name];
+      });
+      data = {
+        name: 'John Doe'
       };
-      t = T(template).map(mapper);
+      return expect(T('template').process(data)).toEqual(['div', 'John Doe']);
+    });
+    it("T(template, data) should call process", function() {
+      var data;
+      T.def('template', function(data) {
+        return ["div", data.name];
+      });
+      data = {
+        name: 'John Doe'
+      };
+      return expect(T('template', data)).toEqual(['div', 'John Doe']);
+    });
+    it("include template as partial should work", function() {
+      var data, result;
+      T.def('partial', function(data) {
+        return ["div", data.name];
+      });
+      T.def('template', function(data) {
+        return ["div", T('partial', data.account)];
+      });
       data = {
         account: {
           name: 'John Doe'
         }
       };
-      return expect(t.process(data)).toEqual(['div', 'John Doe']);
-    });
-    it("include template as partial should work", function() {
-      var partial, result, template;
-      partial = [
-        "div", function(data) {
-          return data.name;
-        }
-      ];
-      template = [
-        "div", T(partial).map(function(data) {
-          return data.account;
-        })
-      ];
       result = ['div', ['div', 'John Doe']];
-      return expect(T(template).process({
-        account: {
-          name: 'John Doe'
-        }
-      })).toEqual(result);
+      return expect(T('template', data)).toEqual(result);
     });
-    it("include template as partial should work", function() {
-      var partial, result, template;
-      partial = ["div", T.get('name')];
-      template = [
-        "div", T(partial).map(function(data) {
-          return data.account;
-        })
-      ];
-      result = '<div><div>John Doe</div></div>';
-      return expect(T(template).render({
+    return it("complex template should work", function() {
+      var data, result;
+      T.def('profileTemplate', function(data) {
+        return ['div', data.username];
+      });
+      T.def('accountTemplate', function(data) {
+        return ['div', data.name, T('profileTemplate', data.profile)];
+      });
+      T.def('template', function(data) {
+        return ['div', T('accountTemplate', data.account)];
+      });
+      result = ['div', ['div', 'John Doe', ['div', 'johndoe']]];
+      data = {
         account: {
-          name: 'John Doe'
+          name: 'John Doe',
+          profile: {
+            username: 'johndoe'
+          }
         }
-      })).toEqual(result);
-    });
-    return it("data is empty", function() {
-      var mapper, t, template;
-      template = [
-        "div", function(data) {
-          return data != null ? data.name : void 0;
-        }
-      ];
-      mapper = function(data) {
-        return data != null ? data.account : void 0;
       };
-      t = T(template).map(mapper);
-      return expect(t.process()).toEqual(['div', void 0]);
+      return expect(T('template', data)).toEqual(result);
     });
   });
 
   describe("T().prepare/T.include", function() {
     it("should work", function() {
-      var template;
-      template = ['div', T.include('title')];
-      return expect(T(template).prepare({
+      T.def('template', ['div', T.include('title')]);
+      return expect(T('template').prepare({
         title: 'Title'
       }).process()).toEqual(['div', 'Title']);
     });
@@ -484,7 +364,7 @@
         title: 'Title'
       }).process()).toEqual(['div', 'first', 'Title']);
     });
-    it("nested include/prepare should work", function() {
+    return it("nested include/prepare should work", function() {
       var template, template2;
       template = ['div', T.include('title')];
       template2 = [
@@ -495,23 +375,6 @@
       return expect(T(template2).prepare({
         body: 'Body'
       }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
-    });
-    return it("mapper should work", function() {
-      var layout, partial, template;
-      layout = ['div', T.include('title')];
-      partial = function(data) {
-        return data.title;
-      };
-      template = T(layout).prepare({
-        title: partial
-      }).map(function(data) {
-        return data.main;
-      });
-      return expect(template.process({
-        main: {
-          title: 'Title'
-        }
-      })).toEqual(['div', 'Title']);
     });
   });
 
