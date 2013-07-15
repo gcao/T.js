@@ -264,7 +264,7 @@
         return ['div', data];
       });
       T.redef('template', function(data) {
-        return ['div.container', T.original(data)];
+        return ['div.container', T.original.process(data)];
       });
       result = [
         "div", {
@@ -344,35 +344,33 @@
       }).process()).toEqual(['div', 'Title']);
     });
     it("should work with partial", function() {
-      var partial, template;
-      template = ['div', T.include('title')];
+      var partial;
+      T.def('template', ['div', T.include('title')]);
       partial = [
         'div', function(data) {
           return data.name;
         }
       ];
-      return expect(T(template).prepare({
+      return expect(T('template').prepare({
         title: partial
       }).process({
         name: 'John Doe'
       })).toEqual(['div', ['div', 'John Doe']]);
     });
     it("prepare2 should work", function() {
-      var template;
-      template = ['div', T.include2(), T.include('title')];
-      return expect(T(template).prepare2('first', {
+      T.def('template', ['div', T.include2(), T.include('title')]);
+      return expect(T('template').prepare2('first', {
         title: 'Title'
       }).process()).toEqual(['div', 'first', 'Title']);
     });
     return it("nested include/prepare should work", function() {
-      var template, template2;
-      template = ['div', T.include('title')];
-      template2 = [
-        'div', T(template).prepare({
+      T.def('template', ['div', T.include('title')]);
+      T.def('template2', [
+        'div', T('template').prepare({
           title: 'Title'
         }), T.include('body')
-      ];
-      return expect(T(template2).prepare({
+      ]);
+      return expect(T('template2').prepare({
         body: 'Body'
       }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
     });

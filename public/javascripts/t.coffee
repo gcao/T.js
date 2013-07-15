@@ -302,38 +302,38 @@ T.process = (template, data) ->
 T.render  = (template, data) ->
   new Template(template).render data
 
-T.get = (name, defaultValue) ->
-  defaultValue = null if typeof defaultValue is 'undefined'
+#T.get = (name, defaultValue) ->
+#  defaultValue = null if typeof defaultValue is 'undefined'
 
-  (data) ->
-    return defaultValue unless data
+#  (data) ->
+#    return defaultValue unless data
 
-    parts = name.split '.'
-    for part in parts
-      data = data[part]
-      if typeof data is 'undefined' or data is null
-        return defaultValue
+#    parts = name.split '.'
+#    for part in parts
+#      data = data[part]
+#      if typeof data is 'undefined' or data is null
+#        return defaultValue
 
-    if typeof data is 'undefined' or data is null
-      defaultValue
-    else
-      data
+#    if typeof data is 'undefined' or data is null
+#      defaultValue
+#    else
+#      data
 
-T.escape = (str) ->
-  str
-   .replace(/&/g, "&amp;" )
-   .replace(/</g, "&lt;"  )
-   .replace(/>/g, "&gt;"  )
-   .replace(/"/g, "&quot;")
-   .replace(/'/g, "&#039;")
+#T.escape = (str) ->
+#  str
+#   .replace(/&/g, "&amp;" )
+#   .replace(/</g, "&lt;"  )
+#   .replace(/>/g, "&gt;"  )
+#   .replace(/"/g, "&quot;")
+#   .replace(/'/g, "&#039;")
 
-T.unescape = (str) ->
-  str
-   .replace(/&amp;/g , '&')
-   .replace(/&lt;/g  , '<')
-   .replace(/&gt;/g  , '>')
-   .replace(/&quot;/g, '"')
-   .replace(/&#039;/g, "'")
+#T.unescape = (str) ->
+#  str
+#   .replace(/&amp;/g , '&')
+#   .replace(/&lt;/g  , '<')
+#   .replace(/&gt;/g  , '>')
+#   .replace(/&quot;/g, '"')
+#   .replace(/&#039;/g, "'")
 
 T.include = (name, defaultValue) ->
   -> T.extras?[name] or defaultValue
@@ -341,23 +341,23 @@ T.include = (name, defaultValue) ->
 T.include2 = (defaultValue) ->
   -> T.defaultParam or defaultValue
 
-T.if = (cond, trueValue, falseValue)->
-  (data) ->
-    if typeof cond is 'function'
-      cond = cond(data)
+#T.if = (cond, trueValue, falseValue)->
+#  (data) ->
+#    if typeof cond is 'function'
+#      cond = cond(data)
 
-    if (cond) then trueValue else falseValue
+#    if (cond) then trueValue else falseValue
 
-T.unless = (cond, value)->
-  (data) ->
-    if typeof cond is 'function'
-      cond = cond(data)
+#T.unless = (cond, value)->
+#  (data) ->
+#    if typeof cond is 'function'
+#      cond = cond(data)
 
-    if (!cond) then value
+#    if (!cond) then value
 
-T.each = (collection, iterator)->
-  (data) ->
-    (iterator(item, i, collection.length) for item, i in collection)
+#T.each = (collection, iterator)->
+#  (data) ->
+#    (iterator(item, i, collection.length) for item, i in collection)
 
 T.templates = {}
 
@@ -368,17 +368,19 @@ T.define = T.def = (name, template)->
 
 T.redefine = T.redef = (name, template) ->
   origTemplate = T.use(name)
-  newTemplate = new Template(template)
-  T.templates[name] = (data) ->
+  newTemplate = new Template((data) ->
     try
       backup = T.original if T.original
-      T.original = (data) -> origTemplate.process(data)
-      newTemplate.process(data)
+      T.original = origTemplate
+      new Template(template).process(data)
     finally
       if backup
         T.original = backup
       else
         delete T.original
+  )
+  newTemplate.templateName = name
+  T.templates[name] = newTemplate
 
 T.use = (name) ->
   T.templates[name]

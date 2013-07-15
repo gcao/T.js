@@ -444,39 +444,6 @@
     return new Template(template).render(data);
   };
 
-  T.get = function(name, defaultValue) {
-    if (typeof defaultValue === 'undefined') {
-      defaultValue = null;
-    }
-    return function(data) {
-      var part, parts, _i, _len;
-      if (!data) {
-        return defaultValue;
-      }
-      parts = name.split('.');
-      for (_i = 0, _len = parts.length; _i < _len; _i++) {
-        part = parts[_i];
-        data = data[part];
-        if (typeof data === 'undefined' || data === null) {
-          return defaultValue;
-        }
-      }
-      if (typeof data === 'undefined' || data === null) {
-        return defaultValue;
-      } else {
-        return data;
-      }
-    };
-  };
-
-  T.escape = function(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  };
-
-  T.unescape = function(str) {
-    return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
-  };
-
   T.include = function(name, defaultValue) {
     return function() {
       var _ref;
@@ -487,42 +454,6 @@
   T.include2 = function(defaultValue) {
     return function() {
       return T.defaultParam || defaultValue;
-    };
-  };
-
-  T["if"] = function(cond, trueValue, falseValue) {
-    return function(data) {
-      if (typeof cond === 'function') {
-        cond = cond(data);
-      }
-      if (cond) {
-        return trueValue;
-      } else {
-        return falseValue;
-      }
-    };
-  };
-
-  T.unless = function(cond, value) {
-    return function(data) {
-      if (typeof cond === 'function') {
-        cond = cond(data);
-      }
-      if (!cond) {
-        return value;
-      }
-    };
-  };
-
-  T.each = function(collection, iterator) {
-    return function(data) {
-      var i, item, _i, _len, _results;
-      _results = [];
-      for (i = _i = 0, _len = collection.length; _i < _len; i = ++_i) {
-        item = collection[i];
-        _results.push(iterator(item, i, collection.length));
-      }
-      return _results;
     };
   };
 
@@ -538,17 +469,14 @@
   T.redefine = T.redef = function(name, template) {
     var newTemplate, origTemplate;
     origTemplate = T.use(name);
-    newTemplate = new Template(template);
-    return T.templates[name] = function(data) {
+    newTemplate = new Template(function(data) {
       var backup;
       try {
         if (T.original) {
           backup = T.original;
         }
-        T.original = function(data) {
-          return origTemplate.process(data);
-        };
-        return newTemplate.process(data);
+        T.original = origTemplate;
+        return new Template(template).process(data);
       } finally {
         if (backup) {
           T.original = backup;
@@ -556,7 +484,9 @@
           delete T.original;
         }
       }
-    };
+    });
+    newTemplate.templateName = name;
+    return T.templates[name] = newTemplate;
   };
 
   T.use = function(name) {

@@ -192,7 +192,7 @@ describe "T.def/use", ->
 
   it "redef should work", ->
     T.def('template', (data) -> ['div', data])
-    T.redef('template', (data) -> ['div.container', T.original(data)])
+    T.redef('template', (data) -> ['div.container', T.original.process(data)])
     result   = [
       "div"
       class: 'container'
@@ -241,18 +241,18 @@ describe "T().prepare/T.include", ->
     expect(T('template').prepare(title: 'Title').process()).toEqual(['div', 'Title'])
 
   it "should work with partial", ->
-    template = ['div', T.include('title')]
+    T.def('template', ['div', T.include('title')])
     partial  = ['div', (data) -> data.name ]
-    expect(T(template).prepare(title: partial).process(name: 'John Doe')).toEqual(['div', ['div', 'John Doe']])
+    expect(T('template').prepare(title: partial).process(name: 'John Doe')).toEqual(['div', ['div', 'John Doe']])
 
   it "prepare2 should work", ->
-    template = ['div', T.include2(), T.include('title')]
-    expect(T(template).prepare2('first', title: 'Title').process()).toEqual(['div', 'first', 'Title'])
+    T.def('template', ['div', T.include2(), T.include('title')])
+    expect(T('template').prepare2('first', title: 'Title').process()).toEqual(['div', 'first', 'Title'])
 
   it "nested include/prepare should work", ->
-    template  = ['div', T.include('title')]
-    template2 = ['div', T(template).prepare(title: 'Title'), T.include('body')]
-    expect(T(template2).prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
+    T.def('template', ['div', T.include('title')])
+    T.def('template2', ['div', T('template').prepare(title: 'Title'), T.include('body')])
+    expect(T('template2').prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
 
 describe "T.noConflict", ->
   it "should work", ->
