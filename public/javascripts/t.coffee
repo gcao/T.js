@@ -335,11 +335,11 @@ T.render  = (template, data) ->
 #   .replace(/&quot;/g, '"')
 #   .replace(/&#039;/g, "'")
 
-T.include = (name, defaultValue) ->
-  -> T.extras?[name] or defaultValue
+T.include = (name, data) ->
+  -> T.extras?[name].process(data)
 
-T.include2 = (defaultValue) ->
-  -> T.defaultParam or defaultValue
+T.include2 = (data) ->
+  -> T.defaultParam?.process(data)
 
 #T.if = (cond, trueValue, falseValue)->
 #  (data) ->
@@ -362,16 +362,19 @@ T.include2 = (defaultValue) ->
 T.templates = {}
 
 T.define = T.def = (name, template)->
+  if typeof template == 'undefined'
+    return new Template(name)
+
   t = new Template(template)
   t.templateName = name
   T.templates[name] = t
 
 T.redefine = T.redef = (name, template) ->
-  origTemplate = T.use(name)
+  oldTemplate = T.use(name)
   newTemplate = new Template((data) ->
     try
       backup = T.original if T.original
-      T.original = origTemplate
+      T.original = oldTemplate
       new Template(template).process(data)
     finally
       if backup

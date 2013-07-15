@@ -444,16 +444,17 @@
     return new Template(template).render(data);
   };
 
-  T.include = function(name, defaultValue) {
+  T.include = function(name, data) {
     return function() {
       var _ref;
-      return ((_ref = T.extras) != null ? _ref[name] : void 0) || defaultValue;
+      return (_ref = T.extras) != null ? _ref[name].process(data) : void 0;
     };
   };
 
-  T.include2 = function(defaultValue) {
+  T.include2 = function(data) {
     return function() {
-      return T.defaultParam || defaultValue;
+      var _ref;
+      return (_ref = T.defaultParam) != null ? _ref.process(data) : void 0;
     };
   };
 
@@ -461,21 +462,24 @@
 
   T.define = T.def = function(name, template) {
     var t;
+    if (typeof template === 'undefined') {
+      return new Template(name);
+    }
     t = new Template(template);
     t.templateName = name;
     return T.templates[name] = t;
   };
 
   T.redefine = T.redef = function(name, template) {
-    var newTemplate, origTemplate;
-    origTemplate = T.use(name);
+    var newTemplate, oldTemplate;
+    oldTemplate = T.use(name);
     newTemplate = new Template(function(data) {
       var backup;
       try {
         if (T.original) {
           backup = T.original;
         }
-        T.original = origTemplate;
+        T.original = oldTemplate;
         return new Template(template).process(data);
       } finally {
         if (backup) {
