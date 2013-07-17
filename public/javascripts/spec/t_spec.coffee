@@ -155,6 +155,10 @@ describe "T()", ->
     data = name: 'John Doe'
     expect(T('template').process(data)).toEqual(['div', 'John Doe'])
 
+  it "process([]) should work", ->
+    T.def('template', [])
+    expect(T('template').process()).toEqual([])
+
   it "T(template, data) should call process", ->
     T.def('template', (data) -> ["div", data.name])
     data = name: 'John Doe'

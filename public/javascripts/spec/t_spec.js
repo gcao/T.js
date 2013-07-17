@@ -298,6 +298,10 @@
       };
       return expect(T('template').process(data)).toEqual(['div', 'John Doe']);
     });
+    it("process([]) should work", function() {
+      T.def('template', []);
+      return expect(T('template').process()).toEqual([]);
+    });
     it("T(template, data) should call process", function() {
       var data;
       T.def('template', function(data) {

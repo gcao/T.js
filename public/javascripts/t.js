@@ -356,6 +356,9 @@
     var output;
     output = prepareOutput(this.template, data);
     output = normalize(output);
+    if (isArray(output) && output.length === 0) {
+      return output;
+    }
     return processAttributes(output);
   };
 
