@@ -12,14 +12,13 @@ isEmpty    = (o) ->
 
 hasFunction = (o) ->
   return true if typeof o is 'function'
+  return true if isTemplate o
 
   if isArray o
     for item in o
       return true if hasFunction item
 
   else if isObject o
-    return true if o.isTjsTemplate
-
     for own key, value of o
       return true if hasFunction value
 
@@ -147,15 +146,15 @@ processAttributes = (items) ->
 prepareOutput = (template, data) ->
   if typeof template is 'function'
     prepareOutput(template(data), data)
+  else if isTemplate template
+    template.process(data)
   else if isArray template
     if hasFunction template
       (prepareOutput(item, data) for item in template)
     else
       template
   else if isObject template
-    if template.isTjsTemplate
-      template.process(data)
-    else if hasFunction template
+    if hasFunction template
       output = {}
       for own key, value of template
         output[key] = prepareOutput(value, data)
@@ -325,9 +324,6 @@ T.noConflict = ->
 
 if this.T then T.oldT = this.T
 this.T = T
-
-# like jQuery to $ 
-this.Tjs = T
 
 # Node.js exports
 module?.exports = T

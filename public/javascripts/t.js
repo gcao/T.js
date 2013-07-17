@@ -35,6 +35,9 @@
     if (typeof o === 'function') {
       return true;
     }
+    if (isTemplate(o)) {
+      return true;
+    }
     if (isArray(o)) {
       for (_i = 0, _len = o.length; _i < _len; _i++) {
         item = o[_i];
@@ -43,9 +46,6 @@
         }
       }
     } else if (isObject(o)) {
-      if (o.isTjsTemplate) {
-        return true;
-      }
       for (key in o) {
         if (!__hasProp.call(o, key)) continue;
         value = o[key];
@@ -215,6 +215,8 @@
     var item, key, output, value, _i, _len, _results;
     if (typeof template === 'function') {
       return prepareOutput(template(data), data);
+    } else if (isTemplate(template)) {
+      return template.process(data);
     } else if (isArray(template)) {
       if (hasFunction(template)) {
         _results = [];
@@ -227,9 +229,7 @@
         return template;
       }
     } else if (isObject(template)) {
-      if (template.isTjsTemplate) {
-        return template.process(data);
-      } else if (hasFunction(template)) {
+      if (hasFunction(template)) {
         output = {};
         for (key in template) {
           if (!__hasProp.call(template, key)) continue;
@@ -485,8 +485,6 @@
   }
 
   this.T = T;
-
-  this.Tjs = T;
 
   if (typeof module !== "undefined" && module !== null) {
     module.exports = T;
