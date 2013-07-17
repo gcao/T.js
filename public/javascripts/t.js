@@ -211,12 +211,13 @@
     return items;
   };
 
-  prepareOutput = function(template, data) {
-    var item, key, output, value, _i, _len, _results;
+  prepareOutput = function() {
+    var data, item, key, output, template, value, _i, _len, _results;
+    template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     if (typeof template === 'function') {
-      return prepareOutput(template(data), data);
+      return prepareOutput.apply(null, [template.apply(null, data)].concat(__slice.call(data)));
     } else if (isTemplate(template)) {
-      return template.process(data);
+      return template.process.apply(template, data);
     } else if (isArray(template)) {
       if (hasFunction(template)) {
         _results = [];
@@ -352,9 +353,10 @@
     return this.isTjsTemplate = true;
   };
 
-  Template.prototype.process = function(data) {
-    var output;
-    output = prepareOutput(this.template, data);
+  Template.prototype.process = function() {
+    var data, output;
+    data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    output = prepareOutput.apply(null, [this.template].concat(__slice.call(data)));
     output = normalize(output);
     if (isArray(output) && output.length === 0) {
       return output;
@@ -362,9 +364,10 @@
     return processAttributes(output);
   };
 
-  Template.prototype.render = function(data) {
-    var output;
-    output = this.process(data);
+  Template.prototype.render = function() {
+    var data, output;
+    data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    output = this.process.apply(this, data);
     return render(output);
   };
 
@@ -400,22 +403,27 @@
     return this;
   };
 
-  T = function(template, data) {
-    var t;
+  T = function() {
+    var data, t, template;
+    template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     t = T.use(template);
-    if (typeof data === 'undefined') {
+    if (data.length === 0) {
       return t;
     } else {
-      return t.process(data);
+      return t.process.apply(t, data);
     }
   };
 
-  T.process = function(template, data) {
-    return new Template(template).process(data);
+  T.process = function() {
+    var data, template, _ref;
+    template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    return (_ref = new Template(template)).process.apply(_ref, data);
   };
 
-  T.render = function(template, data) {
-    return new Template(template).render(data);
+  T.render = function() {
+    var data, template, _ref;
+    template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    return (_ref = new Template(template)).render.apply(_ref, data);
   };
 
   T.include = function(name, data) {

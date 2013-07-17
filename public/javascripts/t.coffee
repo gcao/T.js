@@ -143,11 +143,11 @@ processAttributes = (items) ->
     items.splice 1, 0, attrs unless isEmpty attrs
   items
 
-prepareOutput = (template, data) ->
+prepareOutput = (template, data...) ->
   if typeof template is 'function'
-    prepareOutput(template(data), data)
+    prepareOutput(template(data...), data...)
   else if isTemplate template
-    template.process(data)
+    template.process(data...)
   else if isArray template
     if hasFunction template
       (prepareOutput(item, data) for item in template)
@@ -232,16 +232,16 @@ render = (input) ->
 Template = (@template, @name) ->
   @isTjsTemplate = true
 
-Template.prototype.process = (data) ->
-  output = prepareOutput(@template, data)
+Template.prototype.process = (data...) ->
+  output = prepareOutput(@template, data...)
   output = normalize output
   if isArray(output) and output.length is 0
     return output
 
   processAttributes output
 
-Template.prototype.render = (data) ->
-  output = @process data
+Template.prototype.render = (data...) ->
+  output = @process data...
   render output
 
 Template.prototype.prepare = (@includes) ->
@@ -262,19 +262,19 @@ Template.prototype.prepare = (@includes) ->
 
   this
 
-T = (template, data) ->
+T = (template, data...) ->
   t = T.use(template)
 
-  if typeof data is 'undefined'
+  if data.length is 0
     t
   else
-    t.process(data)
+    t.process(data...)
 
-T.process = (template, data) ->
-  new Template(template).process data
+T.process = (template, data...) ->
+  new Template(template).process data...
 
-T.render  = (template, data) ->
-  new Template(template).render data
+T.render  = (template, data...) ->
+  new Template(template).render data...
 
 T.include = (name, data) ->
   -> T.internal.includes?[name].process(data)

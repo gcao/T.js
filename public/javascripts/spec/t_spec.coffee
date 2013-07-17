@@ -90,8 +90,13 @@ describe "T.process", ->
     ]
     expect(T.process(template)).toEqual(result)
 
+  it "should work with multiple arguments", ->
+    template = (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3]
+    result = ['div', '1', '2', '3']
+    expect(T.process(template, '1', '2', '3')).toEqual(result)
+
   it "can be called with different data", ->
-    template = ['div', (data) -> data ]
+    template = (data) -> ['div', data ]
     expect(T.process(template, 'test')).toEqual(['div', 'test'])
     expect(T.process(template, 'test1')).toEqual(['div', 'test1'])
 
@@ -101,7 +106,12 @@ describe "T.render", ->
     result   = '<div>ab</div>'
     expect(T.render(template)).toEqual(result)
 
-  it "should work", ->
+  it "should work with multiple arguments", ->
+    template = (arg1, arg2) -> ['div', arg1, arg2]
+    result   = '<div>12</div>'
+    expect(T.render(template, '1', '2')).toEqual(result)
+
+  it "should work with an array without parent element", ->
     template = [['div', 'a'], ['div', 'b']]
     result   = '<div>a</div><div>b</div>'
     expect(T.render(template)).toEqual(result)
@@ -155,9 +165,23 @@ describe "T()", ->
     data = name: 'John Doe'
     expect(T('template').process(data)).toEqual(['div', 'John Doe'])
 
+  it "process with multiple arguments should work", ->
+    T.def('template', (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3])
+    result = ['div', '1', '2', '3']
+    expect(T('template').process('1', '2', '3')).toEqual(result)
+
+  it "render with multiple arguments should work", ->
+    T.def('template', (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3])
+    result = '<div>123</div>'
+    expect(T('template').render('1', '2', '3')).toEqual(result)
+
   it "process([]) should work", ->
     T.def('template', [])
     expect(T('template').process()).toEqual([])
+
+  it "T(template, data) should call process with all arguments", ->
+    T.def('template', (arg1, arg2) -> ["div", arg1, arg2])
+    expect(T('template', '1', '2')).toEqual(['div', '1', '2'])
 
   it "T(template, data) should call process", ->
     T.def('template', (data) -> ["div", data.name])

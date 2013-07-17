@@ -194,13 +194,19 @@
       ];
       return expect(T.process(template)).toEqual(result);
     });
+    it("should work with multiple arguments", function() {
+      var result, template;
+      template = function(arg1, arg2, arg3) {
+        return ["div", arg1, arg2, arg3];
+      };
+      result = ['div', '1', '2', '3'];
+      return expect(T.process(template, '1', '2', '3')).toEqual(result);
+    });
     return it("can be called with different data", function() {
       var template;
-      template = [
-        'div', function(data) {
-          return data;
-        }
-      ];
+      template = function(data) {
+        return ['div', data];
+      };
       expect(T.process(template, 'test')).toEqual(['div', 'test']);
       return expect(T.process(template, 'test1')).toEqual(['div', 'test1']);
     });
@@ -213,7 +219,15 @@
       result = '<div>ab</div>';
       return expect(T.render(template)).toEqual(result);
     });
-    it("should work", function() {
+    it("should work with multiple arguments", function() {
+      var result, template;
+      template = function(arg1, arg2) {
+        return ['div', arg1, arg2];
+      };
+      result = '<div>12</div>';
+      return expect(T.render(template, '1', '2')).toEqual(result);
+    });
+    it("should work with an array without parent element", function() {
       var result, template;
       template = [['div', 'a'], ['div', 'b']];
       result = '<div>a</div><div>b</div>';
@@ -298,9 +312,31 @@
       };
       return expect(T('template').process(data)).toEqual(['div', 'John Doe']);
     });
+    it("process with multiple arguments should work", function() {
+      var result;
+      T.def('template', function(arg1, arg2, arg3) {
+        return ["div", arg1, arg2, arg3];
+      });
+      result = ['div', '1', '2', '3'];
+      return expect(T('template').process('1', '2', '3')).toEqual(result);
+    });
+    it("render with multiple arguments should work", function() {
+      var result;
+      T.def('template', function(arg1, arg2, arg3) {
+        return ["div", arg1, arg2, arg3];
+      });
+      result = '<div>123</div>';
+      return expect(T('template').render('1', '2', '3')).toEqual(result);
+    });
     it("process([]) should work", function() {
       T.def('template', []);
       return expect(T('template').process()).toEqual([]);
+    });
+    it("T(template, data) should call process with all arguments", function() {
+      T.def('template', function(arg1, arg2) {
+        return ["div", arg1, arg2];
+      });
+      return expect(T('template', '1', '2')).toEqual(['div', '1', '2']);
     });
     it("T(template, data) should call process", function() {
       var data;
