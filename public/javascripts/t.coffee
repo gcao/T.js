@@ -2,6 +2,7 @@ VERSION = "0.5.0"
 
 isArray    = (o) -> o instanceof Array
 isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
+isTemplate = (o) -> o isnt null and typeof o is "object" and o.isTjsTemplate
 
 isEmpty    = (o) ->
   return true unless o
@@ -242,6 +243,9 @@ Template.prototype.render = (data) ->
   render output
 
 Template.prototype.prepare = (@extras) ->
+  for own key, value of @extras
+    @extras[key] = new Template(value) unless isTemplate value
+
   @process = (data) ->
     try
       oldDefaultParam = T.defaultParam if T.defaultParam
@@ -264,28 +268,32 @@ Template.prototype.prepare = (@extras) ->
 
   this
 
-Template.prototype.prepare2 = (defaultParam, @extras) ->
-  @process = (data) ->
-    try
-      oldDefaultParam = T.defaultParam if T.defaultParam
-      T.defaultParam = defaultParam if defaultParam
+#Template.prototype.prepare2 = (defaultParam, @extras) ->
+#  defaultParam = new Template(defaultParam) unless isTemplate defaultParam
+#  for own key, value of @extras
+#    @extras[key] = new Template(value) unless isTemplate value
 
-      oldExtras = T.extras if T.extras
-      T.extras  = extras if extras
+#  @process = (data) ->
+#    try
+#      oldDefaultParam = T.defaultParam if T.defaultParam
+#      T.defaultParam = defaultParam if defaultParam
 
-      Template.prototype.process.call(this, data)     
-    finally
-      if oldDefaultParam
-        T.defaultParam = oldDefaultParam
-      else
-        delete T.defaultParam
+#      oldExtras = T.extras if T.extras
+#      T.extras  = extras if extras
 
-      if oldExtras
-        T.extras = oldExtras
-      else
-        delete T.extras
+#      Template.prototype.process.call(this, data)     
+#    finally
+#      if oldDefaultParam
+#        T.defaultParam = oldDefaultParam
+#      else
+#        delete T.defaultParam
 
-  this
+#      if oldExtras
+#        T.extras = oldExtras
+#      else
+#        delete T.extras
+
+#  this
 
 T = (template, data) ->
   #template = new Template(template)
@@ -338,8 +346,8 @@ T.render  = (template, data) ->
 T.include = (name, data) ->
   -> T.extras?[name].process(data)
 
-T.include2 = (data) ->
-  -> T.defaultParam?.process(data)
+#T.include2 = (data) ->
+#  -> T.defaultParam?.process(data)
 
 #T.if = (cond, trueValue, falseValue)->
 #  (data) ->
@@ -362,8 +370,8 @@ T.include2 = (data) ->
 T.templates = {}
 
 T.define = T.def = (name, template)->
-  if typeof template == 'undefined'
-    return new Template(name)
+  #if typeof template == 'undefined'
+  #  return new Template(name)
 
   t = new Template(template)
   t.templateName = name

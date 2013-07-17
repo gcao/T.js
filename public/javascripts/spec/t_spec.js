@@ -342,30 +342,24 @@
       T.def('template', function(data) {
         return ['div', T.include('title', data)];
       });
-      partial = T.def(function(data) {
+      partial = function(data) {
         return ['div', data.name];
-      });
+      };
       return expect(T('template').prepare({
         title: partial
       }).process({
         name: 'John Doe'
       })).toEqual(['div', ['div', 'John Doe']]);
     });
-    it("prepare2 should work", function() {
-      T.def('template', ['div', T.include2(), T.include('title')]);
-      return expect(T('template').prepare2(T.def('first'), {
-        title: T.def('Title')
-      }).process()).toEqual(['div', 'first', 'Title']);
-    });
     return it("nested include/prepare should work", function() {
       T.def('template', ['div', T.include('title')]);
       T.def('template2', [
         'div', T('template').prepare({
-          title: T.def('Title')
+          title: 'Title'
         }), T.include('body')
       ]);
       return expect(T('template2').prepare({
-        body: T.def('Body')
+        body: 'Body'
       }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
     });
   });
