@@ -18,24 +18,17 @@ represent html/xml data.
 
 ### ADVANCED FEATURES
 
-* Functions can be used everywhere, they'll be invoked and their results will
-  be used to generate final output, e.g.
-  ```javascript
-  ['div.now', function(){return new Date();}]
-  ```
-
 * render() takes an optional data argument, that argument will then be passed 
   to functions inside the template, e.g.
   ```javascript
-  var template = ['div.total', function(data){return data.total;}];
-  T(template).render({total: 100});
+  T.render(function(data){ return ['div.total', data.total], {total: 100})
   ```
 
 * Support layout, e.g.
   ```javascript
-  var layout = ['div', ['div', 'Title'], T.include('body')]
-  var body   = ['div', 'Content goes here']
-  T(layout).prepare({'body': body}).render()
+  T.def('layout', ['div', ['div', 'Title'], T.include('body')]);
+  var body = ['div', 'Content goes here']
+  T('layout').prepare({'body': body}).render()
   ```
 
 ## USAGE
@@ -47,12 +40,12 @@ represent html/xml data.
 
 * Define template
 ```javascript
-var template = ["a.edit", {"href": "/edit"}, "Edit"]
+T.def('template', ["a.edit", {"href": "/edit"}, "Edit"])
 ```
 
 * Render
 ```javascript
-var result = T(template).render()
+var result = T('template').render()
 ```
 
 * Result is like
@@ -64,7 +57,7 @@ var result = T(template).render()
 
 ### EXAMPLE 1: A simple template that uses data
 ```javascript
-var template = function(account){
+T.def('template', function(account){
   return [
     'div.account', 
     ['div.header', 'Account Info'],
@@ -73,12 +66,12 @@ var template = function(account){
     ['div.label', 'Age'],
     ['div', account.age]
   ];
-};
+});
 var account = {
   name: 'John Doe',
   age: 25
 };
-var result = T(template).render(account);
+var result = T('template').render(account);
 // result is like below (after formatted)
 // <div class="account">
 //   <div class="header">Account Info</div>
