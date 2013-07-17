@@ -459,6 +459,14 @@
     return T.templates[name];
   };
 
+  T.escape = function(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  };
+
+  T.unescape = function(str) {
+    return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
+  };
+
   T.internal = {
     normalize: normalize,
     processFirst: processFirst,

@@ -275,6 +275,18 @@
     });
   });
 
+  describe("T.escape", function() {
+    return it("should work", function() {
+      return expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;');
+    });
+  });
+
+  describe("T.unescape", function() {
+    return it("should work", function() {
+      return expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&');
+    });
+  });
+
   describe("T()", function() {
     it("process should work", function() {
       var data;

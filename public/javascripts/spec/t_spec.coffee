@@ -141,6 +141,14 @@ describe "T.def/use", ->
     ]
     expect(T.use('template').process('value')).toEqual(result)
 
+describe "T.escape", ->
+  it "should work", ->
+    expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;')
+
+describe "T.unescape", ->
+  it "should work", ->
+    expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&')
+
 describe "T()", ->
   it "process should work", ->
     T.def('template', (data) -> ["div", data.name])

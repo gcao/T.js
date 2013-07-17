@@ -303,6 +303,22 @@ T.wrapped = (data) ->
 T.use = (name) ->
   T.templates[name]
 
+T.escape = (str) ->
+  str
+   .replace(/&/g, "&amp;" )
+   .replace(/</g, "&lt;" )
+   .replace(/>/g, "&gt;" )
+   .replace(/"/g, "&quot;")
+   .replace(/'/g, "&#039;")
+
+T.unescape = (str) ->
+  str
+   .replace(/&amp;/g , '&')
+   .replace(/&lt;/g , '<')
+   .replace(/&gt;/g , '>')
+   .replace(/&quot;/g, '"')
+   .replace(/&#039;/g, "'")
+
 T.internal =
   normalize        : normalize
   processFirst     : processFirst
