@@ -230,7 +230,7 @@ render = (input) ->
 
   result
 
-Template = (@template) ->
+Template = (@template, @name) ->
   @isTjsTemplate = true
 
 Template.prototype.process = (data) ->
@@ -242,61 +242,25 @@ Template.prototype.render = (data) ->
   output = @process data
   render output
 
-Template.prototype.prepare = (@extras) ->
-  for own key, value of @extras
-    @extras[key] = new Template(value) unless isTemplate value
+Template.prototype.prepare = (@includes) ->
+  for own key, value of @includes
+    @includes[key] = new Template(value) unless isTemplate value
 
   @process = (data) ->
     try
-      oldDefaultParam = T.defaultParam if T.defaultParam
-      delete T.defaultParam
-
-      oldExtras = T.extras if T.extras
-      T.extras  = extras if extras
+      oldIncludes = T.internal.includes if T.internal.includes
+      T.internal.includes  = includes if includes
 
       Template.prototype.process.call(this, data)     
     finally
-      if oldDefaultParam
-        T.defaultParam = oldDefaultParam
+      if oldIncludes
+        T.internal.includes = oldIncludes
       else
-        delete T.defaultParam
-
-      if oldExtras
-        T.extras = oldExtras
-      else
-        delete T.extras
+        delete T.internal.includes
 
   this
 
-#Template.prototype.prepare2 = (defaultParam, @extras) ->
-#  defaultParam = new Template(defaultParam) unless isTemplate defaultParam
-#  for own key, value of @extras
-#    @extras[key] = new Template(value) unless isTemplate value
-
-#  @process = (data) ->
-#    try
-#      oldDefaultParam = T.defaultParam if T.defaultParam
-#      T.defaultParam = defaultParam if defaultParam
-
-#      oldExtras = T.extras if T.extras
-#      T.extras  = extras if extras
-
-#      Template.prototype.process.call(this, data)     
-#    finally
-#      if oldDefaultParam
-#        T.defaultParam = oldDefaultParam
-#      else
-#        delete T.defaultParam
-
-#      if oldExtras
-#        T.extras = oldExtras
-#      else
-#        delete T.extras
-
-#  this
-
 T = (template, data) ->
-  #template = new Template(template)
   t = T.use(template)
 
   if typeof data is 'undefined'
@@ -310,88 +274,32 @@ T.process = (template, data) ->
 T.render  = (template, data) ->
   new Template(template).render data
 
-#T.get = (name, defaultValue) ->
-#  defaultValue = null if typeof defaultValue is 'undefined'
-
-#  (data) ->
-#    return defaultValue unless data
-
-#    parts = name.split '.'
-#    for part in parts
-#      data = data[part]
-#      if typeof data is 'undefined' or data is null
-#        return defaultValue
-
-#    if typeof data is 'undefined' or data is null
-#      defaultValue
-#    else
-#      data
-
-#T.escape = (str) ->
-#  str
-#   .replace(/&/g, "&amp;" )
-#   .replace(/</g, "&lt;"  )
-#   .replace(/>/g, "&gt;"  )
-#   .replace(/"/g, "&quot;")
-#   .replace(/'/g, "&#039;")
-
-#T.unescape = (str) ->
-#  str
-#   .replace(/&amp;/g , '&')
-#   .replace(/&lt;/g  , '<')
-#   .replace(/&gt;/g  , '>')
-#   .replace(/&quot;/g, '"')
-#   .replace(/&#039;/g, "'")
-
 T.include = (name, data) ->
-  -> T.extras?[name].process(data)
-
-#T.include2 = (data) ->
-#  -> T.defaultParam?.process(data)
-
-#T.if = (cond, trueValue, falseValue)->
-#  (data) ->
-#    if typeof cond is 'function'
-#      cond = cond(data)
-
-#    if (cond) then trueValue else falseValue
-
-#T.unless = (cond, value)->
-#  (data) ->
-#    if typeof cond is 'function'
-#      cond = cond(data)
-
-#    if (!cond) then value
-
-#T.each = (collection, iterator)->
-#  (data) ->
-#    (iterator(item, i, collection.length) for item, i in collection)
+  -> T.internal.includes?[name].process(data)
 
 T.templates = {}
 
 T.define = T.def = (name, template)->
-  #if typeof template == 'undefined'
-  #  return new Template(name)
-
-  t = new Template(template)
-  t.templateName = name
-  T.templates[name] = t
+  T.templates[name] = new Template(template, name)
 
 T.redefine = T.redef = (name, template) ->
   oldTemplate = T.use(name)
-  newTemplate = new Template((data) ->
+  newTemplate = new Template(template)
+  wrapper = (data) ->
     try
-      backup = T.original if T.original
-      T.original = oldTemplate
-      new Template(template).process(data)
+      backup = T.internal.original if T.original
+      T.internal.original = oldTemplate
+      newTemplate.process(data)
     finally
       if backup
-        T.original = backup
+        T.internal.original = backup
       else
-        delete T.original
-  )
-  newTemplate.templateName = name
-  T.templates[name] = newTemplate
+        delete T.internal.original
+
+  T.templates[name] = new Template(wrapper, name)
+
+T.wrapped = (data) ->
+  T.internal.original.process(data)
 
 T.use = (name) ->
   T.templates[name]

@@ -264,7 +264,7 @@
         return ['div', data];
       });
       T.redef('template', function(data) {
-        return ['div.container', T.original.process(data)];
+        return ['div.container', T.wrapped(data)];
       });
       result = [
         "div", {

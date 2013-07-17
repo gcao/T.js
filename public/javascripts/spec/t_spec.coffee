@@ -125,65 +125,6 @@ describe "T.render", ->
     result = '<div id="test" class="first second third"/>'
     expect(T.render(template)).toEqual(result)
 
-#describe "T.get", ->
-#  it "should work", ->
-#    v    = T.get('name')
-#    data = name: 'John Doe'
-#    expect(v(data)).toEqual(data.name)
-
-#  it "should work with nested attribute", ->
-#    v    = T.get('account.name')
-#    data = account: name: 'John Doe'
-#    expect(v(data)).toEqual(data.account.name)
-
-#  it "Should take default value", ->
-#    v = T.get('name', 'Default')
-#    expect(v()).toEqual('Default')
-
-#describe "T.escape", ->
-#  it "should work", ->
-#    expect(T.escape('<>&<>&')).toEqual('&lt;&gt;&amp;&lt;&gt;&amp;')
-
-#describe "T.unescape", ->
-#  it "should work", ->
-#    expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&')
-
-#describe "T.if", ->
-#  it "should work", ->
-#    template = (cond) -> ['div', T.if(cond, 'true')]
-#    result   = ['div', 'true']
-#    expect(T(template).process(true)).toEqual(result)
-
-#  it "should work if condition evals to false", ->
-#    template = (cond) -> ['div', T.if(cond, 'true', 'false')]
-#    result   = ['div', 'false']
-#    expect(T(template).process(false)).toEqual(result)
-
-#  it "condition function should work", ->
-#    template = (data) -> ['div', T.if(((data) -> data.cond), 'true', 'false')]
-#    expect(T(template).process(cond: true)).toEqual(['div', 'true'])
-#    expect(T(template).process(cond: false)).toEqual(['div', 'false'])
-
-#describe "T.unless", ->
-#  it "should work", ->
-#    template = (cond) -> ['div', T.unless(cond, 'value')]
-#    result   = ['div', 'value']
-#    expect(T(template).process(false)).toEqual(result)
-
-#  it "should work if condition evaluates to true", ->
-#    template = (cond) -> ['div', T.unless(cond, 'value')]
-#    result   = ['div', undefined]
-#    expect(T(template).process(true)).toEqual(result)
-
-#describe "T.each", ->
-#  it "should work", ->
-#    template = (data) -> T.each(data, (item, i, count) -> ['div', item, i, count])
-#    result   = [
-#      ['div', 'item1', 0, 2]
-#      ['div', 'item2', 1, 2]
-#    ]
-#    expect(T(template).process(['item1', 'item2'])).toEqual(result)
-
 describe "T.def/use", ->
   it "should work", ->
     T.def('template', (data) -> ['div', data])
@@ -192,7 +133,7 @@ describe "T.def/use", ->
 
   it "redef should work", ->
     T.def('template', (data) -> ['div', data])
-    T.redef('template', (data) -> ['div.container', T.original.process(data)])
+    T.redef('template', (data) -> ['div.container', T.wrapped(data)])
     result   = [
       "div"
       class: 'container'
@@ -240,10 +181,6 @@ describe "T().prepare/T.include", ->
     T.def('template', (data) -> ['div', T.include('title', data)])
     partial = (data) -> ['div', data.name]
     expect(T('template').prepare(title: partial).process(name: 'John Doe')).toEqual(['div', ['div', 'John Doe']])
-
-  #it "prepare2 should work", ->
-  #  T.def('template', ['div', T.include2(), T.include('title')])
-  #  expect(T('template').prepare2('first', title: 'Title').process()).toEqual(['div', 'first', 'Title'])
 
   it "nested include/prepare should work", ->
     T.def('template', ['div', T.include('title')])

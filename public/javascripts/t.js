@@ -346,8 +346,9 @@
     return result;
   };
 
-  Template = function(template) {
+  Template = function(template, name) {
     this.template = template;
+    this.name = name;
     return this.isTjsTemplate = true;
   };
 
@@ -364,41 +365,32 @@
     return render(output);
   };
 
-  Template.prototype.prepare = function(extras) {
+  Template.prototype.prepare = function(includes) {
     var key, value, _ref;
-    this.extras = extras;
-    _ref = this.extras;
+    this.includes = includes;
+    _ref = this.includes;
     for (key in _ref) {
       if (!__hasProp.call(_ref, key)) continue;
       value = _ref[key];
       if (!isTemplate(value)) {
-        this.extras[key] = new Template(value);
+        this.includes[key] = new Template(value);
       }
     }
     this.process = function(data) {
-      var oldDefaultParam, oldExtras;
+      var oldIncludes;
       try {
-        if (T.defaultParam) {
-          oldDefaultParam = T.defaultParam;
+        if (T.internal.includes) {
+          oldIncludes = T.internal.includes;
         }
-        delete T.defaultParam;
-        if (T.extras) {
-          oldExtras = T.extras;
-        }
-        if (extras) {
-          T.extras = extras;
+        if (includes) {
+          T.internal.includes = includes;
         }
         return Template.prototype.process.call(this, data);
       } finally {
-        if (oldDefaultParam) {
-          T.defaultParam = oldDefaultParam;
+        if (oldIncludes) {
+          T.internal.includes = oldIncludes;
         } else {
-          delete T.defaultParam;
-        }
-        if (oldExtras) {
-          T.extras = oldExtras;
-        } else {
-          delete T.extras;
+          delete T.internal.includes;
         }
       }
     };
@@ -426,40 +418,41 @@
   T.include = function(name, data) {
     return function() {
       var _ref;
-      return (_ref = T.extras) != null ? _ref[name].process(data) : void 0;
+      return (_ref = T.internal.includes) != null ? _ref[name].process(data) : void 0;
     };
   };
 
   T.templates = {};
 
   T.define = T.def = function(name, template) {
-    var t;
-    t = new Template(template);
-    t.templateName = name;
-    return T.templates[name] = t;
+    return T.templates[name] = new Template(template, name);
   };
 
   T.redefine = T.redef = function(name, template) {
-    var newTemplate, oldTemplate;
+    var newTemplate, oldTemplate, wrapper;
     oldTemplate = T.use(name);
-    newTemplate = new Template(function(data) {
+    newTemplate = new Template(template);
+    wrapper = function(data) {
       var backup;
       try {
         if (T.original) {
-          backup = T.original;
+          backup = T.internal.original;
         }
-        T.original = oldTemplate;
-        return new Template(template).process(data);
+        T.internal.original = oldTemplate;
+        return newTemplate.process(data);
       } finally {
         if (backup) {
-          T.original = backup;
+          T.internal.original = backup;
         } else {
-          delete T.original;
+          delete T.internal.original;
         }
       }
-    });
-    newTemplate.templateName = name;
-    return T.templates[name] = newTemplate;
+    };
+    return T.templates[name] = new Template(wrapper, name);
+  };
+
+  T.wrapped = function(data) {
+    return T.internal.original.process(data);
   };
 
   T.use = function(name) {
