@@ -231,6 +231,15 @@ describe "T().prepare/T.include", ->
     result = ['div', ['div', 'Title'], 'Body']
     expect(T('template2').prepare(body: 'Body').process()).toEqual(result)
 
+describe "Clone T to avoid template conflicting", ->
+  it "should work", ->
+    T1 = T.create()
+    T2 = T.create()
+    T1.def('template', 'T1')
+    T2.def('template', 'T2')
+    expect(T1('template').process()).toEqual('T1')
+    expect(T2('template').process()).toEqual('T2')
+
 describe "T.noConflict", ->
   it "should work", ->
     T1 = T.noConflict()

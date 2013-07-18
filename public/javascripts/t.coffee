@@ -263,74 +263,82 @@ Template.prototype.prepare = (includes) ->
 
   t
 
-T = (template, data...) ->
-  t = T.use(template)
+create = ->
+  newT = (template, data...) ->
+    t = newT.use(template)
 
-  if data.length is 0
-    t
-  else
-    t.process(data...)
+    if data.length is 0
+      t
+    else
+      t.process(data...)
 
-T.process = (template, data...) ->
-  new Template(template).process data...
+  initT(newT)
+  newT
 
-T.render  = (template, data...) ->
-  new Template(template).render data...
+initT = (T) ->
+  T.templates = {}
+  T.internal = {}
 
-T.include = (name, data...) ->
-  T.internal.includes?[name].process(data...)
+  T.process = (template, data...) ->
+    new Template(template).process data...
 
-T.templates = {}
+  T.render  = (template, data...) ->
+    new Template(template).render data...
 
-T.define = T.def = (name, template)->
-  T.templates[name] = new Template(template, name)
+  T.include = (name, data...) ->
+    T.internal.includes?[name].process(data...)
 
-T.redefine = T.redef = (name, template) ->
-  oldTemplate = T.use(name)
-  newTemplate = new Template(template)
-  wrapper = (data...) ->
-    try
-      backup = T.internal.original if T.original
-      T.internal.original = oldTemplate
-      newTemplate.process(data...)
-    finally
-      if backup
-        T.internal.original = backup
-      else
-        delete T.internal.original
+  T.define = T.def = (name, template)->
+    T.templates[name] = new Template(template, name)
 
-  T.templates[name] = new Template(wrapper, name)
+  T.redefine = T.redef = (name, template) ->
+    oldTemplate = T.use(name)
+    newTemplate = new Template(template)
+    wrapper = (data...) ->
+      try
+        backup = T.internal.original if T.original
+        T.internal.original = oldTemplate
+        newTemplate.process(data...)
+      finally
+        if backup
+          T.internal.original = backup
+        else
+          delete T.internal.original
 
-T.wrapped = (data...) ->
-  T.internal.original.process(data...)
+    T.templates[name] = new Template(wrapper, name)
 
-T.use = (name) ->
-  T.templates[name]
+  T.wrapped = (data...) ->
+    T.internal.original.process(data...)
 
-T.escape = (str) ->
-  str
-   .replace(/&/g, "&amp;" )
-   .replace(/</g, "&lt;" )
-   .replace(/>/g, "&gt;" )
-   .replace(/"/g, "&quot;")
-   .replace(/'/g, "&#039;")
+  T.use = (name) ->
+    T.templates[name]
 
-T.unescape = (str) ->
-  str
-   .replace(/&amp;/g , '&')
-   .replace(/&lt;/g , '<')
-   .replace(/&gt;/g , '>')
-   .replace(/&quot;/g, '"')
-   .replace(/&#039;/g, "'")
+  T.escape = (str) ->
+    str
+     .replace(/&/g, "&amp;" )
+     .replace(/</g, "&lt;" )
+     .replace(/>/g, "&gt;" )
+     .replace(/"/g, "&quot;")
+     .replace(/'/g, "&#039;")
 
-T.internal =
-  normalize        : normalize
-  processFirst     : processFirst
-  parseStyles      : parseStyles
-  processStyles    : processStyles
-  processAttributes: processAttributes
-  render           : render
-  thisRef          : this
+  T.unescape = (str) ->
+    str
+     .replace(/&amp;/g , '&')
+     .replace(/&lt;/g  , '<')
+     .replace(/&gt;/g  , '>')
+     .replace(/&quot;/g, '"')
+     .replace(/&#039;/g, "'")
+
+T = create()
+T.create = create
+
+T.internal.normalize         = normalize
+T.internal.processFirst      = processFirst
+T.internal.parseStyles       = parseStyles
+T.internal.processStyles     = processStyles
+T.internal.processAttributes = processAttributes
+T.internal.render            = render
+T.internal.thisRef           = this
 
 T.VERSION = VERSION
 
