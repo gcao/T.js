@@ -22,6 +22,22 @@ hasFunction = (o) ->
     for own key, value of o
       return true if hasFunction value
 
+escape = (str) ->
+  str
+   .replace(/&/g, "&amp;" )
+   .replace(/</g, "&lt;" )
+   .replace(/>/g, "&gt;" )
+   .replace(/"/g, "&quot;")
+   .replace(/'/g, "&#039;")
+
+unescape = (str) ->
+  str
+   .replace(/&amp;/g , '&')
+   .replace(/&lt;/g  , '<')
+   .replace(/&gt;/g  , '>')
+   .replace(/&quot;/g, '"')
+   .replace(/&#039;/g, "'")
+
 merge      = (o1, o2) ->
   return o1 unless o2
   return o2 unless o1
@@ -148,19 +164,6 @@ prepareOutput = (template, data...) ->
     prepareOutput(template(data...), data...)
   else if isTemplate template
     template.process(data...)
-  #else if isArray template
-  #  if hasFunction template
-  #    (prepareOutput(item, data...) for item in template)
-  #  else
-  #    template
-  #else if isObject template
-  #  if hasFunction template
-  #    output = {}
-  #    for own key, value of template
-  #      output[key] = prepareOutput(value, data...)
-  #    output
-  #  else
-  #    template
   else
     template
 
@@ -230,22 +233,21 @@ render = (input) ->
   result
 
 create = ->
-  newT = (template, data...) ->
-    t = newT.use(template)
+  newT = (name, data...) ->
+    template = newT.use(name)
 
     if data.length is 0
-      t
+      template
     else
-      t.process(data...)
+      template.process(data...)
 
   init(newT)
   newT
 
 init = (T) ->
+  T.create    = create
   T.templates = {}
   T.internal  = {}
-
-  T.create  = create
 
   Template = (@template, @name) ->
     @isTjsTemplate = true
@@ -318,27 +320,11 @@ init = (T) ->
   T.escape   = escape
   T.unescape = unescape
 
-  T.VERSION = VERSION
-
-escape = (str) ->
-  str
-   .replace(/&/g, "&amp;" )
-   .replace(/</g, "&lt;" )
-   .replace(/>/g, "&gt;" )
-   .replace(/"/g, "&quot;")
-   .replace(/'/g, "&#039;")
-
-unescape = (str) ->
-  str
-   .replace(/&amp;/g , '&')
-   .replace(/&lt;/g  , '<')
-   .replace(/&gt;/g  , '>')
-   .replace(/&quot;/g, '"')
-   .replace(/&#039;/g, "'")
+  T.VERSION  = VERSION
 
 T = create()
 
-# Internal functions added for testing
+# Internal functions added for testing purpose
 T.internal.normalize         = normalize
 T.internal.processFirst      = processFirst
 T.internal.parseStyles       = parseStyles

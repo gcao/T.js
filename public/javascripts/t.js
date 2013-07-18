@@ -56,6 +56,14 @@
     }
   };
 
+  escape = function(str) {
+    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  };
+
+  unescape = function(str) {
+    return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
+  };
+
   merge = function(o1, o2) {
     var key, value;
     if (!o2) {
@@ -327,13 +335,13 @@
   create = function() {
     var newT;
     newT = function() {
-      var data, t, template;
-      template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      t = newT.use(template);
+      var data, name, template;
+      name = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      template = newT.use(name);
       if (data.length === 0) {
-        return t;
+        return template;
       } else {
-        return t.process.apply(t, data);
+        return template.process.apply(template, data);
       }
     };
     init(newT);
@@ -342,9 +350,9 @@
 
   init = function(T) {
     var Template;
+    T.create = create;
     T.templates = {};
     T.internal = {};
-    T.create = create;
     Template = function(template, name) {
       this.template = template;
       this.name = name;
@@ -449,14 +457,6 @@
     T.escape = escape;
     T.unescape = unescape;
     return T.VERSION = VERSION;
-  };
-
-  escape = function(str) {
-    return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
-  };
-
-  unescape = function(str) {
-    return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
   };
 
   T = create();
