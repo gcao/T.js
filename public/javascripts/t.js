@@ -212,35 +212,12 @@
   };
 
   prepareOutput = function() {
-    var data, item, key, output, template, value, _i, _len, _results;
+    var data, template;
     template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
     if (typeof template === 'function') {
       return prepareOutput.apply(null, [template.apply(null, data)].concat(__slice.call(data)));
     } else if (isTemplate(template)) {
       return template.process.apply(template, data);
-    } else if (isArray(template)) {
-      if (hasFunction(template)) {
-        _results = [];
-        for (_i = 0, _len = template.length; _i < _len; _i++) {
-          item = template[_i];
-          _results.push(prepareOutput(item, data));
-        }
-        return _results;
-      } else {
-        return template;
-      }
-    } else if (isObject(template)) {
-      if (hasFunction(template)) {
-        output = {};
-        for (key in template) {
-          if (!__hasProp.call(template, key)) continue;
-          value = template[key];
-          output[key] = prepareOutput(value, data);
-        }
-        return output;
-      } else {
-        return template;
-      }
     } else {
       return template;
     }
@@ -372,18 +349,18 @@
   };
 
   Template.prototype.prepare = function(includes) {
-    var key, value, _ref;
-    this.includes = includes;
-    _ref = this.includes;
-    for (key in _ref) {
-      if (!__hasProp.call(_ref, key)) continue;
-      value = _ref[key];
+    var key, t, value;
+    for (key in includes) {
+      if (!__hasProp.call(includes, key)) continue;
+      value = includes[key];
       if (!isTemplate(value)) {
-        this.includes[key] = new Template(value);
+        includes[key] = new Template(value);
       }
     }
-    this.process = function(data) {
-      var oldIncludes;
+    t = new Template(this.template, this.name);
+    t.process = function() {
+      var data, oldIncludes, _ref;
+      data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       try {
         if (T.internal.includes) {
           oldIncludes = T.internal.includes;
@@ -391,7 +368,7 @@
         if (includes) {
           T.internal.includes = includes;
         }
-        return Template.prototype.process.call(this, data);
+        return (_ref = Template.prototype.process).call.apply(_ref, [this].concat(__slice.call(data)));
       } finally {
         if (oldIncludes) {
           T.internal.includes = oldIncludes;
@@ -400,7 +377,7 @@
         }
       }
     };
-    return this;
+    return t;
   };
 
   T = function() {
@@ -426,11 +403,10 @@
     return (_ref = new Template(template)).render.apply(_ref, data);
   };
 
-  T.include = function(name, data) {
-    return function() {
-      var _ref;
-      return (_ref = T.internal.includes) != null ? _ref[name].process(data) : void 0;
-    };
+  T.include = function() {
+    var data, name, _ref, _ref1;
+    name = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    return (_ref = T.internal.includes) != null ? (_ref1 = _ref[name]).process.apply(_ref1, data) : void 0;
   };
 
   T.templates = {};
@@ -443,14 +419,15 @@
     var newTemplate, oldTemplate, wrapper;
     oldTemplate = T.use(name);
     newTemplate = new Template(template);
-    wrapper = function(data) {
-      var backup;
+    wrapper = function() {
+      var backup, data;
+      data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       try {
         if (T.original) {
           backup = T.internal.original;
         }
         T.internal.original = oldTemplate;
-        return newTemplate.process(data);
+        return newTemplate.process.apply(newTemplate, data);
       } finally {
         if (backup) {
           T.internal.original = backup;
@@ -462,8 +439,10 @@
     return T.templates[name] = new Template(wrapper, name);
   };
 
-  T.wrapped = function(data) {
-    return T.internal.original.process(data);
+  T.wrapped = function() {
+    var data, _ref;
+    data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+    return (_ref = T.internal.original).process.apply(_ref, data);
   };
 
   T.use = function(name) {

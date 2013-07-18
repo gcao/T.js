@@ -403,16 +403,36 @@
         name: 'John Doe'
       })).toEqual(['div', ['div', 'John Doe']]);
     });
+    it("layout can be reused", function() {
+      var template1, template2;
+      T.def('layout', function() {
+        return ['div', T.include('body')];
+      });
+      template1 = T('layout').prepare({
+        body: 'Body1'
+      });
+      template2 = T('layout').prepare({
+        body: 'Body2'
+      });
+      expect(template1.process()).toEqual(['div', 'Body1']);
+      return expect(template2.process()).toEqual(['div', 'Body2']);
+    });
     return it("nested include/prepare should work", function() {
-      T.def('template', ['div', T.include('title')]);
-      T.def('template2', [
-        'div', T('template').prepare({
-          title: 'Title'
-        }), T.include('body')
-      ]);
+      var result;
+      T.def('template', function() {
+        return ['div', T.include('title')];
+      });
+      T.def('template2', function() {
+        return [
+          'div', T('template').prepare({
+            title: 'Title'
+          }).process(), T.include('body')
+        ];
+      });
+      result = ['div', ['div', 'Title'], 'Body'];
       return expect(T('template2').prepare({
         body: 'Body'
-      }).process()).toEqual(['div', ['div', 'Title'], 'Body']);
+      }).process()).toEqual(result);
     });
   });
 

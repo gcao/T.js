@@ -218,10 +218,18 @@ describe "T().prepare/T.include", ->
     partial = (data) -> ['div', data.name]
     expect(T('template').prepare(title: partial).process(name: 'John Doe')).toEqual(['div', ['div', 'John Doe']])
 
+  it "layout can be reused", ->
+    T.def('layout', -> ['div', T.include('body')])
+    template1 = T('layout').prepare(body: 'Body1')
+    template2 = T('layout').prepare(body: 'Body2')
+    expect(template1.process()).toEqual(['div', 'Body1'])
+    expect(template2.process()).toEqual(['div', 'Body2'])
+
   it "nested include/prepare should work", ->
-    T.def('template', ['div', T.include('title')])
-    T.def('template2', ['div', T('template').prepare(title: 'Title'), T.include('body')])
-    expect(T('template2').prepare(body: 'Body').process()).toEqual(['div', ['div', 'Title'], 'Body'])
+    T.def('template' , -> ['div', T.include('title')])
+    T.def('template2', -> ['div', T('template').prepare(title: 'Title').process(), T.include('body')])
+    result = ['div', ['div', 'Title'], 'Body']
+    expect(T('template2').prepare(body: 'Body').process()).toEqual(result)
 
 describe "T.noConflict", ->
   it "should work", ->

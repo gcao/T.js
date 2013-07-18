@@ -148,19 +148,19 @@ prepareOutput = (template, data...) ->
     prepareOutput(template(data...), data...)
   else if isTemplate template
     template.process(data...)
-  else if isArray template
-    if hasFunction template
-      (prepareOutput(item, data) for item in template)
-    else
-      template
-  else if isObject template
-    if hasFunction template
-      output = {}
-      for own key, value of template
-        output[key] = prepareOutput(value, data)
-      output
-    else
-      template
+  #else if isArray template
+  #  if hasFunction template
+  #    (prepareOutput(item, data...) for item in template)
+  #  else
+  #    template
+  #else if isObject template
+  #  if hasFunction template
+  #    output = {}
+  #    for own key, value of template
+  #      output[key] = prepareOutput(value, data...)
+  #    output
+  #  else
+  #    template
   else
     template
 
@@ -244,23 +244,24 @@ Template.prototype.render = (data...) ->
   output = @process data...
   render output
 
-Template.prototype.prepare = (@includes) ->
-  for own key, value of @includes
-    @includes[key] = new Template(value) unless isTemplate value
+Template.prototype.prepare = (includes) ->
+  for own key, value of includes
+    includes[key] = new Template(value) unless isTemplate value
 
-  @process = (data) ->
+  t = new Template(@template, @name)
+  t.process = (data...) ->
     try
       oldIncludes = T.internal.includes if T.internal.includes
-      T.internal.includes  = includes if includes
+      T.internal.includes = includes if includes
 
-      Template.prototype.process.call(this, data)     
+      Template.prototype.process.call(this, data...) 
     finally
       if oldIncludes
         T.internal.includes = oldIncludes
       else
         delete T.internal.includes
 
-  this
+  t
 
 T = (template, data...) ->
   t = T.use(template)
@@ -276,8 +277,8 @@ T.process = (template, data...) ->
 T.render  = (template, data...) ->
   new Template(template).render data...
 
-T.include = (name, data) ->
-  -> T.internal.includes?[name].process(data)
+T.include = (name, data...) ->
+  T.internal.includes?[name].process(data...)
 
 T.templates = {}
 
@@ -287,11 +288,11 @@ T.define = T.def = (name, template)->
 T.redefine = T.redef = (name, template) ->
   oldTemplate = T.use(name)
   newTemplate = new Template(template)
-  wrapper = (data) ->
+  wrapper = (data...) ->
     try
       backup = T.internal.original if T.original
       T.internal.original = oldTemplate
-      newTemplate.process(data)
+      newTemplate.process(data...)
     finally
       if backup
         T.internal.original = backup
@@ -300,8 +301,8 @@ T.redefine = T.redef = (name, template) ->
 
   T.templates[name] = new Template(wrapper, name)
 
-T.wrapped = (data) ->
-  T.internal.original.process(data)
+T.wrapped = (data...) ->
+  T.internal.original.process(data...)
 
 T.use = (name) ->
   T.templates[name]
