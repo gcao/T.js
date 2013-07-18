@@ -135,6 +135,8 @@ processCssClasses = (attrs, newAttrs) ->
 # Combine attributes into one hash and move to second position of array
 processAttributes = (items) ->
   if isArray items
+    return items if items.length is 0
+
     attrs = {}
     items = processFirst items
     for item in items
@@ -255,9 +257,6 @@ init = (T) ->
   Template.prototype.process = (data...) ->
     output = prepareOutput(@template, data...)
     output = normalize output
-    if isArray(output) and output.length is 0
-      return output
-
     processAttributes output
 
   Template.prototype.render = (data...) ->

@@ -56,6 +56,11 @@ describe "T.internal.processStyles", ->
     expect(T.internal.processStyles(input)).toEqual(result)
 
 describe "T.internal.processAttributes", ->
+  it "should return empty array as is", ->
+    input  = []
+    result = []
+    expect(T.internal.processAttributes(input)).toEqual(result)
+
   it "should merge attributes", ->
     input  = ['div', {a: 1}, {a: 11, b: 2}]
     result = ['div', {a: 11, b: 2}]
@@ -174,10 +179,6 @@ describe "T()", ->
     T.def('template', (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3])
     result = '<div>123</div>'
     expect(T('template').render('1', '2', '3')).toEqual(result)
-
-  it "process([]) should work", ->
-    T.def('template', [])
-    expect(T('template').process()).toEqual([])
 
   it "T(template, data) should call process with all arguments", ->
     T.def('template', (arg1, arg2) -> ["div", arg1, arg2])

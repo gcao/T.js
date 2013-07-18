@@ -104,6 +104,12 @@
   });
 
   describe("T.internal.processAttributes", function() {
+    it("should return empty array as is", function() {
+      var input, result;
+      input = [];
+      result = [];
+      return expect(T.internal.processAttributes(input)).toEqual(result);
+    });
     it("should merge attributes", function() {
       var input, result;
       input = [
@@ -327,10 +333,6 @@
       });
       result = '<div>123</div>';
       return expect(T('template').render('1', '2', '3')).toEqual(result);
-    });
-    it("process([]) should work", function() {
-      T.def('template', []);
-      return expect(T('template').process()).toEqual([]);
     });
     it("T(template, data) should call process with all arguments", function() {
       T.def('template', function(arg1, arg2) {

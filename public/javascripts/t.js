@@ -189,6 +189,9 @@
   processAttributes = function(items) {
     var attrs, i, item, newStyles, styles, _i, _j, _len, _ref;
     if (isArray(items)) {
+      if (items.length === 0) {
+        return items;
+      }
       attrs = {};
       items = processFirst(items);
       for (_i = 0, _len = items.length; _i < _len; _i++) {
@@ -363,9 +366,6 @@
       data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       output = prepareOutput.apply(null, [this.template].concat(__slice.call(data)));
       output = normalize(output);
-      if (isArray(output) && output.length === 0) {
-        return output;
-      }
       return processAttributes(output);
     };
     Template.prototype.render = function() {
