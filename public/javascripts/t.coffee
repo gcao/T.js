@@ -272,12 +272,14 @@ create = ->
     else
       t.process(data...)
 
-  initT(newT)
+  init(newT)
   newT
 
-initT = (T) ->
+init = (T) ->
   T.templates = {}
-  T.internal = {}
+  T.internal  = {}
+
+  T.create  = create
 
   T.process = (template, data...) ->
     new Template(template).process data...
@@ -313,41 +315,44 @@ initT = (T) ->
   T.use = (name) ->
     T.templates[name]
 
-  T.escape = (str) ->
-    str
-     .replace(/&/g, "&amp;" )
-     .replace(/</g, "&lt;" )
-     .replace(/>/g, "&gt;" )
-     .replace(/"/g, "&quot;")
-     .replace(/'/g, "&#039;")
+  T.escape   = escape
+  T.unescape = unescape
 
-  T.unescape = (str) ->
-    str
-     .replace(/&amp;/g , '&')
-     .replace(/&lt;/g  , '<')
-     .replace(/&gt;/g  , '>')
-     .replace(/&quot;/g, '"')
-     .replace(/&#039;/g, "'")
+  T.VERSION = VERSION
+
+escape = (str) ->
+  str
+   .replace(/&/g, "&amp;" )
+   .replace(/</g, "&lt;" )
+   .replace(/>/g, "&gt;" )
+   .replace(/"/g, "&quot;")
+   .replace(/'/g, "&#039;")
+
+unescape = (str) ->
+  str
+   .replace(/&amp;/g , '&')
+   .replace(/&lt;/g  , '<')
+   .replace(/&gt;/g  , '>')
+   .replace(/&quot;/g, '"')
+   .replace(/&#039;/g, "'")
 
 T = create()
-T.create = create
 
+# Internal functions added for testing
 T.internal.normalize         = normalize
 T.internal.processFirst      = processFirst
 T.internal.parseStyles       = parseStyles
 T.internal.processStyles     = processStyles
 T.internal.processAttributes = processAttributes
 T.internal.render            = render
+
+# noConflict support
 T.internal.thisRef           = this
-
-T.VERSION = VERSION
-
 T.noConflict = ->
   if T.oldT 
     T.internal.thisRef.T = T.oldT
   else
     delete T.internal.thisRef.T
-
   T
 
 if this.T then T.oldT = this.T
