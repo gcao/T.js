@@ -437,7 +437,7 @@
   });
 
   describe("Clone T to avoid template conflicting", function() {
-    return it("should work", function() {
+    it("should work", function() {
       var T1, T2;
       T1 = T.create();
       T2 = T.create();
@@ -445,6 +445,23 @@
       T2.def('template', 'T2');
       expect(T1('template').process()).toEqual('T1');
       return expect(T2('template').process()).toEqual('T2');
+    });
+    return it("should work with complex templates", function() {
+      var T1, T2;
+      T1 = T.create();
+      T2 = T.create();
+      T1.def('template', function(data) {
+        return ['div', T1.include('body', data)];
+      });
+      T2.def('template', function(arg1, arg2) {
+        return ['div', arg1, arg2];
+      });
+      expect(T1('template').prepare({
+        body: function(data) {
+          return ['div', data];
+        }
+      }).process('John Doe')).toEqual(['div', ['div', 'John Doe']]);
+      return expect(T2('template').process('1', '2')).toEqual(['div', '1', '2']);
     });
   });
 

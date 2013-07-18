@@ -229,40 +229,6 @@ render = (input) ->
 
   result
 
-Template = (@template, @name) ->
-  @isTjsTemplate = true
-
-Template.prototype.process = (data...) ->
-  output = prepareOutput(@template, data...)
-  output = normalize output
-  if isArray(output) and output.length is 0
-    return output
-
-  processAttributes output
-
-Template.prototype.render = (data...) ->
-  output = @process data...
-  render output
-
-Template.prototype.prepare = (includes) ->
-  for own key, value of includes
-    includes[key] = new Template(value) unless isTemplate value
-
-  t = new Template(@template, @name)
-  t.process = (data...) ->
-    try
-      oldIncludes = T.internal.includes if T.internal.includes
-      T.internal.includes = includes if includes
-
-      Template.prototype.process.call(this, data...) 
-    finally
-      if oldIncludes
-        T.internal.includes = oldIncludes
-      else
-        delete T.internal.includes
-
-  t
-
 create = ->
   newT = (template, data...) ->
     t = newT.use(template)
@@ -280,6 +246,40 @@ init = (T) ->
   T.internal  = {}
 
   T.create  = create
+
+  Template = (@template, @name) ->
+    @isTjsTemplate = true
+
+  Template.prototype.process = (data...) ->
+    output = prepareOutput(@template, data...)
+    output = normalize output
+    if isArray(output) and output.length is 0
+      return output
+
+    processAttributes output
+
+  Template.prototype.render = (data...) ->
+    output = @process data...
+    render output
+
+  Template.prototype.prepare = (includes) ->
+    for own key, value of includes
+      includes[key] = new Template(value) unless isTemplate value
+
+    template = new Template(@template, @name)
+    template.process = (data...) ->
+      try
+        oldIncludes = T.internal.includes if T.internal.includes
+        T.internal.includes = includes if includes
+
+        Template.prototype.process.call(this, data...) 
+      finally
+        if oldIncludes
+          T.internal.includes = oldIncludes
+        else
+          delete T.internal.includes
+
+    template
 
   T.process = (template, data...) ->
     new Template(template).process data...

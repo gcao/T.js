@@ -240,6 +240,14 @@ describe "Clone T to avoid template conflicting", ->
     expect(T1('template').process()).toEqual('T1')
     expect(T2('template').process()).toEqual('T2')
 
+  it "should work with complex templates", ->
+    T1 = T.create()
+    T2 = T.create()
+    T1.def('template', (data) -> ['div', T1.include('body', data)])
+    T2.def('template', (arg1, arg2) -> ['div', arg1, arg2])
+    expect(T1('template').prepare(body: (data) -> ['div', data]).process('John Doe')).toEqual(['div', ['div', 'John Doe']])
+    expect(T2('template').process('1', '2')).toEqual(['div', '1', '2'])
+
 describe "T.noConflict", ->
   it "should work", ->
     T1 = T.noConflict()
