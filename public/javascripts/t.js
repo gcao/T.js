@@ -109,7 +109,7 @@
       return rest[0];
     }
     if (matches = first.match(FIRST_FIELD_PATTERN)) {
-      tag = matches[1];
+      tag = matches[1] || 'div';
       id = matches[3];
       classes = matches[5];
       if (id || classes) {

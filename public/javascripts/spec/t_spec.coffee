@@ -12,6 +12,11 @@ describe "T.internal.processFirst", ->
     result = ['div', {id: 'this'}, 'text']
     expect(T.internal.processFirst(input)).toEqual(result)
 
+  it "should parse #this", ->
+    input  = ['#this', 'text']
+    result = ['div', {id: 'this'}, 'text']
+    expect(T.internal.processFirst(input)).toEqual(result)
+
   it "should parse 'div#this div.child'", ->
     input  = ['div#this div.child', 'text']
     result = ['div', {id: 'this'}, ['div', {class: 'child'}, 'text']]

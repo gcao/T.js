@@ -26,6 +26,16 @@
       ];
       return expect(T.internal.processFirst(input)).toEqual(result);
     });
+    it("should parse #this", function() {
+      var input, result;
+      input = ['#this', 'text'];
+      result = [
+        'div', {
+          id: 'this'
+        }, 'text'
+      ];
+      return expect(T.internal.processFirst(input)).toEqual(result);
+    });
     it("should parse 'div#this div.child'", function() {
       var input, result;
       input = ['div#this div.child', 'text'];
