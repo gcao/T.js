@@ -80,7 +80,7 @@ processFirst = (items) ->
     if id or classes
       attrs = {}
       attrs.id    = id if id
-      attrs.class = classes.replace('.', ' ') if classes
+      attrs.class = classes.replace(/\./g, ' ') if classes
       items.splice 0, 1, tag, attrs
 
   items

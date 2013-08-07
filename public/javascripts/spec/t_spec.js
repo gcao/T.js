@@ -5,13 +5,13 @@
   THIS = this;
 
   describe("T.internal.processFirst", function() {
-    it("should parse div#this.class1.class2", function() {
+    it("should parse div#this.class1.class2.class3", function() {
       var input, result;
-      input = ['div#this.class1.class2', 'text'];
+      input = ['div#this.class1.class2.class3', 'text'];
       result = [
         'div', {
           id: 'this',
-          'class': 'class1 class2'
+          'class': 'class1 class2 class3'
         }, 'text'
       ];
       return expect(T.internal.processFirst(input)).toEqual(result);

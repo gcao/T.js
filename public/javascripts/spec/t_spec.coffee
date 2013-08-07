@@ -2,9 +2,9 @@
 THIS = this
 
 describe "T.internal.processFirst", ->
-  it "should parse div#this.class1.class2", ->
-    input  = ['div#this.class1.class2', 'text']
-    result = ['div', {id: 'this', 'class': 'class1 class2'}, 'text']
+  it "should parse div#this.class1.class2.class3", ->
+    input  = ['div#this.class1.class2.class3', 'text']
+    result = ['div', {id: 'this', 'class': 'class1 class2 class3'}, 'text']
     expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should parse div#this", ->

@@ -118,7 +118,7 @@
           attrs.id = id;
         }
         if (classes) {
-          attrs["class"] = classes.replace('.', ' ');
+          attrs["class"] = classes.replace(/\./g, ' ');
         }
         items.splice(0, 1, tag, attrs);
       }

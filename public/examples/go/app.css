@@ -226,7 +226,7 @@ a.gvreset {
   top: 82px;
   width: 22px;
   height: 361px;
-  background-image: url(/jsgameviewer/view/images/19/vlabel.gif); }
+  background-image: url(images/19/vlabel.gif); }
 
 .gvboardhlabel {
   position: absolute;
@@ -234,7 +234,7 @@ a.gvreset {
   top: 518px;
   width: 361px;
   height: 17px;
-  background-image: url(/jsgameviewer/view/images/19/hlabel.gif); }
+  background-image: url(images/19/hlabel.gif); }
 
 .gvboard-overlay {
   position: absolute;
@@ -474,224 +474,224 @@ a.gvreset {
 .gvsprite-15-black {
   width: 15px;
   height: 15px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -5px; }
+  background: url(images/sprites.gif) 0 -5px; }
 
 .gvsprite-15-black_dead {
   width: 15px;
   height: 15px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -30px; }
+  background: url(images/sprites.gif) 0 -30px; }
 
 .gvsprite-15-white {
   width: 15px;
   height: 15px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -55px; }
+  background: url(images/sprites.gif) 0 -55px; }
 
 .gvsprite-15-white_dead {
   width: 15px;
   height: 15px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -80px; }
+  background: url(images/sprites.gif) 0 -80px; }
 
 .gvsprite-19-black {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -105px; }
+  background: url(images/sprites.gif) 0 -105px; }
 
 .gvsprite-19-black_dead {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -134px; }
+  background: url(images/sprites.gif) 0 -134px; }
 
 .gvsprite-19-blankboarddq {
   width: 475px;
   height: 475px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -163px; }
+  background: url(images/sprites.gif) 0 -163px; }
 
 .gvsprite-19-boarddq {
   width: 513px;
   height: 513px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -648px; }
+  background: url(images/sprites.gif) 0 -648px; }
 
 .gvsprite-19-hlabel {
   width: 722px;
   height: 17px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1171px; }
+  background: url(images/sprites.gif) 0 -1171px; }
 
 .gvsprite-19-markblack {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1198px; }
+  background: url(images/sprites.gif) 0 -1198px; }
 
 .gvsprite-19-markcircle {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1227px; }
+  background: url(images/sprites.gif) 0 -1227px; }
 
 .gvsprite-19-markcross {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1256px; }
+  background: url(images/sprites.gif) 0 -1256px; }
 
 .gvsprite-19-markmove {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1285px; }
+  background: url(images/sprites.gif) 0 -1285px; }
 
 .gvsprite-19-marksquare {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1314px; }
+  background: url(images/sprites.gif) 0 -1314px; }
 
 .gvsprite-19-marktriangle {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1343px; }
+  background: url(images/sprites.gif) 0 -1343px; }
 
 .gvsprite-19-markwhite {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1372px; }
+  background: url(images/sprites.gif) 0 -1372px; }
 
 .gvsprite-19-vlabel {
   width: 20px;
   height: 722px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -1401px; }
+  background: url(images/sprites.gif) 0 -1401px; }
 
 .gvsprite-19-white {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -2133px; }
+  background: url(images/sprites.gif) 0 -2133px; }
 
 .gvsprite-19-white_dead {
   width: 19px;
   height: 19px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -2162px; }
+  background: url(images/sprites.gif) 0 -2162px; }
 
 .gvsprite-21-black {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -2191px; }
+  background: url(images/sprites.gif) 0 -2191px; }
 
 .gvsprite-21-black_dead {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -2222px; }
+  background: url(images/sprites.gif) 0 -2222px; }
 
 .gvsprite-21-blankboard {
   width: 399px;
   height: 399px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -2253px; }
+  background: url(images/sprites.gif) 0 -2253px; }
 
 .gvsprite-21-board {
   width: 425px;
   height: 420px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -2662px; }
+  background: url(images/sprites.gif) 0 -2662px; }
 
 .gvsprite-21-markblack {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3092px; }
+  background: url(images/sprites.gif) 0 -3092px; }
 
 .gvsprite-21-markcircle {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3123px; }
+  background: url(images/sprites.gif) 0 -3123px; }
 
 .gvsprite-21-markcross {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3154px; }
+  background: url(images/sprites.gif) 0 -3154px; }
 
 .gvsprite-21-markmove {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3185px; }
+  background: url(images/sprites.gif) 0 -3185px; }
 
 .gvsprite-21-marksquare {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3216px; }
+  background: url(images/sprites.gif) 0 -3216px; }
 
 .gvsprite-21-marktriangle {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3247px; }
+  background: url(images/sprites.gif) 0 -3247px; }
 
 .gvsprite-21-markwhite {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3278px; }
+  background: url(images/sprites.gif) 0 -3278px; }
 
 .gvsprite-21-white {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3309px; }
+  background: url(images/sprites.gif) 0 -3309px; }
 
 .gvsprite-21-white_dead {
   width: 21px;
   height: 21px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3340px; }
+  background: url(images/sprites.gif) 0 -3340px; }
 
 .gvsprite-back {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3371px; }
+  background: url(images/sprites.gif) 0 -3371px; }
 
 .gvsprite-backall {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3412px; }
+  background: url(images/sprites.gif) 0 -3412px; }
 
 .gvsprite-backc {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3453px; }
+  background: url(images/sprites.gif) 0 -3453px; }
 
 .gvsprite-backn {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3494px; }
+  background: url(images/sprites.gif) 0 -3494px; }
 
 .gvsprite-default {
   width: 1px;
   height: 1px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3535px; }
+  background: url(images/sprites.gif) 0 -3535px; }
 
 .gvsprite-forward {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3546px; }
+  background: url(images/sprites.gif) 0 -3546px; }
 
 .gvsprite-forwardall {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3587px; }
+  background: url(images/sprites.gif) 0 -3587px; }
 
 .gvsprite-forwardc {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3628px; }
+  background: url(images/sprites.gif) 0 -3628px; }
 
 .gvsprite-forwardn {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3669px; }
+  background: url(images/sprites.gif) 0 -3669px; }
 
 .gvsprite-hidenumber {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3710px; }
+  background: url(images/sprites.gif) 0 -3710px; }
 
 .gvsprite-newwindow {
   width: 16px;
   height: 16px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3751px; }
+  background: url(images/sprites.gif) 0 -3751px; }
 
 .gvsprite-refresh {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3777px; }
+  background: url(images/sprites.gif) 0 -3777px; }
 
 .gvsprite-shownumber {
   width: 31px;
   height: 31px;
-  background: url(/jsgameviewer/view/images/sprites.gif) 0 -3818px; }
+  background: url(images/sprites.gif) 0 -3818px; }
