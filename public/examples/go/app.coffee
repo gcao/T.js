@@ -1,5 +1,3 @@
-t = (key) -> jsgv_zh_cn[key]
-
 T.def 'main', ->
   [ '.gvreset.gameviewer'
     T('banner'     ).process()
@@ -101,7 +99,7 @@ T.def 'board', ->
       [ '.gvreset.gvboard-overlay.BOARD_BRANCHES' ]
       [ '.gvreset.gvsprite-21-markmove.MOVE_MARKS' ]
       [ '.gvreset.gvboard-overlay.PRISONERS' ]
-      [ '.gvreset.gvboard-overlay.gvboardfascade.BOARD_FASCADE' 
+      [ '.gvreset.gvboard-overlay.gvboardfascade.BOARD_FASCADE'
         [ 'img.gvreset.gvsprite-21-blankboard', src: 'images/default.gif' ]
       ]
     ]
@@ -126,10 +124,12 @@ T.def 'toolbar', ->
   ]
 
 T.def 'point-label', ->
-  [ '.gvreset.gvpoint-label.POINT_LABEL', align: 'center' ]
+  [ '.gvreset.gvpoint-label.POINT_LABEL'
+    style: 'text-align': 'center'
+  ]
 
 T.def 'right-panel', ->
-  [ '.gvreset.gvright-pane.RIGHT_PANEL' 
+  [ '.gvreset.gvright-pane.RIGHT_PANEL'
     [ '.gvreset.gvinfo.INFO' ]
     [ '.gvreset.gvcomment.COMMENT' ]
   ]

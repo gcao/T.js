@@ -42,3 +42,5 @@ window.jsgv_zh_cn = {
   'jump_to_xx': '跳到第XX手',
   'rule': '规则'};
 if (window.jsgvTranslations == undefined) window.jsgvTranslations = jsgv_zh_cn;
+
+function t(key){ return jsgv_zh_cn[key]; }

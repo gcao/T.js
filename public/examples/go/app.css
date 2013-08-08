@@ -138,7 +138,7 @@ a.gvreset {
 .gvprisoners-outer {
   position: absolute;
   left: 270px;
-  top: -2px;
+  /*top: -2px;*/
   width: 176px; }
 
 .gvblack-prisoners-outer {
