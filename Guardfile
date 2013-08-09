@@ -24,3 +24,5 @@ guard 'jasmine-headless-webkit', :jasmine_config => 'public/javascripts/spec/jas
   watch(%r{^public/javascripts/(.*)\.coffee}) { |m| "public/javascripts/spec/#{m[1]}_spec" }
 end
 
+guard 'sass', :input => 'public/examples/go'
+

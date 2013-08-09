@@ -1,0 +1,662 @@
+$viewer_l_padding : 2px
+$viewer_r_padding : $viewer_l_padding
+$viewer_t_padding : 2px
+$viewer_b_padding : $viewer_t_padding
+
+$header_l_margin : 0px
+$header_r_margin : $header_l_margin
+$header_t_margin : 2px
+$header_b_margin : $header_t_margin
+$header_top : 0px
+$header_left : 0px
+$header_height : 22px
+
+$weiqi_board_grid : 21px
+$weiqi_board_size : 19
+$weiqi_board_top : $header_t_margin + $header_height + $header_b_margin
+$weiqi_board_left : 0px
+$weiqi_board_width : 425px
+$weiqi_board_height : 420px
+
+$weiqi_control_area_top : 0
+$weiqi_control_area_left : $weiqi_board_width - ($weiqi_board_grid * $weiqi_board_size)
+
+$toolbar_l_margin : 2px
+$toolbar_r_margin : $toolbar_l_margin
+$toolbar_top : $weiqi_board_top
+$toolbar_left : $weiqi_board_width + $toolbar_l_margin
+$toolbar_width : 35px
+
+$left_pane_width : $weiqi_board_width + $toolbar_l_margin + $toolbar_width + $toolbar_r_margin
+$left_pane_height : $header_t_margin + $header_height + $header_b_margin + $weiqi_board_height
+
+$header_width : $left_pane_width - $header_l_margin - $header_r_margin
+
+$info_width : 300px
+$info_height : 500px
+
+$weiqi_body_height : $info_height
+@if $info_height < $left_pane_height
+  $weiqi_body_height : $left_pane_height
+
+$weiqi_height : $viewer_t_padding + $weiqi_body_height + $viewer_b_padding
+$weiqi_width : $viewer_l_padding + $weiqi_body_height + $viewer_r_padding
+
+$toolbar_height : $weiqi_height - $viewer_t_padding - $header_t_margin - $header_height - $header_b_margin - $viewer_b_padding
+
+.gvreset
+  margin: 0
+  padding: 0
+  border: 0
+  outline: 0
+  font-size: 100%
+  vertical-align: baseline
+  background: transparent
+  text-decoration: none
+
+
+a.gvreset
+  color: blue
+
+
+.toggleopacity
+  img
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=70)
+    -moz-opacity: 0.70
+
+  &:hover img
+    filter: progid:DXImageTransform.Microsoft.Alpha(opacity=100)
+    -moz-opacity: 1
+
+
+.gvbutton
+  position: absolute
+  left: 0px
+  top: 0px
+  width: 100%
+  padding: 1px 0px
+  white-space: nowrap
+  z-index: 99
+
+  a
+    display: inline
+    border-top: 1px solid #EEE
+    border-left: 1px solid #EEE
+    border-right: 1px solid #606060
+    border-bottom: 1px solid #101010
+    color: blue
+    background: #DDBC69
+    text-decoration: none
+    padding: 2px 4px 1px 4px
+    text-align: center
+
+    &:hover
+      border-top: 1px solid #000
+      border-left: 1px solid #666
+      border-right: 1px solid #ccc
+      border-bottom: 1px solid #ccc
+      color: #fff
+      background: #47748e fixed
+
+    &:active
+      color: #fff
+      background: #47748e
+
+
+.gvcontrol-text
+  font-size: larger
+  font-weight: bold
+  vertical-align: middle
+
+
+.gameviewer
+  clear: both
+  position: relative
+  left: 0px
+  top: 0px
+  width: 720px
+  height: 450px
+  border: 1px solid black
+  background: #EECD7A
+
+
+.gameviewerdq
+  position: relative
+  left: 0px
+  top: 0px
+  width: 834px
+  height: 564px
+  border: 1px solid black
+  background: #EECD7A
+
+
+.gvbanner
+  position: absolute
+  left: 2px
+  top: 2px
+  width: 468px
+  height: 25px
+
+
+.gvbannerdq
+  position: absolute
+  left: 2px
+  top: 2px
+  width: 582px
+  height: 25px
+
+
+.gvbanner-overlay
+  position: absolute
+  left: 0px
+  top: 0px
+  width: 100%
+  height: 100%
+
+
+.gvbanner-left
+  display: inline
+  position: absolute
+  left: 0px
+  top: 0px
+  padding: 1px 0px
+  z-index: 100
+
+
+.nextPlayerImg
+  position: relative
+  top: 2px
+
+
+.prisonersImg
+  position: relative
+  top: 2px
+
+
+.gvresign, .gvresigndq
+  display: none
+  position: absolute
+  top: -1px
+  z-index: 200
+
+.gvresign
+  left: 255px
+
+.gvresigndq
+  left: 310px
+
+
+.gvmove-outer
+  position: absolute
+  left: 22px
+  top: 0px
+  width: 399px
+  text-align: center
+
+
+.gvmove-outerdq
+  position: absolute
+  left: 22px
+  top: 0px
+  width: 513px
+  text-align: center
+
+
+.gvprisoners-outer
+  position: absolute
+  left: 270px
+  //top: -2px
+  width: 176px
+
+
+.gvblack-prisoners-outer
+  position: absolute
+  top: 0
+  width: 50%
+  text-align: right
+
+
+.gvwhite-prisoners-outer
+  position: absolute
+  left: 50%
+  top: 0
+  width: 50%
+  text-align: right
+
+
+.gvopen-window-outer
+  position: absolute
+  left: 450px
+  top: 0
+
+
+.gvprisoners-outerdq
+  position: absolute
+  left: 319px
+  top: 0px
+  width: 239px
+
+
+.gvblack-prisoners-outerdq
+  position: absolute
+  top: 0
+  width: 50%
+  text-align: right
+
+
+.gvwhite-prisoners-outerdq
+  position: absolute
+  left: 50%
+  top: 0
+  width: 50%
+  text-align: right
+
+
+.gvopen-window-outerdq
+  position: absolute
+  left: 530px
+  top: 0
+
+
+.gvboard-fascade
+  z-index: 99
+
+
+.gvboard-outer
+  position: absolute
+  left: 1px
+  top: 28px
+
+
+.gvboard-outerdq
+  position: absolute
+  left: 1px
+  top: 28px
+  width: 539px
+  height: 536px
+  z-index: 2
+
+
+.gvboard
+  position: absolute
+  left: 22px
+  top: 2px
+  width: 399px
+  height: 399px
+
+
+.gvboard-realdq
+  position: absolute
+  left: 99px
+  top: 106px
+  width: 361px
+  height: 361px
+  background: #CCAB69
+  z-index: 1
+
+
+.gvboarddq
+  position: absolute
+  left: 22px
+  top: 2px
+
+
+.gvboardvlabel
+  position: absolute
+  left: 0px
+  top: 82px
+  width: 22px
+  height: 361px
+  background-image: url(images/19/vlabel.gif)
+
+
+.gvboardhlabel
+  position: absolute
+  left: 98px
+  top: 518px
+  width: 361px
+  height: 17px
+  background-image: url(images/19/hlabel.gif)
+
+
+.gvboard-overlay
+  position: absolute
+  left: 0px
+  top: 0px
+  width: 100%
+  height: 100%
+
+
+.gvbranch
+  position: absolute
+  text-align: center
+  vertical-align: middle
+  color: blue
+  font-weight: bolder
+  background-color: #EECD7A
+
+
+.gvbranch-real
+  position: absolute
+  text-align: center
+  vertical-align: middle
+  color: blue
+  font-weight: bolder
+  background-color: #CCAB69
+
+
+.gvtoolbar
+  position: absolute
+  left: 432px
+  top: 28px
+  width: 35px
+  height: 414px
+
+
+.gvtoolbardq
+  position: absolute
+  left: 546px
+  top: 28px
+  width: 35px
+  height: 528px
+
+
+.gvtb-item
+  position: relative
+  text-align: center
+  background-repeat: no-repeat
+  background-position: center center
+  z-index: 1
+
+
+.gvtb-branches
+  position: relative
+  width: 100%
+  height: 0px
+  overflow: hidden
+  margin: 0px
+
+
+.gvtb-branch
+  position: relative
+  left: 20%
+  width: 80%
+  height: 20px
+  margin: 1px
+  font-weight: bolder
+
+
+.gvpoint-label
+  position: absolute
+  left: 425px
+  top: 430px
+  width: 40px
+  height: 15px
+  font-weight: bolder
+  color: #3399CC
+
+
+.gvpoint-labeldq
+  position: absolute
+  left: 539px
+  top: 544px
+  width: 40px
+  height: 15px
+  font-weight: bolder
+  color: #3399CC
+
+
+.gvright-pane
+  position: absolute
+  left: 472px
+  top: 1px
+  width: 245px
+  height: 446px
+  border: 1px solid gray
+  background: white
+
+
+.gvright-panedq
+  position: absolute
+  left: 586px
+  top: 1px
+  width: 245px
+  height: 560px
+  border: 1px solid gray
+  background: white
+
+
+.gvinfo
+  margin: 3px
+
+
+.gvcomment
+  margin: 8px 1px 3px
+  overflow: auto
+  
+
+.gvsprite-15-black
+  width: 15px
+  height: 15px
+  background: url(images/sprites.gif) 0 -5px
+
+.gvsprite-15-black_dead
+  width: 15px
+  height: 15px
+  background: url(images/sprites.gif) 0 -30px
+
+.gvsprite-15-white
+  width: 15px
+  height: 15px
+  background: url(images/sprites.gif) 0 -55px
+
+.gvsprite-15-white_dead
+  width: 15px
+  height: 15px
+  background: url(images/sprites.gif) 0 -80px
+
+.gvsprite-19-black
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -105px
+
+.gvsprite-19-black_dead
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -134px
+
+.gvsprite-19-blankboarddq
+  width: 475px
+  height: 475px
+  background: url(images/sprites.gif) 0 -163px
+
+.gvsprite-19-boarddq
+  width: 513px
+  height: 513px
+  background: url(images/sprites.gif) 0 -648px
+
+.gvsprite-19-hlabel
+  width: 722px
+  height: 17px
+  background: url(images/sprites.gif) 0 -1171px
+
+.gvsprite-19-markblack
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -1198px
+
+.gvsprite-19-markcircle
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -1227px
+
+.gvsprite-19-markcross
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -1256px
+
+.gvsprite-19-markmove
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -1285px
+
+.gvsprite-19-marksquare
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -1314px
+
+.gvsprite-19-marktriangle
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -1343px
+
+.gvsprite-19-markwhite
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -1372px
+
+.gvsprite-19-vlabel
+  width: 20px
+  height: 722px
+  background: url(images/sprites.gif) 0 -1401px
+
+.gvsprite-19-white
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -2133px
+
+.gvsprite-19-white_dead
+  width: 19px
+  height: 19px
+  background: url(images/sprites.gif) 0 -2162px
+
+.gvsprite-21-black
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -2191px
+
+.gvsprite-21-black_dead
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -2222px
+
+.gvsprite-21-blankboard
+  width: 399px
+  height: 399px
+  background: url(images/sprites.gif) 0 -2253px
+
+.gvsprite-21-board
+  width: 425px
+  height: 420px
+  background: url(images/sprites.gif) 0 -2662px
+
+.gvsprite-21-markblack
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3092px
+
+.gvsprite-21-markcircle
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3123px
+
+.gvsprite-21-markcross
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3154px
+
+.gvsprite-21-markmove
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3185px
+
+.gvsprite-21-marksquare
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3216px
+
+.gvsprite-21-marktriangle
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3247px
+
+.gvsprite-21-markwhite
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3278px
+
+.gvsprite-21-white
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3309px
+
+.gvsprite-21-white_dead
+  width: 21px
+  height: 21px
+  background: url(images/sprites.gif) 0 -3340px
+
+.gvsprite-back
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3371px
+
+.gvsprite-backall
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3412px
+
+.gvsprite-backc
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3453px
+
+.gvsprite-backn
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3494px
+
+.gvsprite-default
+  width: 1px
+  height: 1px
+  background: url(images/sprites.gif) 0 -3535px
+
+.gvsprite-forward
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3546px
+
+.gvsprite-forwardall
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3587px
+
+.gvsprite-forwardc
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3628px
+
+.gvsprite-forwardn
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3669px
+
+.gvsprite-hidenumber
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3710px
+
+.gvsprite-newwindow
+  width: 16px
+  height: 16px
+  background: url(images/sprites.gif) 0 -3751px
+
+.gvsprite-refresh
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3777px
+
+.gvsprite-shownumber
+  width: 31px
+  height: 31px
+  background: url(images/sprites.gif) 0 -3818px
+
