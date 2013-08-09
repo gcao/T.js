@@ -8,7 +8,7 @@ T.def('banner', function() {
   return [
     '.banner', ['.banner-overlay'], [
       '.banner-left', T('language-switcher').process(), '&nbsp;&nbsp;', t('whose_turn'), "&nbsp;", [
-        'img.nextPlayerImg', {
+        'img.next-player', {
           src: 'images/default.gif'
         }
       ]

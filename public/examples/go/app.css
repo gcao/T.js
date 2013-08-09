@@ -82,10 +82,10 @@
     top: 0px;
     padding: 1px 0px;
     z-index: 100; }
-  .gameviewer .nextPlayerImg {
+  .gameviewer img.next-player {
     position: relative;
     top: 2px; }
-  .gameviewer .prisonersImg {
+  .gameviewer img.prisoners {
     position: relative;
     top: 2px; }
   .gameviewer .resign, .gameviewer .resigndq {

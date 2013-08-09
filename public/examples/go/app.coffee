@@ -15,7 +15,7 @@ T.def 'banner', ->
       '&nbsp;&nbsp;'
       t('whose_turn')
       "&nbsp;"
-      [ 'img.nextPlayerImg', src: 'images/default.gif' ]
+      [ 'img.next-player', src: 'images/default.gif' ]
     ]
     T('move-number').process()
     T('resign').process()
