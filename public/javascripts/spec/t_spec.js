@@ -50,6 +50,22 @@
       ];
       return expect(T.internal.processFirst(input)).toEqual(result);
     });
+    it("should parse '.tb-item.refresh a.toggle-opacity'", function() {
+      var input, result;
+      input = ['div', ['.tb-item.refresh a.toggle-opacity', 'text']];
+      result = [
+        'div', [
+          'div', {
+            "class": 'td-item refresh'
+          }, [
+            'a', {
+              "class": 'toggle-opacity'
+            }, 'text'
+          ]
+        ]
+      ];
+      return expect(T.internal.processFirst(input)).toEqual(result);
+    });
     it("should return as is if first starts with '<'", function() {
       var input, result;
       input = ['<!DOCTYPE html>', '...'];

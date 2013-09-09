@@ -63,12 +63,6 @@
     top: 2px;
     width: 468px;
     height: 25px; }
-  .gameviewer .bannerdq {
-    position: absolute;
-    left: 2px;
-    top: 2px;
-    width: 582px;
-    height: 25px; }
   .gameviewer .banner-overlay {
     position: absolute;
     left: 0px;
@@ -88,65 +82,37 @@
   .gameviewer img.prisoners {
     position: relative;
     top: 2px; }
-  .gameviewer .resign, .gameviewer .resigndq {
+  .gameviewer .resign {
     display: none;
     position: absolute;
     top: -1px;
     z-index: 200; }
   .gameviewer .resign {
     left: 255px; }
-  .gameviewer .resigndq {
-    left: 310px; }
-  .gameviewer .move-outer {
+  .gameviewer .move-number-outer {
     position: absolute;
     left: 22px;
     top: 0px;
     width: 399px;
     text-align: center; }
-  .gameviewer .move-outerdq {
-    position: absolute;
-    left: 22px;
-    top: 0px;
-    width: 513px;
-    text-align: center; }
   .gameviewer .prisoners-outer {
     position: absolute;
     left: 270px;
     width: 176px; }
-  .gameviewer .black-prisoners-outer {
-    position: absolute;
-    top: 0;
-    width: 50%;
-    text-align: right; }
-  .gameviewer .white-prisoners-outer {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 50%;
-    text-align: right; }
+    .gameviewer .prisoners-outer .black {
+      position: absolute;
+      top: 0;
+      width: 50%;
+      text-align: center; }
+    .gameviewer .prisoners-outer .white {
+      position: absolute;
+      left: 50%;
+      top: 0;
+      width: 50%;
+      text-align: center; }
   .gameviewer .open-window-outer {
     position: absolute;
     left: 450px;
-    top: 0; }
-  .gameviewer .prisoners-outerdq {
-    position: absolute;
-    left: 319px;
-    top: 0px;
-    width: 239px; }
-  .gameviewer .black-prisoners-outerdq {
-    position: absolute;
-    top: 0;
-    width: 50%;
-    text-align: right; }
-  .gameviewer .white-prisoners-outerdq {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 50%;
-    text-align: right; }
-  .gameviewer .open-window-outerdq {
-    position: absolute;
-    left: 530px;
     top: 0; }
   .gameviewer .board-fascade {
     z-index: 99; }
@@ -154,31 +120,12 @@
     position: absolute;
     left: 1px;
     top: 28px; }
-  .gameviewer .board-outerdq {
-    position: absolute;
-    left: 1px;
-    top: 28px;
-    width: 539px;
-    height: 536px;
-    z-index: 2; }
   .gameviewer .board {
     position: absolute;
     left: 22px;
     top: 2px;
     width: 399px;
     height: 399px; }
-  .gameviewer .board-realdq {
-    position: absolute;
-    left: 99px;
-    top: 106px;
-    width: 361px;
-    height: 361px;
-    background: #ccab69;
-    z-index: 1; }
-  .gameviewer .boarddq {
-    position: absolute;
-    left: 22px;
-    top: 2px; }
   .gameviewer .boardvlabel {
     position: absolute;
     left: 0px;
@@ -219,12 +166,6 @@
     top: 28px;
     width: 35px;
     height: 414px; }
-  .gameviewer .toolbardq {
-    position: absolute;
-    left: 546px;
-    top: 28px;
-    width: 35px;
-    height: 528px; }
   .gameviewer .tb-item {
     position: relative;
     text-align: center;
@@ -253,28 +194,12 @@
     text-align: center;
     font-weight: bolder;
     color: #3399cc; }
-  .gameviewer .point-labeldq {
-    position: absolute;
-    left: 539px;
-    top: 544px;
-    width: 40px;
-    height: 15px;
-    font-weight: bolder;
-    color: #3399cc; }
   .gameviewer .right-pane {
     position: absolute;
     left: 472px;
     top: 1px;
     width: 245px;
     height: 446px;
-    border: 1px solid gray;
-    background: white; }
-  .gameviewer .right-panedq {
-    position: absolute;
-    left: 586px;
-    top: 1px;
-    width: 245px;
-    height: 560px;
     border: 1px solid gray;
     background: white; }
   .gameviewer .info {

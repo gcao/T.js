@@ -1,5 +1,5 @@
 T.def 'main', ->
-  [ '.gameviewer'
+  [ '.gameviewer.size-21'
     T('banner'     ).process()
     T('board'      ).process()
     T('toolbar'    ).process()
@@ -18,7 +18,7 @@ T.def 'banner', ->
       [ 'img.next-player', src: 'images/default.gif' ]
     ]
     T('move-number').process()
-    T('resign').process()
+    T('resign'     ).process()
     [ '.banner-overlay'
       T('banner-prisoners').process()
       T('window-opener'   ).process()
@@ -39,13 +39,13 @@ T.def 'language-switcher', ->
   ]
 
 T.def 'move-number', ->
-  [ '.move-outer.button'
+  [ '.button.move-number-outer'
     [ 'a.thickbox'
       href: '#TB_inline?test=0&width=250&height=56&inlineId=1_goTo&focus=1_goToInput&modal=true&test1=0'
       title: "#{t('jump_to_xx')} [Alt Shift G]"
       t('move_number_before')
       '&nbsp;'
-      [ 'span.control-text', 0 ]
+      [ 'span.control-text.move-number', 0 ]
       '&nbsp;'
       t('move_number_after')
     ]
@@ -68,7 +68,7 @@ T.def 'banner-prisoners', ->
   ]
 
 T.def 'banner-prisoner', (color) ->
-  [ ".#{color}-prisoners-outer"
+  [ ".#{color}"
     [ 'span.button'
       [ 'a'
         href: 'javascript: void(0)'
@@ -96,7 +96,7 @@ T.def 'board', ->
       [ '.board-overlay.points' ]
       [ '.board-overlay.marks' ]
       [ '.board-overlay.branches' ]
-      [ '.sprite-21-markmove.move_marks' ]
+      [ '.sprite-21-markmove.move-marks' ]
       [ '.board-overlay.prisoners' ]
       [ '.board-overlay.fascade'
         [ 'img.sprite-21-blankboard', src: 'images/default.gif' ]

@@ -22,6 +22,11 @@ describe "T.internal.processFirst", ->
     result = ['div', {id: 'this'}, ['div', {class: 'child'}, 'text']]
     expect(T.internal.processFirst(input)).toEqual(result)
 
+  it "should parse '.tb-item.refresh a.toggle-opacity'", ->
+    input  = ['div', ['.tb-item.refresh a.toggle-opacity', 'text']]
+    result = ['div', ['div', {class: 'td-item refresh'}, ['a', {class: 'toggle-opacity'}, 'text']]]
+    expect(T.internal.processFirst(input)).toEqual(result)
+
   it "should return as is if first starts with '<'", ->
     input  = ['<!DOCTYPE html>', '...']
     result = input
