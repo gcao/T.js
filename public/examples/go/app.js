@@ -156,6 +156,8 @@ T.def('right-panel', function() {
   return ['.right-pane', ['.info'], ['.comment']];
 });
 
-T('main').renderWith(function(output) {
-  return $('#container').html(output);
+T('main').renderWith({
+  domRenderer: function(output) {
+    return $('#container').html(output);
+  }
 });

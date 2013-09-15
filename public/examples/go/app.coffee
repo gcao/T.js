@@ -137,5 +137,5 @@ T.def 'right-panel', ->
     [ '.comment' ]
   ]
 
-T('main').renderWith((output) -> $('#container').html(output))
+T('main').renderWith(domRenderer: (output) -> $('#container').html(output))
 

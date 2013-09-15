@@ -236,7 +236,7 @@
     }
   };
 
-  registerCallbacks = function(registerFunc) {
+  registerCallbacks = function(config) {
     var callback, cssClass, element, myCallbacks, name, _ref, _results;
     _results = [];
     while (callbacks.length > 0) {
@@ -258,11 +258,7 @@
             for (name in myCallbacks) {
               if (!__hasProp.call(myCallbacks, name)) continue;
               callback = myCallbacks[name];
-              if (registerFunc) {
-                _results2.push(registerFunc(element, name, callback));
-              } else {
-                _results2.push(element[name] = callback);
-              }
+              _results2.push(element[name] = callback);
             }
             return _results2;
           })());
@@ -341,8 +337,8 @@
     })()).join('');
   };
 
-  render = function(input, handler) {
-    var first, item, result, second;
+  render = function(input, config) {
+    var domRenderer, first, item, result, second;
     if (typeof input === 'undefined' || input === null) {
       return '';
     }
@@ -400,12 +396,13 @@
       result += renderRest(input);
       result += "</" + first + ">";
     }
-    if (handler) {
-      if (typeof handler === 'function') {
-        handler(result);
-        registerCallbacks();
+    if (config && config.domRenderer) {
+      domRenderer = config.domRenderer;
+      if (typeof domRenderer === 'function') {
+        domRenderer(result);
+        registerCallbacks(config);
       } else {
-        raise("render(): handler must be a function, but is a " + (typeof handler) + ".");
+        raise("render(): domRenderer must be a function, but is a " + (typeof domRenderer) + ".");
       }
     }
     return result;
@@ -452,11 +449,11 @@
       return render(output);
     };
     Template.prototype.renderWith = function() {
-      var data, handler, output;
+      var config, data, output;
       data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      handler = data.pop();
+      config = data.pop();
       output = this.process.apply(this, data);
-      return render(output, handler);
+      return render(output, config);
     };
     Template.prototype.prepare = function(includes) {
       var key, template, value;

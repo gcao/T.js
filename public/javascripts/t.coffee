@@ -171,7 +171,7 @@ prepareOutput = (template, data...) ->
   else
     template
 
-registerCallbacks = (registerFunc) ->
+registerCallbacks = (config) ->
   while callbacks.length > 0
     [cssClass, myCallbacks] = callbacks.shift()
 
@@ -183,10 +183,7 @@ registerCallbacks = (registerFunc) ->
         element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
 
       for own name, callback of myCallbacks
-        if registerFunc
-          registerFunc(element, name, callback)
-        else
-          element[name] = callback
+        element[name] = callback
 
 getRandomCssClass = ->
   String(Math.random()).replace('0.', 'cls')
@@ -232,7 +229,7 @@ renderAttributes = (attributes) ->
 renderRest = (input) ->
   (render(item) for item in input).join('')
 
-render = (input, handler) ->
+render = (input, config) ->
   return '' if typeof input is 'undefined' or input is null
   return '' + input unless isArray input
   return '' if input.length is 0
@@ -275,12 +272,13 @@ render = (input, handler) ->
     result += renderRest input
     result += "</" + first + ">"
 
-  if handler
-    if typeof handler is 'function'
-      handler(result)
-      registerCallbacks()
+  if config and config.domRenderer
+    domRenderer = config.domRenderer
+    if typeof domRenderer is 'function'
+      domRenderer(result)
+      registerCallbacks(config)
     else
-      raise "render(): handler must be a function, but is a #{typeof handler}."
+      raise "render(): domRenderer must be a function, but is a #{typeof domRenderer}."
 
   result
 
@@ -315,9 +313,9 @@ init = (T) ->
     render output
 
   Template.prototype.renderWith = (data...) ->
-    handler = data.pop()
+    config = data.pop()
     output = @process data...
-    render output, handler
+    render output, config
 
   Template.prototype.prepare = (includes) ->
     for own key, value of includes
