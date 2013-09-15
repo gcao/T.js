@@ -20,11 +20,17 @@ T.def('language-switcher', function() {
   return [
     [
       'a.localization', {
-        href: 'javascript: void(jsGameViewer.1.changeLocale("zh_cn"))'
+        href: 'javascript:void(0)',
+        onclick: function() {
+          return console.log('Change language to Chinese');
+        }
       }, '中文'
     ], ' | ', [
       'a.localization', {
-        href: 'javascript: void(jsGameViewer.1.changeLocale("en_us"))'
+        href: 'javascript:void(0)',
+        onclick: function() {
+          return console.log('Change language to English');
+        }
       }, 'EN'
     ]
   ];
@@ -46,7 +52,10 @@ T.def('resign', function() {
     '.resign', [
       'span.button', [
         'a', {
-          href: 'javascript: void(jsGameViewer.1.resign())'
+          href: 'javascript:void(0)',
+          onclick: function() {
+            return console.log('Resign');
+          }
         }, t('resign')
       ]
     ]
@@ -78,7 +87,10 @@ T.def('window-opener', function() {
     '.open-window-outer', [
       'a', {
         title: "" + (t('open_in_new_window')) + " [Alt Shift W]",
-        href: 'javascript: void(jsGameViewer.1.openInWindow())'
+        href: 'javascript: void(0)',
+        onclick: function() {
+          return console.log('Open in new window');
+        }
       }, [
         'img.sprite-newwindow', {
           src: 'images/default.gif'
@@ -107,7 +119,10 @@ T.def('toolbar', function() {
     '.toolbar', [
       '.tb-item.refresh', [
         'a.toggle-opacity', {
-          href: "javascript: void(jsGameViewer.1.refresh(true))",
+          href: 'javascript: void(0)',
+          onclick: function() {
+            return console.log('Refresh');
+          },
           title: "" + (t('refresh')) + " [Alt Shift R]"
         }, [
           'img.sprite-refresh', {
@@ -118,7 +133,10 @@ T.def('toolbar', function() {
     ], [
       '.tb-item.toggle-number', [
         'a.toggle-opacity', {
-          href: "javascript: void(jsGameViewer.1.toggleNumber())",
+          href: 'javascript: void(0)',
+          onclick: function() {
+            return console.log('Toggle move number display');
+          },
           title: "" + (t('refresh')) + " [Alt Shift R]"
         }, [
           'img.sprite-toggle-number', {
@@ -138,4 +156,6 @@ T.def('right-panel', function() {
   return ['.right-pane', ['.info'], ['.comment']];
 });
 
-$('#container').html(T('main').render());
+T('main').renderWith(function(output) {
+  return $('#container').html(output);
+});

@@ -47,6 +47,8 @@ merge      = (o1, o2) ->
 
   o1
 
+callbacks = []
+
 FIRST_NO_PROCESS_PATTERN = /^<.*/
 FIRST_FIELD_PATTERN      = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 
@@ -169,8 +171,48 @@ prepareOutput = (template, data...) ->
   else
     template
 
+registerCallbacks = (registerFunc) ->
+  while callbacks.length > 0
+    [cssClass, myCallbacks] = callbacks.shift()
+
+    for element in document.querySelectorAll('.' + cssClass)
+      # Remove class from DOM
+      if element.getAttribute('class') is cssClass
+        element.removeAttribute('class')
+      else
+        element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
+
+      for own name, callback of myCallbacks
+        if registerFunc
+          registerFunc(element, name, callback)
+        else
+          element[name] = callback
+
+getRandomCssClass = ->
+  String(Math.random()).replace('0.', 'cls')
+
+processCallbacks = (attributes) ->
+  hasCallbacks = false
+  myCallbacks  = {}
+
+  for own key, value of attributes
+    if typeof value is 'function'
+      hasCallbacks     = true
+      myCallbacks[key] = value
+      delete attributes[key]
+
+  if hasCallbacks
+    cssClass = getRandomCssClass()
+    callbacks.push([cssClass, myCallbacks])
+    if attributes.class
+      attributes.class += ' ' + cssClass
+    else
+      attributes.class = cssClass
+
 renderAttributes = (attributes) ->
   result = ""
+
+  processCallbacks(attributes)
 
   for own key, value of attributes
     if key is "style"
@@ -182,14 +224,15 @@ renderAttributes = (attributes) ->
         result += " style=\"" + s + "\""
       else
         result += " style=\"" + styles + "\""
-    else result += " " + key + "=\"" + value + "\""
+    else
+      result += " " + key + "=\"" + value + "\""
 
   result
 
 renderRest = (input) ->
   (render(item) for item in input).join('')
 
-render = (input) ->
+render = (input, handler) ->
   return '' if typeof input is 'undefined' or input is null
   return '' + input unless isArray input
   return '' if input.length is 0
@@ -232,6 +275,13 @@ render = (input) ->
     result += renderRest input
     result += "</" + first + ">"
 
+  if handler
+    if typeof handler is 'function'
+      handler(result)
+      registerCallbacks()
+    else
+      raise "render(): handler must be a function, but is a #{typeof handler}."
+
   result
 
 create = ->
@@ -250,6 +300,7 @@ init = (T) ->
   T.create    = create
   T.templates = {}
   T.internal  = {}
+  T.callbacks = callbacks
 
   Template = (@template, @name) ->
     @isTjsTemplate = true
@@ -262,6 +313,10 @@ init = (T) ->
   Template.prototype.render = (data...) ->
     output = @process data...
     render output
+
+  Template.prototype.renderWith = (handler, data...) ->
+    output = @process data...
+    render output, handler
 
   Template.prototype.prepare = (includes) ->
     for own key, value of includes
@@ -287,6 +342,11 @@ init = (T) ->
 
   T.render  = (template, data...) ->
     new Template(template).render data...
+
+  T.renderWith  = (template, handler, data...) ->
+    new Template(template).renderWith handler, data...
+
+  T.registerCallbacks = registerCallbacks
 
   T.include = (name, data...) ->
     T.internal.includes?[name].process(data...)
@@ -330,6 +390,7 @@ T.internal.parseStyles       = parseStyles
 T.internal.processStyles     = processStyles
 T.internal.processAttributes = processAttributes
 T.internal.render            = render
+T.internal.callbacks         = callbacks
 
 # noConflict support
 T.internal.thisRef           = this
