@@ -453,7 +453,8 @@
     };
     Template.prototype.renderWith = function() {
       var data, handler, output;
-      handler = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      handler = data.pop();
       output = this.process.apply(this, data);
       return render(output, handler);
     };
@@ -499,9 +500,9 @@
       return (_ref = new Template(template)).render.apply(_ref, data);
     };
     T.renderWith = function() {
-      var data, handler, template, _ref;
-      template = arguments[0], handler = arguments[1], data = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-      return (_ref = new Template(template)).renderWith.apply(_ref, [handler].concat(__slice.call(data)));
+      var data, template, _ref;
+      template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+      return (_ref = new Template(template)).renderWith.apply(_ref, data);
     };
     T.registerCallbacks = registerCallbacks;
     T.include = function() {

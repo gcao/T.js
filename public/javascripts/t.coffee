@@ -314,7 +314,8 @@ init = (T) ->
     output = @process data...
     render output
 
-  Template.prototype.renderWith = (handler, data...) ->
+  Template.prototype.renderWith = (data...) ->
+    handler = data.pop()
     output = @process data...
     render output, handler
 
@@ -343,8 +344,8 @@ init = (T) ->
   T.render  = (template, data...) ->
     new Template(template).render data...
 
-  T.renderWith  = (template, handler, data...) ->
-    new Template(template).renderWith handler, data...
+  T.renderWith  = (template, data...) ->
+    new Template(template).renderWith data...
 
   T.registerCallbacks = registerCallbacks
 
