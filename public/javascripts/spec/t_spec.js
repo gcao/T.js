@@ -52,11 +52,25 @@
     });
     it("should parse '.tb-item.refresh a.toggle-opacity'", function() {
       var input, result;
+      input = ['.tb-item.refresh a.toggle-opacity', 'text'];
+      result = [
+        'div', {
+          "class": 'tb-item refresh'
+        }, [
+          'a', {
+            "class": 'toggle-opacity'
+          }, 'text'
+        ]
+      ];
+      return expect(T.internal.processFirst(input)).toEqual(result);
+    });
+    it("should parse nested '.tb-item.refresh a.toggle-opacity'", function() {
+      var input, result;
       input = ['div', ['.tb-item.refresh a.toggle-opacity', 'text']];
       result = [
         'div', [
           'div', {
-            "class": 'td-item refresh'
+            "class": 'tb-item refresh'
           }, [
             'a', {
               "class": 'toggle-opacity'

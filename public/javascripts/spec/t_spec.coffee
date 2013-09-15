@@ -23,8 +23,13 @@ describe "T.internal.processFirst", ->
     expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should parse '.tb-item.refresh a.toggle-opacity'", ->
+    input  = ['.tb-item.refresh a.toggle-opacity', 'text']
+    result = ['div', {class: 'tb-item refresh'}, ['a', {class: 'toggle-opacity'}, 'text']]
+    expect(T.internal.processFirst(input)).toEqual(result)
+
+  it "should parse nested '.tb-item.refresh a.toggle-opacity'", ->
     input  = ['div', ['.tb-item.refresh a.toggle-opacity', 'text']]
-    result = ['div', ['div', {class: 'td-item refresh'}, ['a', {class: 'toggle-opacity'}, 'text']]]
+    result = ['div', ['div', {class: 'tb-item refresh'}, ['a', {class: 'toggle-opacity'}, 'text']]]
     expect(T.internal.processFirst(input)).toEqual(result)
 
   it "should return as is if first starts with '<'", ->
