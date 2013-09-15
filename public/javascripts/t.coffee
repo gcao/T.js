@@ -183,7 +183,7 @@ registerCallbacks = (config) ->
         element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
 
       for own name, callback of myCallbacks
-        element[name] = callback
+        element.addEventListener(name, callback, false)
 
 getRandomCssClass = ->
   String(Math.random()).replace('0.', 'cls')

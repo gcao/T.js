@@ -21,14 +21,14 @@ T.def('language-switcher', function() {
     [
       'a.localization', {
         href: 'javascript:void(0)',
-        onclick: function() {
+        click: function() {
           return console.log('Change language to Chinese');
         }
       }, '中文'
     ], ' | ', [
       'a.localization', {
         href: 'javascript:void(0)',
-        onclick: function() {
+        click: function() {
           return console.log('Change language to English');
         }
       }, 'EN'
@@ -53,7 +53,7 @@ T.def('resign', function() {
       'span.button', [
         'a', {
           href: 'javascript:void(0)',
-          onclick: function() {
+          click: function() {
             return console.log('Resign');
           }
         }, t('resign')
@@ -88,7 +88,7 @@ T.def('window-opener', function() {
       'a', {
         title: "" + (t('open_in_new_window')) + " [Alt Shift W]",
         href: 'javascript: void(0)',
-        onclick: function() {
+        click: function() {
           return console.log('Open in new window');
         }
       }, [
@@ -120,7 +120,7 @@ T.def('toolbar', function() {
       '.tb-item.refresh', [
         'a.toggle-opacity', {
           href: 'javascript: void(0)',
-          onclick: function() {
+          click: function() {
             return console.log('Refresh');
           },
           title: "" + (t('refresh')) + " [Alt Shift R]"
@@ -134,7 +134,7 @@ T.def('toolbar', function() {
       '.tb-item.toggle-number', [
         'a.toggle-opacity', {
           href: 'javascript: void(0)',
-          onclick: function() {
+          click: function() {
             return console.log('Toggle move number display');
           },
           title: "" + (t('refresh')) + " [Alt Shift R]"

@@ -258,7 +258,7 @@
             for (name in myCallbacks) {
               if (!__hasProp.call(myCallbacks, name)) continue;
               callback = myCallbacks[name];
-              _results2.push(element[name] = callback);
+              _results2.push(element.addEventListener(name, callback, false));
             }
             return _results2;
           })());

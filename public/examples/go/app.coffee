@@ -29,13 +29,13 @@ T.def 'language-switcher', ->
   [
     [ 'a.localization'
       href: 'javascript:void(0)'
-      onclick: -> console.log 'Change language to Chinese'
+      click: -> console.log 'Change language to Chinese'
       '中文'
     ]
     ' | '
     [ 'a.localization'
       href: 'javascript:void(0)'
-      onclick: -> console.log 'Change language to English'
+      click: -> console.log 'Change language to English'
       'EN'
     ]
   ]
@@ -58,7 +58,7 @@ T.def 'resign', ->
     [ 'span.button'
       [ 'a'
         href: 'javascript:void(0)'
-        onclick: -> console.log 'Resign'
+        click: -> console.log 'Resign'
         t('resign')
       ]
     ]
@@ -89,7 +89,7 @@ T.def 'window-opener', ->
     [ 'a'
       title: "#{t('open_in_new_window')} [Alt Shift W]"
       href: 'javascript: void(0)'
-      onclick: -> console.log 'Open in new window'
+      click: -> console.log 'Open in new window'
       [ 'img.sprite-newwindow', src: 'images/default.gif' ]
     ]
   ]
@@ -113,7 +113,7 @@ T.def 'toolbar', ->
     [ '.tb-item.refresh'
       [ 'a.toggle-opacity'
         href: 'javascript: void(0)'
-        onclick: -> console.log 'Refresh'
+        click: -> console.log 'Refresh'
         title: "#{t('refresh')} [Alt Shift R]"
         [ 'img.sprite-refresh', src: 'images/default.gif' ]
       ]
@@ -121,7 +121,7 @@ T.def 'toolbar', ->
     [ '.tb-item.toggle-number'
       [ 'a.toggle-opacity'
         href: 'javascript: void(0)'
-        onclick: -> console.log 'Toggle move number display'
+        click: -> console.log 'Toggle move number display'
         title: "#{t('refresh')} [Alt Shift R]"
         [ 'img.sprite-toggle-number', src: 'images/shownumber.gif' ]
       ]
