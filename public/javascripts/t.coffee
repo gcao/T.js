@@ -49,6 +49,8 @@ merge      = (o1, o2) ->
 
   o1
 
+RENDERER_CONFIG          = 'renderer'
+RENDER_COMPLETE_CALLBACK = 'renderComplete'
 callbacks = []
 
 FIRST_NO_PROCESS_PATTERN = /^<.*/
@@ -185,7 +187,10 @@ registerCallbacks = (config) ->
         element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
 
       for own name, callback of myCallbacks
-        element.addEventListener(name, callback, false)
+        if name is RENDER_COMPLETE_CALLBACK
+          callback(element)
+        else
+          element.addEventListener(name, callback, false)
 
 getRandomCssClass = ->
   String(Math.random()).replace('0.', 'cls')
@@ -309,13 +314,16 @@ init = (T) ->
   Template.prototype.renderWith = (data...) ->
     config = data.pop()
     output = @process data...
-    html = render output
-    domRenderer = config?.domRenderer
-    if typeof domRenderer is 'function'
-      domRenderer(html)
+    html   = render output
+
+    renderer = config?[RENDERER_CONFIG]
+    if typeof renderer is 'function'
+      renderer(html)
       registerCallbacks(config)
     else
-      throw "render(): domRenderer must be a function, but is a #{typeof domRenderer}."
+      throw "render(): #{RENDERER_CONFIG} must be a function, but is a #{typeof renderer}."
+
+    html
 
   Template.prototype.prepare = (includes) ->
     for own key, value of includes
