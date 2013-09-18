@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>T.js example 3 - a TODO list that uses data-binding</title>
+  <script type="text/javascript" src="coffee-script.js"></script>
+  <script type="text/javascript" src="watch.js"></script>
+  <script type="text/javascript" src="../javascripts/jquery-1.8.2.min.js"></script>
+  <script type="text/javascript" src="../javascripts/t.js"></script>
+  <script type="text/coffeescript">
+
+todos = ["Do this", "Do that"]
+
+T.def 'main', ->
+  [ "div#container"
+    style: 
+      width: "300px"
+      padding: "3px"
+      border: "1px solid grey"
+
+    [ "div.header"
+      style:
+        padding: "3px"
+        background: "#fbb"
+        "font-weight": "bold"
+      "My TODO List"
+    ]
+    [ "div.contents"
+      style: width: "100%"
+    ]
+    [ "input"
+      type: "text"
+      placeholder: "Type content and hit Enter"
+      style: width: "98%"
+      keyup: (event) ->
+        return if event.which isnt 13
+
+        event.preventDefault()
+        todos.push $(this).val()
+        $(this).val('')
+    ]
+  ]
+
+T('main').renderWith inside: $('body')
+
+#T('main').process().render before:  $('#container')
+#T('main').process().render after:   $('#container')
+#T('main').process().render inside:  $('#container')
+#T('main').process().render replace: $('#container')
+
+#T('main', data).render replace: $('#container')
+
+T.def 'rowTemplate', (items, index) ->
+  [ "div.content"
+    style: padding: "3px"
+
+    T.escape(items[index])
+    "&nbsp;&nbsp;"
+    [ "a"
+      href: "javascript:void(0)"
+      click: -> 
+        items.splice(index, 1)
+      "X"
+    ]
+  ]
+
+T.def 'rowsTemplate', (rows) ->
+  T('rowTemplate', rows, i) for i in [0..rows.length - 1]
+
+T('rowsTemplate').renderWith todos, 
+  renderer: (s) -> $('.contents').html(s)
+
+</script>
+</head>
+<body>
+T.js example 2
+
+This example shows a simple TODO list.
+</body>
+</html>
+

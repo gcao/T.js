@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>T.js example 3 - a TODO list that uses data-binding</title>
+  <script type="text/javascript" src="coffee-script.js"></script>
+  <script type="text/javascript" src="watch.js"></script>
+  <script type="text/javascript" src="../javascripts/jquery-1.8.2.min.js"></script>
+  <script type="text/javascript" src="../javascripts/t.js"></script>
+  <script type="text/coffeescript">
+
+T.def 'main', ->
+  [ "div#container"
+    style: 
+      width: "300px"
+      padding: "3px"
+      border: "1px solid grey"
+
+    [ "div.header"
+      style:
+        padding: "3px"
+        background: "#fbb"
+        "font-weight": "bold"
+      "My TODO List"
+    ]
+    [ "div.contents"
+      style: width: "100%"
+    ]
+    [ "input"
+      type: "text"
+      placeholder: "Type content and hit Enter"
+      style: width: "98%"
+      keyup: (event) ->
+        return if event.which isnt 13
+
+        event.preventDefault()
+        console.log 'keyup'
+        console.log window.contents
+        console.log window.contents instanceof Array
+        window.contents.push $(this).val()
+        $(this).val('')
+    ]
+  ]
+
+T('main').renderWith renderer: (s) -> $('body').html(s)
+
+T.def 'rowTemplate', (items, index) ->
+  [ "div.content"
+    style: padding: "3px"
+
+    T.escape(items[index])
+    "&nbsp;&nbsp;"
+    [ "a"
+      href: "javascript:void(0)"
+      click: -> 
+        console.log 'rowTemplate'
+        items.splice(index, 1)
+      "X"
+    ]
+  ]
+
+T.def 'rowsTemplate', (rows) ->
+  console.log 'rowsTemplate'
+  console.log rows instanceof Array
+  T('rowTemplate', rows, i) for i in [0..rows.length - 1]
+
+watch window, 'contents', (name, oldValue, newValue) ->
+  console.log 'watch'
+  console.log contents instanceof Array
+  T('rowsTemplate').renderWith newValue, 
+    renderer: (s) -> $('.contents').html(s)
+
+window.contents = ["Do this", "Do that"]
+console.log 'top level'
+console.log window.contents
+
+</script>
+</head>
+<body>
+T.js example 2
+
+This example shows a simple TODO list.
+</body>
+</html>
+
