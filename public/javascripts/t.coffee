@@ -23,6 +23,7 @@ hasFunction = (o) ->
       return true if hasFunction value
 
 escape = (str) ->
+  return str if not str
   str
    .replace(/&/g, "&amp;" )
    .replace(/</g, "&lt;"  )
@@ -31,6 +32,7 @@ escape = (str) ->
    .replace(/'/g, "&#039;")
 
 unescape = (str) ->
+  return str if not str
   str
    .replace(/&amp;/g , '&')
    .replace(/&lt;/g  , '<')
@@ -229,7 +231,7 @@ renderAttributes = (attributes) ->
 renderRest = (input) ->
   (render(item) for item in input).join('')
 
-render = (input, config) ->
+render = (input) ->
   return '' if typeof input is 'undefined' or input is null
   return '' + input unless isArray input
   return '' if input.length is 0
@@ -272,14 +274,6 @@ render = (input, config) ->
     result += renderRest input
     result += "</" + first + ">"
 
-  if config and config.domRenderer
-    domRenderer = config.domRenderer
-    if typeof domRenderer is 'function'
-      domRenderer(result)
-      registerCallbacks(config)
-    else
-      raise "render(): domRenderer must be a function, but is a #{typeof domRenderer}."
-
   result
 
 create = ->
@@ -315,7 +309,13 @@ init = (T) ->
   Template.prototype.renderWith = (data...) ->
     config = data.pop()
     output = @process data...
-    render output, config
+    html = render output
+    domRenderer = config?.domRenderer
+    if typeof domRenderer is 'function'
+      domRenderer(html)
+      registerCallbacks(config)
+    else
+      throw "render(): domRenderer must be a function, but is a #{typeof domRenderer}."
 
   Template.prototype.prepare = (includes) ->
     for own key, value of includes

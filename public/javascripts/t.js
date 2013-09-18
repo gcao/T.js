@@ -57,10 +57,16 @@
   };
 
   escape = function(str) {
+    if (!str) {
+      return str;
+    }
     return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
   };
 
   unescape = function(str) {
+    if (!str) {
+      return str;
+    }
     return str.replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&quot;/g, '"').replace(/&#039;/g, "'");
   };
 
@@ -337,8 +343,8 @@
     })()).join('');
   };
 
-  render = function(input, config) {
-    var domRenderer, first, item, result, second;
+  render = function(input) {
+    var first, item, result, second;
     if (typeof input === 'undefined' || input === null) {
       return '';
     }
@@ -396,15 +402,6 @@
       result += renderRest(input);
       result += "</" + first + ">";
     }
-    if (config && config.domRenderer) {
-      domRenderer = config.domRenderer;
-      if (typeof domRenderer === 'function') {
-        domRenderer(result);
-        registerCallbacks(config);
-      } else {
-        raise("render(): domRenderer must be a function, but is a " + (typeof domRenderer) + ".");
-      }
-    }
     return result;
   };
 
@@ -449,11 +446,18 @@
       return render(output);
     };
     Template.prototype.renderWith = function() {
-      var config, data, output;
+      var config, data, domRenderer, html, output;
       data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       config = data.pop();
       output = this.process.apply(this, data);
-      return render(output, config);
+      html = render(output);
+      domRenderer = config != null ? config.domRenderer : void 0;
+      if (typeof domRenderer === 'function') {
+        domRenderer(html);
+        return registerCallbacks(config);
+      } else {
+        throw "render(): domRenderer must be a function, but is a " + (typeof domRenderer) + ".";
+      }
     };
     Template.prototype.prepare = function(includes) {
       var key, template, value;
