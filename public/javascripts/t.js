@@ -4,7 +4,7 @@
     __hasProp = {}.hasOwnProperty,
     __slice = [].slice;
 
-  VERSION = "0.5.0";
+  VERSION = "0.6.0";
 
   isArray = function(o) {
     return o instanceof Array;
@@ -97,15 +97,19 @@
 
   TemplateOutput.prototype.render = function(options) {
     if (options.inside) {
-      $(options.inside).html(toString());
+      $(options.inside).html(this.toString());
     } else if (options.replace) {
-      $(options.replace).replace(toString());
+      $(options.replace).replace(this.toString());
     } else if (options.prepend) {
-      $(options.prepend).prepend(toString());
+      $(options.prepend).prepend(this.toString());
     } else if (options.append) {
-      $(options.append).append(toString());
+      $(options.append).append(this.toString());
+    } else if (options.before) {
+      $(options.before).before(this.toString());
+    } else if (options.after) {
+      $(options.after).after(this.toString());
     } else if (options["with"]) {
-      options["with"](toString());
+      options["with"](this.toString());
     }
     return registerCallbacks();
   };

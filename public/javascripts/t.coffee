@@ -1,4 +1,4 @@
-VERSION = "0.5.0"
+VERSION = "0.6.0"
 
 isArray    = (o) -> o instanceof Array
 isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
@@ -56,15 +56,19 @@ TemplateOutput.prototype.toString = ->
 
 TemplateOutput.prototype.render = (options) ->
   if options.inside
-    $(options.inside).html(toString())
+    $(options.inside).html(@toString())
   else if options.replace
-    $(options.replace).replace(toString())
+    $(options.replace).replace(@toString())
   else if options.prepend
-    $(options.prepend).prepend(toString())
+    $(options.prepend).prepend(@toString())
   else if options.append
-    $(options.append).append(toString())
+    $(options.append).append(@toString())
+  else if options.before
+    $(options.before).before(@toString())
+  else if options.after
+    $(options.after).after(@toString())
   else if options.with
-    options.with(toString())
+    options.with(@toString())
 
   registerCallbacks()
 

@@ -41,14 +41,7 @@ T.def 'main', ->
     ]
   ]
 
-T('main').renderWith inside: $('body')
-
-#T('main').process().render before:  $('#container')
-#T('main').process().render after:   $('#container')
-#T('main').process().render inside:  $('#container')
-#T('main').process().render replace: $('#container')
-
-#T('main', data).render replace: $('#container')
+T('main').process().render inside: $('body')
 
 T.def 'rowTemplate', (items, index) ->
   [ "div.content"
@@ -67,8 +60,7 @@ T.def 'rowTemplate', (items, index) ->
 T.def 'rowsTemplate', (rows) ->
   T('rowTemplate', rows, i) for i in [0..rows.length - 1]
 
-T('rowsTemplate').renderWith todos, 
-  renderer: (s) -> $('.contents').html(s)
+T('rowsTemplate', todos).render inside: '.contents'
 
 </script>
 </head>
