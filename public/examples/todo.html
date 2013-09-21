@@ -10,7 +10,8 @@
 
 T.def 'main', ->
   [ "div#container"
-    renderComplete: ->
+    renderComplete: (el) ->
+      console.log el
       updateContents()
     style: 
       width: "300px"
@@ -18,6 +19,8 @@ T.def 'main', ->
       border: "1px solid grey"
 
     [ "div.header"
+      renderComplete: (el) ->
+        console.log el
       style:
         padding: "3px"
         background: "#fbb"
@@ -25,9 +28,13 @@ T.def 'main', ->
       "My TODO List"
     ]
     [ "div.contents"
+      renderComplete: (el) ->
+        console.log el
       style: width: "100%"
     ]
     [ "input"
+      renderComplete: (el) ->
+        console.log el
       type: "text"
       style: width: "98%"
       keyup: (event) ->
@@ -42,11 +49,15 @@ T.def 'main', ->
 
 T.def 'rowTemplate', (item, index) ->
   [ "div.content"
+    renderComplete: (el) ->
+      console.log el
     style: padding: "3px"
 
     T.escape(item)
     "&nbsp;&nbsp;"
     [ "a"
+      renderComplete: (el) ->
+        console.log el
       href: "javascript:void(0)"
       click: ->
         contents.splice(index, 1)
@@ -60,11 +71,9 @@ T.def 'rowsTemplate', (rows) ->
 
 contents = ["Do this", "Do that"]
 
-updateContents = ->
-  T('rowsTemplate').renderWith contents, 
-    renderer: (s) -> $('.contents').html(s)
+updateContents = -> T('rowsTemplate', contents).render inside: '.contents'
 
-T('main').renderWith renderer: (s) -> $('body').html(s)
+T('main').process().render inside: 'body'
 
 </script>
 </head>

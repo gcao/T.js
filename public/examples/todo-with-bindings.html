@@ -42,7 +42,7 @@ T.def 'main', ->
     ]
   ]
 
-T('main').renderWith renderer: (s) -> $('body').html(s)
+T('main').process().render inside: 'body'
 
 T.def 'rowTemplate', (items, index) ->
   [ "div.content"
@@ -54,7 +54,7 @@ T.def 'rowTemplate', (items, index) ->
       href: "javascript:void(0)"
       click: -> 
         console.log 'rowTemplate'
-        items.splice(index, 1)
+        window.contents = items.splice(index, 1)
       "X"
     ]
   ]
@@ -67,8 +67,7 @@ T.def 'rowsTemplate', (rows) ->
 watch window, 'contents', (name, oldValue, newValue) ->
   console.log 'watch'
   console.log contents instanceof Array
-  T('rowsTemplate').renderWith newValue, 
-    renderer: (s) -> $('.contents').html(s)
+  T('rowsTemplate', newValue).render inside: '.contents'
 
 window.contents = ["Do this", "Do that"]
 console.log 'top level'
