@@ -49,7 +49,25 @@ merge      = (o1, o2) ->
 
   o1
 
-RENDERER_CONFIG          = 'renderer'
+TemplateOutput = (@template, @tags) ->
+
+TemplateOutput.prototype.toString = ->
+  render @tags
+
+TemplateOutput.prototype.render = (options) ->
+  if options.inside
+    $(options.inside).html(toString())
+  else if options.replace
+    $(options.replace).replace(toString())
+  else if options.prepend
+    $(options.prepend).prepend(toString())
+  else if options.append
+    $(options.append).append(toString())
+  else if options.with
+    options.with(toString())
+
+  registerCallbacks()
+
 RENDER_COMPLETE_CALLBACK = 'renderComplete'
 callbacks = []
 
@@ -104,6 +122,8 @@ normalize = (items) ->
         items.splice i, 1, item...
       else if isArray first
         items.splice i, 1, item...
+    else if item instanceof TemplateOutput
+      items[i] = item.tags
     else if typeof item is 'undefined' or item is null or item is ''
       #items.splice i, 1
     else
@@ -303,27 +323,28 @@ init = (T) ->
     @isTjsTemplate = true
 
   Template.prototype.process = (data...) ->
-    output = prepareOutput(@template, data...)
-    output = normalize output
-    processAttributes output
+    tags = prepareOutput(@template, data...)
+    tags = normalize tags
+    tags = processAttributes tags
+    new TemplateOutput(this, tags)
 
-  Template.prototype.render = (data...) ->
-    output = @process data...
-    render output
+  #Template.prototype.render = (data...) ->
+  #  output = @process data...
+  #  render output
 
-  Template.prototype.renderWith = (data...) ->
-    config = data.pop()
-    output = @process data...
-    html   = render output
+  #Template.prototype.renderWith = (data...) ->
+  #  config = data.pop()
+  #  output = @process data...
+  #  html   = render output
 
-    renderer = config?[RENDERER_CONFIG]
-    if typeof renderer is 'function'
-      renderer(html)
-      registerCallbacks(config)
-    else
-      throw "render(): #{RENDERER_CONFIG} must be a function, but is a #{typeof renderer}."
+  #  renderer = config?[RENDERER_CONFIG]
+  #  if typeof renderer is 'function'
+  #    renderer(html)
+  #    registerCallbacks(config)
+  #  else
+  #    throw "render(): #{RENDERER_CONFIG} must be a function, but is a #{typeof renderer}."
 
-    html
+  #  html
 
   Template.prototype.prepare = (includes) ->
     for own key, value of includes
@@ -347,11 +368,11 @@ init = (T) ->
   T.process = (template, data...) ->
     new Template(template).process data...
 
-  T.render  = (template, data...) ->
-    new Template(template).render data...
+  #T.render  = (template, data...) ->
+  #  new Template(template).render data...
 
-  T.renderWith  = (template, data...) ->
-    new Template(template).renderWith data...
+  #T.renderWith  = (template, data...) ->
+  #  new Template(template).renderWith data...
 
   T.registerCallbacks = registerCallbacks
 
@@ -368,7 +389,7 @@ init = (T) ->
       try
         backup = T.internal.original if T.original
         T.internal.original = oldTemplate
-        newTemplate.process(data...)
+        newTemplate.process(data...).tags
       finally
         if backup
           T.internal.original = backup

@@ -238,7 +238,7 @@
           "class": 'first second third'
         }
       ];
-      return expect(T.process(template)).toEqual(result);
+      return expect(T.process(template).tags).toEqual(result);
     });
     it("should work with multiple arguments", function() {
       var result, template;
@@ -246,66 +246,15 @@
         return ["div", arg1, arg2, arg3];
       };
       result = ['div', '1', '2', '3'];
-      return expect(T.process(template, '1', '2', '3')).toEqual(result);
+      return expect(T.process(template, '1', '2', '3').tags).toEqual(result);
     });
     return it("can be called with different data", function() {
       var template;
       template = function(data) {
         return ['div', data];
       };
-      expect(T.process(template, 'test')).toEqual(['div', 'test']);
-      return expect(T.process(template, 'test1')).toEqual(['div', 'test1']);
-    });
-  });
-
-  describe("T.render", function() {
-    it("should work", function() {
-      var result, template;
-      template = ['div', 'a', 'b'];
-      result = '<div>ab</div>';
-      return expect(T.render(template)).toEqual(result);
-    });
-    it("should work with multiple arguments", function() {
-      var result, template;
-      template = function(arg1, arg2) {
-        return ['div', arg1, arg2];
-      };
-      result = '<div>12</div>';
-      return expect(T.render(template, '1', '2')).toEqual(result);
-    });
-    it("should work with an array without parent element", function() {
-      var result, template;
-      template = [['div', 'a'], ['div', 'b']];
-      result = '<div>a</div><div>b</div>';
-      return expect(T.render(template)).toEqual(result);
-    });
-    it("empty script should not self-close", function() {
-      var result, template;
-      template = ['script'];
-      result = '<script></script>';
-      return expect(T.render(template)).toEqual(result);
-    });
-    it("script should not self-close", function() {
-      var result, template;
-      template = [
-        'script', {
-          src: 'test.js'
-        }
-      ];
-      result = '<script src="test.js"></script>';
-      return expect(T.render(template)).toEqual(result);
-    });
-    return it("should render template", function() {
-      var result, template;
-      template = [
-        'div#test', {
-          "class": 'first second'
-        }, {
-          "class": 'third'
-        }
-      ];
-      result = '<div id="test" class="first second third"/>';
-      return expect(T.render(template)).toEqual(result);
+      expect(T.process(template, 'test').tags).toEqual(['div', 'test']);
+      return expect(T.process(template, 'test1').tags).toEqual(['div', 'test1']);
     });
   });
 
@@ -316,7 +265,7 @@
         return ['div', data];
       });
       result = ['div', 'value'];
-      return expect(T.use('template').process('value')).toEqual(result);
+      return expect(T.use('template').process('value').tags).toEqual(result);
     });
     return it("redef should work", function() {
       var result;
@@ -331,7 +280,7 @@
           "class": 'container'
         }, ['div', 'value']
       ];
-      return expect(T.use('template').process('value')).toEqual(result);
+      return expect(T.use('template').process('value').tags).toEqual(result);
     });
   });
 
@@ -356,7 +305,7 @@
       data = {
         name: 'John Doe'
       };
-      return expect(T('template').process(data)).toEqual(['div', 'John Doe']);
+      return expect(T('template').process(data).tags).toEqual(['div', 'John Doe']);
     });
     it("process with multiple arguments should work", function() {
       var result;
@@ -364,7 +313,7 @@
         return ["div", arg1, arg2, arg3];
       });
       result = ['div', '1', '2', '3'];
-      return expect(T('template').process('1', '2', '3')).toEqual(result);
+      return expect(T('template').process('1', '2', '3').tags).toEqual(result);
     });
     it("render with multiple arguments should work", function() {
       var result;
@@ -372,13 +321,13 @@
         return ["div", arg1, arg2, arg3];
       });
       result = '<div>123</div>';
-      return expect(T('template').render('1', '2', '3')).toEqual(result);
+      return expect(T('template', '1', '2', '3').toString()).toEqual(result);
     });
     it("T(template, data) should call process with all arguments", function() {
       T.def('template', function(arg1, arg2) {
         return ["div", arg1, arg2];
       });
-      return expect(T('template', '1', '2')).toEqual(['div', '1', '2']);
+      return expect(T('template', '1', '2').tags).toEqual(['div', '1', '2']);
     });
     it("T(template, data) should call process", function() {
       var data;
@@ -388,7 +337,7 @@
       data = {
         name: 'John Doe'
       };
-      return expect(T('template', data)).toEqual(['div', 'John Doe']);
+      return expect(T('template', data).tags).toEqual(['div', 'John Doe']);
     });
     it("include template as partial should work", function() {
       var data, result;
@@ -404,7 +353,7 @@
         }
       };
       result = ['div', ['div', 'John Doe']];
-      return expect(T('template', data)).toEqual(result);
+      return expect(T('template', data).tags).toEqual(result);
     });
     return it("complex template should work", function() {
       var data, result;
@@ -426,7 +375,7 @@
           }
         }
       };
-      return expect(T('template', data)).toEqual(result);
+      return expect(T('template', data).tags).toEqual(result);
     });
   });
 
@@ -443,7 +392,7 @@
         title: partial
       }).process({
         name: 'John Doe'
-      })).toEqual(['div', ['div', 'John Doe']]);
+      }).tags).toEqual(['div', ['div', 'John Doe']]);
     });
     it("layout can be reused", function() {
       var template1, template2;
@@ -456,8 +405,8 @@
       template2 = T('layout').prepare({
         body: 'Body2'
       });
-      expect(template1.process()).toEqual(['div', 'Body1']);
-      return expect(template2.process()).toEqual(['div', 'Body2']);
+      expect(template1.process().tags).toEqual(['div', 'Body1']);
+      return expect(template2.process().tags).toEqual(['div', 'Body2']);
     });
     return it("nested include/prepare should work", function() {
       var result;
@@ -474,7 +423,7 @@
       result = ['div', ['div', 'Title'], 'Body'];
       return expect(T('template2').prepare({
         body: 'Body'
-      }).process()).toEqual(result);
+      }).process().tags).toEqual(result);
     });
   });
 
@@ -485,8 +434,8 @@
       T2 = T.create();
       T1.def('template', 'T1');
       T2.def('template', 'T2');
-      expect(T1('template').process()).toEqual('T1');
-      return expect(T2('template').process()).toEqual('T2');
+      expect(T1('template').process().tags).toEqual('T1');
+      return expect(T2('template').process().tags).toEqual('T2');
     });
     return it("should work with complex templates", function() {
       var T1, T2;
@@ -502,8 +451,8 @@
         body: function(data) {
           return ['div', data];
         }
-      }).process('John Doe')).toEqual(['div', ['div', 'John Doe']]);
-      return expect(T2('template').process('1', '2')).toEqual(['div', '1', '2']);
+      }).process('John Doe').tags).toEqual(['div', ['div', 'John Doe']]);
+      return expect(T2('template').process('1', '2').tags).toEqual(['div', '1', '2']);
     });
   });
 
