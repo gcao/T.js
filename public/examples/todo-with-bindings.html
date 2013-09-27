@@ -34,9 +34,6 @@ T.def 'main', ->
         return if event.which isnt 13
 
         event.preventDefault()
-        console.log 'keyup'
-        console.log window.contents
-        console.log window.contents instanceof Array
         window.contents.push $(this).val()
         $(this).val('')
     ]
@@ -53,25 +50,18 @@ T.def 'rowTemplate', (items, index) ->
     [ "a"
       href: "javascript:void(0)"
       click: -> 
-        console.log 'rowTemplate'
-        window.contents = items.splice(index, 1)
+        items.splice(index, 1)
       "X"
     ]
   ]
 
 T.def 'rowsTemplate', (rows) ->
-  console.log 'rowsTemplate'
-  console.log rows instanceof Array
   T('rowTemplate', rows, i) for i in [0..rows.length - 1]
 
 watch window, 'contents', (name, oldValue, newValue) ->
-  console.log 'watch'
-  console.log contents instanceof Array
   T('rowsTemplate', newValue).render inside: '.contents'
 
 window.contents = ["Do this", "Do that"]
-console.log 'top level'
-console.log window.contents
 
 </script>
 </head>

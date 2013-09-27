@@ -120,46 +120,11 @@ describe "T.process", ->
     expect(T.process(template, 'test' ).tags).toEqual(['div', 'test'])
     expect(T.process(template, 'test1').tags).toEqual(['div', 'test1'])
 
-#describe "T.render", ->
-#  it "should work", ->
-#    template = ['div', 'a', 'b']
-#    result   = '<div>ab</div>'
-#    expect(T.render(template)).toEqual(result)
-
-#  it "should work with multiple arguments", ->
-#    template = (arg1, arg2) -> ['div', arg1, arg2]
-#    result   = '<div>12</div>'
-#    expect(T.render(template, '1', '2')).toEqual(result)
-
-#  it "should work with an array without parent element", ->
-#    template = [['div', 'a'], ['div', 'b']]
-#    result   = '<div>a</div><div>b</div>'
-#    expect(T.render(template)).toEqual(result)
-
-#  it "empty script should not self-close", ->
-#    template = ['script']
-#    result   = '<script></script>'
-#    expect(T.render(template)).toEqual(result)
-
-#  it "script should not self-close", ->
-#    template = ['script', src: 'test.js']
-#    result   = '<script src="test.js"></script>'
-#    expect(T.render(template)).toEqual(result)
-
-#  it "should render template", ->
-#    template = [
-#      'div#test'
-#      {class: 'first second'}
-#      {class: 'third'}
-#    ]
-#    result = '<div id="test" class="first second third"/>'
-#    expect(T.render(template)).toEqual(result)
-
-describe "T.def/use", ->
+describe "T.def", ->
   it "should work", ->
     T.def('template', (data) -> ['div', data])
     result   = ['div', 'value']
-    expect(T.use('template').process('value').tags).toEqual(result)
+    expect(T('template').process('value').tags).toEqual(result)
 
   it "redef should work", ->
     T.def('template', (data) -> ['div', data])
@@ -169,7 +134,7 @@ describe "T.def/use", ->
       class: 'container'
       ['div', 'value']
     ]
-    expect(T.use('template').process('value').tags).toEqual(result)
+    expect(T('template').process('value').tags).toEqual(result)
 
 describe "T.escape", ->
   it "should work", ->

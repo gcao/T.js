@@ -214,7 +214,7 @@ registerCallbacks = (config) ->
         if name is RENDER_COMPLETE_CALLBACK
           callback(element)
         else
-          element.addEventListener(name, callback, false)
+          $(element).on(name, callback)
 
 getRandomCssClass = ->
   String(Math.random()).replace('0.', 'cls')
@@ -307,7 +307,7 @@ render = (input) ->
 
 create = ->
   newT = (name, data...) ->
-    template = newT.use(name)
+    template = newT.templates[name]
 
     if data.length is 0
       template
@@ -332,24 +332,6 @@ init = (T) ->
     tags = processAttributes tags
     new TemplateOutput(this, tags)
 
-  #Template.prototype.render = (data...) ->
-  #  output = @process data...
-  #  render output
-
-  #Template.prototype.renderWith = (data...) ->
-  #  config = data.pop()
-  #  output = @process data...
-  #  html   = render output
-
-  #  renderer = config?[RENDERER_CONFIG]
-  #  if typeof renderer is 'function'
-  #    renderer(html)
-  #    registerCallbacks(config)
-  #  else
-  #    throw "render(): #{RENDERER_CONFIG} must be a function, but is a #{typeof renderer}."
-
-  #  html
-
   Template.prototype.prepare = (includes) ->
     for own key, value of includes
       includes[key] = new Template(value) unless isTemplate value
@@ -372,12 +354,6 @@ init = (T) ->
   T.process = (template, data...) ->
     new Template(template).process data...
 
-  #T.render  = (template, data...) ->
-  #  new Template(template).render data...
-
-  #T.renderWith  = (template, data...) ->
-  #  new Template(template).renderWith data...
-
   T.registerCallbacks = registerCallbacks
 
   T.include = (name, data...) ->
@@ -387,7 +363,7 @@ init = (T) ->
     T.templates[name] = new Template(template, name)
 
   T.redefine = T.redef = (name, template) ->
-    oldTemplate = T.use(name)
+    oldTemplate = T.templates[name]
     newTemplate = new Template(template)
     wrapper = (data...) ->
       try
@@ -404,9 +380,6 @@ init = (T) ->
 
   T.wrapped = (data...) ->
     T.internal.original.process(data...)
-
-  T.use = (name) ->
-    T.templates[name]
 
   T.escape   = escape
   T.unescape = unescape

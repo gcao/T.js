@@ -8,72 +8,66 @@
   <script type="text/javascript" src="../javascripts/t.js"></script>
   <script type="text/coffeescript">
 
-T.def 'main', ->
+T.def 'todoContainer', (todos) ->
   [ "div#container"
-    renderComplete: (el) ->
-      console.log el
-      updateContents()
     style: 
       width: "300px"
       padding: "3px"
       border: "1px solid grey"
 
+    # Event handler
+    todosUpdated: (e, newTodos) ->
+      T('todos', newTodos).render inside: '.todos'
+
     [ "div.header"
-      renderComplete: (el) ->
-        console.log el
       style:
         padding: "3px"
         background: "#fbb"
         "font-weight": "bold"
       "My TODO List"
     ]
-    [ "div.contents"
-      renderComplete: (el) ->
-        console.log el
+    [ "div.todos"
       style: width: "100%"
+      T('todos', todos)
     ]
-    [ "input"
-      renderComplete: (el) ->
-        console.log el
-      type: "text"
-      style: width: "98%"
-      keyup: (event) ->
-        if event.which is 13
-          event.preventDefault()
-          contents.push $(this).val()
-          $(this).val('')
-          updateContents()
-      placeholder: "Type content and hit Enter"
-    ]
+    T('todoInput', todos)
   ]
 
-T.def 'rowTemplate', (item, index) ->
-  [ "div.content"
-    renderComplete: (el) ->
-      console.log el
+T.def 'todo', (todos, index) ->
+  [ "div.todo"
     style: padding: "3px"
 
-    T.escape(item)
+    T.escape(todos[index])
     "&nbsp;&nbsp;"
     [ "a"
-      renderComplete: (el) ->
-        console.log el
       href: "javascript:void(0)"
       click: ->
-        contents.splice(index, 1)
-        updateContents()
+        todos.splice(index, 1)
+        $(this).trigger('todosUpdated', [todos])
       "X"
     ]
   ]
 
-T.def 'rowsTemplate', (rows) ->
-  T('rowTemplate', item, i) for item, i in rows
+T.def 'todos', (todos) ->
+  return if todos.length is 0
 
-contents = ["Do this", "Do that"]
+  T('todo', todos, i) for i in [0..todos.length - 1]
 
-updateContents = -> T('rowsTemplate', contents).render inside: '.contents'
+T.def 'todoInput', (todos) ->
+  [ "input"
+    type: "text"
+    style: width: "98%"
+    keyup: (event) ->
+      if event.which is 13
+        event.preventDefault()
 
-T('main').process().render inside: 'body'
+        todos.push $(this).val()
+        $(this).val('')
+        $(this).trigger('todosUpdated', [todos])
+    placeholder: "Enter content and hit Return"
+  ]
+
+T('todoContainer', ["Do this", "Do that"]).render inside: 'body'
 
 </script>
 </head>

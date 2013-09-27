@@ -258,14 +258,14 @@
     });
   });
 
-  describe("T.def/use", function() {
+  describe("T.def", function() {
     it("should work", function() {
       var result;
       T.def('template', function(data) {
         return ['div', data];
       });
       result = ['div', 'value'];
-      return expect(T.use('template').process('value').tags).toEqual(result);
+      return expect(T('template').process('value').tags).toEqual(result);
     });
     return it("redef should work", function() {
       var result;
@@ -280,7 +280,7 @@
           "class": 'container'
         }, ['div', 'value']
       ];
-      return expect(T.use('template').process('value').tags).toEqual(result);
+      return expect(T('template').process('value').tags).toEqual(result);
     });
   });
 

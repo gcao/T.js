@@ -1,13 +1,17 @@
-T.def 'main', ->
+T.def 'main', (game) ->
   [ '.gameviewer.size-21'
-    T('banner'     ).process()
-    T('board'      ).process()
-    T('toolbar'    ).process()
-    T('point-label').process()
-    T('right-panel').process()
+    T('banner'     , game)
+    T('board'      , game)
+    T('toolbar'    , game)
+    T('point-label', game)
+    T('right-panel', game)
+    languageChanged: ->
+      console.log 'languageChanged'
+    renderComplete: (el) -> 
+      game.element = el
   ]
 
-T.def 'banner', ->
+T.def 'banner', (game) ->
   [ '.banner'
     [ '.banner-overlay' ]
     [ '.banner-left'
@@ -17,11 +21,11 @@ T.def 'banner', ->
       "&nbsp;"
       [ 'img.next-player', src: 'images/default.gif' ]
     ]
-    T('move-number').process()
-    T('resign'     ).process()
+    T('move-number', game)
+    T('resign'     , game)
     [ '.banner-overlay'
-      T('banner-prisoners').process()
-      T('window-opener'   ).process()
+      T('banner-prisoners', game)
+      T('window-opener'   , game)
     ]
   ]
 
@@ -29,18 +33,22 @@ T.def 'language-switcher', ->
   [
     [ 'a.localization'
       href: 'javascript:void(0)'
-      click: -> console.log 'Change language to Chinese'
+      click: -> 
+        console.log 'Change language to Chinese'
+        $(this).trigger('languageChanged', ['cn'])
       '中文'
     ]
     ' | '
     [ 'a.localization'
       href: 'javascript:void(0)'
-      click: -> console.log 'Change language to English'
+      click: ->
+        console.log 'Change language to English'
+        $(this).trigger('languageChanged', ['en'])
       'EN'
     ]
   ]
 
-T.def 'move-number', ->
+T.def 'move-number', (game) ->
   [ '.button.move-number-outer'
     [ 'a.thickbox'
       href: '#TB_inline?test=0&width=250&height=56&inlineId=1_goTo&focus=1_goToInput&modal=true&test1=0'
@@ -53,7 +61,7 @@ T.def 'move-number', ->
     ]
   ]
 
-T.def 'resign', ->
+T.def 'resign', (game) ->
   [ '.resign'
     [ 'span.button'
       [ 'a'
@@ -64,13 +72,13 @@ T.def 'resign', ->
     ]
   ]
 
-T.def 'banner-prisoners', ->
+T.def 'banner-prisoners', (game) ->
   [ '.prisoners-outer'
-    T('banner-prisoner', 'black')
-    T('banner-prisoner', 'white')
+    T('banner-prisoner', game, 'black')
+    T('banner-prisoner', game, 'white')
   ]
 
-T.def 'banner-prisoner', (color) ->
+T.def 'banner-prisoner', (game, color) ->
   [ ".#{color}"
     [ 'span.button'
       [ 'a'
@@ -84,7 +92,7 @@ T.def 'banner-prisoner', (color) ->
     ]
   ]
 
-T.def 'window-opener', ->
+T.def 'window-opener', (game) ->
   [ '.open-window-outer'
     [ 'a'
       title: "#{t('open_in_new_window')} [Alt Shift W]"
@@ -94,7 +102,7 @@ T.def 'window-opener', ->
     ]
   ]
 
-T.def 'board', ->
+T.def 'board', (game) ->
   [ '.board-outer.sprite-21-board'
     [ '.board'
       [ '.board-overlay.points' ]
@@ -108,7 +116,7 @@ T.def 'board', ->
     ]
   ]
 
-T.def 'toolbar', ->
+T.def 'toolbar', (game) ->
   [ '.toolbar'
     [ '.tb-item.refresh'
       [ 'a.toggle-opacity'
@@ -128,14 +136,29 @@ T.def 'toolbar', ->
     ]
   ]
 
-T.def 'point-label', ->
+T.def 'point-label', (game) ->
   [ '.point-label' ]
 
-T.def 'right-panel', ->
+T.def 'right-panel', (game) ->
   [ '.right-pane'
-    [ '.info' ]
+    T('info-pane', game)
     [ '.comment' ]
   ]
 
-T('main').renderWith(domRenderer: (output) -> $('#container').html(output))
+T.def 'info-pane', (game) ->
+  [ '.info'
+    [ 'p'
+      'Name: '
+      game.name
+    ]
+  ]
+
+window.game =
+  name: 'Test'
+  moves: [
+    [0, 3, 3]
+    [1, 16, 16]
+  ]
+
+T('main', game).render(inside: '#container')
 

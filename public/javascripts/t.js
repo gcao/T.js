@@ -299,7 +299,7 @@
               if (name === RENDER_COMPLETE_CALLBACK) {
                 _results2.push(callback(element));
               } else {
-                _results2.push(element.addEventListener(name, callback, false));
+                _results2.push($(element).on(name, callback));
               }
             }
             return _results2;
@@ -446,7 +446,7 @@
     newT = function() {
       var data, name, template;
       name = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      template = newT.use(name);
+      template = newT.templates[name];
       if (data.length === 0) {
         return template;
       } else {
@@ -523,7 +523,7 @@
     };
     T.redefine = T.redef = function(name, template) {
       var newTemplate, oldTemplate, wrapper;
-      oldTemplate = T.use(name);
+      oldTemplate = T.templates[name];
       newTemplate = new Template(template);
       wrapper = function() {
         var backup, data;
@@ -548,9 +548,6 @@
       var data, _ref;
       data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
       return (_ref = T.internal.original).process.apply(_ref, data);
-    };
-    T.use = function(name) {
-      return T.templates[name];
     };
     T.escape = escape;
     T.unescape = unescape;
