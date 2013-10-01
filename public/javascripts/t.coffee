@@ -248,6 +248,8 @@ renderAttributes = (attributes) ->
       if isObject styles
         s = ""
         for own name, style of styles
+          if typeof style is 'number'
+            style += 'px'
           s += name + ":" + style + ";"
         result += " style=\"" + s + "\""
       else
@@ -395,6 +397,7 @@ T.internal.parseStyles       = parseStyles
 T.internal.processStyles     = processStyles
 T.internal.processAttributes = processAttributes
 T.internal.render            = render
+T.internal.renderAttributes  = renderAttributes
 T.internal.callbacks         = callbacks
 
 # noConflict support

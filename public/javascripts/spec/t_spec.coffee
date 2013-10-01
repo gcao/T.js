@@ -96,6 +96,12 @@ describe "T.internal.processAttributes", ->
     result = ['div', {class: 'first second third'}]
     expect(T.internal.processAttributes(input)).toEqual(result)
 
+describe "T.internal.renderAttributes", ->
+  it "should work", ->
+    input  = {style: top: 10}
+    result = ' style="top:10px;"'
+    expect(T.internal.renderAttributes(input)).toEqual(result)
+
 describe "T.process", ->
   it "should create ready-to-be-rendered data structure from template and data", ->
     template = [

@@ -353,6 +353,9 @@
           for (name in styles) {
             if (!__hasProp.call(styles, name)) continue;
             style = styles[name];
+            if (typeof style === 'number') {
+              style += 'px';
+            }
             s += name + ":" + style + ";";
           }
           result += " style=\"" + s + "\"";
@@ -567,6 +570,8 @@
   T.internal.processAttributes = processAttributes;
 
   T.internal.render = render;
+
+  T.internal.renderAttributes = renderAttributes;
 
   T.internal.callbacks = callbacks;
 

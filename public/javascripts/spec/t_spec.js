@@ -222,6 +222,19 @@
     });
   });
 
+  describe("T.internal.renderAttributes", function() {
+    return it("should work", function() {
+      var input, result;
+      input = {
+        style: {
+          top: 10
+        }
+      };
+      result = ' style="top:10px;"';
+      return expect(T.internal.renderAttributes(input)).toEqual(result);
+    });
+  });
+
   describe("T.process", function() {
     it("should create ready-to-be-rendered data structure from template and data", function() {
       var result, template;

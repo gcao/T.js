@@ -3,8 +3,8 @@
 T.def('main', function(game) {
   return [
     '.gameviewer.size-21', T('banner', game), T('board', game), T('toolbar', game), T('point-label', game), T('right-panel', game), {
-      languageChanged: function() {
-        return console.log('languageChanged');
+      languageChanged: function(e, language) {
+        return console.log("Language is changed to " + language);
       },
       renderComplete: function(el) {
         return game.element = el;
@@ -31,7 +31,6 @@ T.def('language-switcher', function() {
       'a.localization', {
         href: 'javascript:void(0)',
         click: function() {
-          console.log('Change language to Chinese');
           return $(this).trigger('languageChanged', ['cn']);
         }
       }, '中文'
@@ -39,7 +38,6 @@ T.def('language-switcher', function() {
       'a.localization', {
         href: 'javascript:void(0)',
         click: function() {
-          console.log('Change language to English');
           return $(this).trigger('languageChanged', ['en']);
         }
       }, 'EN'

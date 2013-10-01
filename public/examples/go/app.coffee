@@ -5,8 +5,8 @@ T.def 'main', (game) ->
     T('toolbar'    , game)
     T('point-label', game)
     T('right-panel', game)
-    languageChanged: ->
-      console.log 'languageChanged'
+    languageChanged: (e, language) ->
+      console.log "Language is changed to #{language}"
     renderComplete: (el) -> 
       game.element = el
   ]
@@ -33,17 +33,13 @@ T.def 'language-switcher', ->
   [
     [ 'a.localization'
       href: 'javascript:void(0)'
-      click: -> 
-        console.log 'Change language to Chinese'
-        $(this).trigger('languageChanged', ['cn'])
+      click: -> $(this).trigger('languageChanged', ['cn'])
       '中文'
     ]
     ' | '
     [ 'a.localization'
       href: 'javascript:void(0)'
-      click: ->
-        console.log 'Change language to English'
-        $(this).trigger('languageChanged', ['en'])
+      click: -> $(this).trigger('languageChanged', ['en'])
       'EN'
     ]
   ]
