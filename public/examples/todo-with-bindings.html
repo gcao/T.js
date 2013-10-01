@@ -54,6 +54,7 @@ T.def 'todo', (todos, index) ->
   ]
 
 T.def 'todos', (todos) ->
+  return if todos.length is 0
   T('todo', todos, i) for i in [0..todos.length - 1]
 
 window.data = todos: []
@@ -61,7 +62,6 @@ window.data = todos: []
 T('main', data).render inside: 'body'
 
 watch window.data, 'todos', (name, oldValue, newValue) ->
-  console.log data.todos
   T('todos', data.todos).render inside: '.todos'
 
 data.todos.push 'Do this'
