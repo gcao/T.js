@@ -9,7 +9,8 @@
   <script type="text/javascript" src="../javascripts/t.js"></script>
   <script type="text/coffeescript">
 
-T.def 'main', (data) ->
+# Templates
+T.def 'main', (todos) ->
   [ "div#container"
     style: 
       width: "300px"
@@ -21,11 +22,13 @@ T.def 'main', (data) ->
         padding: "3px"
         background: "#fbb"
         "font-weight": "bold"
+
       "My TODO List"
     ]
     [ "div.todos"
       style: width: "100%"
-      T('todos', data.todos) if data.todos?.length > 0
+
+      T('todos', todos)
     ]
     [ "input"
       type: "text"
@@ -35,7 +38,7 @@ T.def 'main', (data) ->
         return if event.which isnt 13
 
         event.preventDefault()
-        data.todos.push $(this).val()
+        todos.push $(this).val()
         $(this).val('')
     ]
   ]
@@ -49,23 +52,23 @@ T.def 'todo', (todos, index) ->
     [ "a"
       href: "javascript:void(0)"
       click: -> todos.splice(index, 1)
+
       "X"
     ]
   ]
 
 T.def 'todos', (todos) ->
-  return if todos.length is 0
-  T('todo', todos, i) for i in [0..todos.length - 1]
+  if todos.length > 0
+    T('todo', todos, i) for i in [0..todos.length - 1]
 
-window.data = todos: []
+# Model
+window.todos = ['Do this', 'Do that']
 
-T('main', data).render inside: 'body'
+# Model change listener
+watch window, 'todos', ->
+  T('todos', window.todos).render inside: '.todos'
 
-watch window.data, 'todos', (name, oldValue, newValue) ->
-  T('todos', data.todos).render inside: '.todos'
-
-data.todos.push 'Do this'
-data.todos.push 'Do that'
+T('main', todos).render inside: 'body'
 
 </script>
 </head>
