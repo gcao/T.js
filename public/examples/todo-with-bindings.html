@@ -13,13 +13,13 @@
 T.def 'main', (todos) ->
   [ "div#container"
     style: 
-      width: "300px"
-      padding: "3px"
+      width: 300
+      padding: 3
       border: "1px solid grey"
 
     [ "div.header"
       style:
-        padding: "3px"
+        padding: 3
         background: "#fbb"
         "font-weight": "bold"
 
@@ -45,7 +45,7 @@ T.def 'main', (todos) ->
 
 T.def 'todo', (todos, index) ->
   [ "div.content"
-    style: padding: "3px"
+    style: padding: 3
 
     T.escape(todos[index])
     "&nbsp;&nbsp;"
