@@ -21,3 +21,7 @@ group :development do
   gem 'guard-jasmine-headless-webkit'
 end
 
+group :presentation do
+  gem 'parade'
+end
+
