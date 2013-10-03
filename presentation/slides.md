@@ -29,7 +29,7 @@ Map an array to a HTML tag
 
 # What Does It Imply?
 
-We can use full Javascript's power to build up the array
+We can use Javascript's full power to build up the array
 
 E.g. create functions that return arrays:
 
