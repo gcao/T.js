@@ -127,6 +127,10 @@ T.def 'todo', (todos, index) ->
       ]
   ```
 
+!SLIDE title
+
+# EXAMPLES
+
 !SLIDE incremental text-size-90
 
 # Look Ma, Two Way Data Binding
