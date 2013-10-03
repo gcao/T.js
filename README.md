@@ -16,21 +16,6 @@ represent html/xml data.
 * Child tags are in child arrays;
 * Texts and child tags are rendered sequentially.
 
-### ADVANCED FEATURES
-
-* render() takes an optional data argument, that argument will then be passed 
-  to functions inside the template, e.g.
-  ```javascript
-  T.render(function(data){ return ['div.total', data.total], {total: 100})
-  ```
-
-* Support layout, e.g.
-  ```javascript
-  T.def('layout', ['div', ['div', 'Title'], T.include('body')]);
-  var body = ['div', 'Content goes here']
-  T('layout').prepare({'body': body}).render()
-  ```
-
 ## USAGE
 
 * Include T.js on top of HTML
@@ -45,13 +30,25 @@ T.def('template', ["a.edit", {"href": "/edit"}, "Edit"])
 
 * Render
 ```javascript
-var result = T('template').render()
+var result = T('template').process().toString()
 ```
 
 * Result is like
 ```html
 <a class="edit" href="/edit">Edit</a>
 ```
+
+### ADVANCED FEATURES
+
+* Support layout, e.g.
+  ```javascript
+  T.def('layout', ['div', ['div', 'Title'], T.include('body')]);
+
+  var body = ['div', 'Content goes here']
+
+  var result = T('layout').prepare({'body': body}).process().toString()
+  // <div><div>Title</div><div>Content goes here</div></div>
+  ```
 
 ## EXAMPLES
 
@@ -71,7 +68,7 @@ var account = {
   name: 'John Doe',
   age: 25
 };
-var result = T('template').render(account);
+var result = T('template', account).toString();
 // result is like below (after formatted)
 // <div class="account">
 //   <div class="header">Account Info</div>
