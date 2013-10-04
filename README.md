@@ -18,7 +18,7 @@ represent html/xml data.
 
 ## USAGE
 
-* Include T.js on top of HTML
+* Include T.js in HTML
 ```html
 <script src="PATH_TO/t.js"></script>
 ```
