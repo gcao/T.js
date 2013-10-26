@@ -130,7 +130,7 @@ describe "T.def", ->
   it "should work", ->
     T.def('template', (data) -> ['div', data])
     result   = ['div', 'value']
-    expect(T('template').process('value').tags).toEqual(result)
+    expect(T('template', 'value').tags).toEqual(result)
 
   it "redef should work", ->
     T.def('template', (data) -> ['div', data])
@@ -140,7 +140,7 @@ describe "T.def", ->
       class: 'container'
       ['div', 'value']
     ]
-    expect(T('template').process('value').tags).toEqual(result)
+    expect(T('template', 'value').tags).toEqual(result)
 
 describe "T.escape", ->
   it "should work", ->
@@ -151,29 +151,20 @@ describe "T.unescape", ->
     expect(T.unescape('&lt;&gt;&amp;&lt;&gt;&amp;')).toEqual('<>&<>&')
 
 describe "T()", ->
-  it "process should work", ->
+  it "should work", ->
     T.def('template', (data) -> ["div", data.name])
     data = name: 'John Doe'
-    expect(T('template').process(data).tags).toEqual(['div', 'John Doe'])
+    expect(T('template', data).tags).toEqual(['div', 'John Doe'])
 
-  it "process with multiple arguments should work", ->
+  it "with multiple arguments should work", ->
     T.def('template', (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3])
     result = ['div', '1', '2', '3']
-    expect(T('template').process('1', '2', '3').tags).toEqual(result)
+    expect(T('template', '1', '2', '3').tags).toEqual(result)
 
   it "render with multiple arguments should work", ->
     T.def('template', (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3])
     result = '<div>123</div>'
     expect(T('template', '1', '2', '3').toString()).toEqual(result)
-
-  it "T(template, data) should call process with all arguments", ->
-    T.def('template', (arg1, arg2) -> ["div", arg1, arg2])
-    expect(T('template', '1', '2').tags).toEqual(['div', '1', '2'])
-
-  it "T(template, data) should call process", ->
-    T.def('template', (data) -> ["div", data.name])
-    data = name: 'John Doe'
-    expect(T('template', data).tags).toEqual(['div', 'John Doe'])
 
   it "include template as partial should work", ->
     T.def('partial', (data) -> ["div", data.name])
@@ -203,20 +194,20 @@ describe "T().prepare/T.include", ->
   it "should work", ->
     T.def('template', (data) -> ['div', T.include('title', data)])
     partial = (data) -> ['div', data.name]
-    expect(T('template').prepare(title: partial).process(name: 'John Doe').tags).toEqual(['div', ['div', 'John Doe']])
+    expect(T.get('template').prepare(title: partial).process(name: 'John Doe').tags).toEqual(['div', ['div', 'John Doe']])
 
   it "layout can be reused", ->
     T.def('layout', -> ['div', T.include('body')])
-    template1 = T('layout').prepare(body: 'Body1')
-    template2 = T('layout').prepare(body: 'Body2')
+    template1 = T.get('layout').prepare(body: 'Body1')
+    template2 = T.get('layout').prepare(body: 'Body2')
     expect(template1.process().tags).toEqual(['div', 'Body1'])
     expect(template2.process().tags).toEqual(['div', 'Body2'])
 
   it "nested include/prepare should work", ->
     T.def('template' , -> ['div', T.include('title')])
-    T.def('template2', -> ['div', T('template').prepare(title: 'Title').process(), T.include('body')])
+    T.def('template2', -> ['div', T.get('template').prepare(title: 'Title').process(), T.include('body')])
     result = ['div', ['div', 'Title'], 'Body']
-    expect(T('template2').prepare(body: 'Body').process().tags).toEqual(result)
+    expect(T.get('template2').prepare(body: 'Body').process().tags).toEqual(result)
 
 describe "Clone T to avoid template conflicting", ->
   it "should work", ->
@@ -224,16 +215,16 @@ describe "Clone T to avoid template conflicting", ->
     T2 = T.create()
     T1.def('template', 'T1')
     T2.def('template', 'T2')
-    expect(T1('template').process().tags).toEqual('T1')
-    expect(T2('template').process().tags).toEqual('T2')
+    expect(T1('template').tags).toEqual('T1')
+    expect(T2('template').tags).toEqual('T2')
 
   it "should work with complex templates", ->
     T1 = T.create()
     T2 = T.create()
     T1.def('template', (data) -> ['div', T1.include('body', data)])
     T2.def('template', (arg1, arg2) -> ['div', arg1, arg2])
-    expect(T1('template').prepare(body: (data) -> ['div', data]).process('John Doe').tags).toEqual(['div', ['div', 'John Doe']])
-    expect(T2('template').process('1', '2').tags).toEqual(['div', '1', '2'])
+    expect(T1.get('template').prepare(body: (data) -> ['div', data]).process('John Doe').tags).toEqual(['div', ['div', 'John Doe']])
+    expect(T2('template', '1', '2').tags).toEqual(['div', '1', '2'])
 
 describe "T.noConflict", ->
   it "should work", ->

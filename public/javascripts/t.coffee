@@ -310,11 +310,7 @@ render = (input) ->
 create = ->
   newT = (name, data...) ->
     template = newT.templates[name]
-
-    if data.length is 0
-      template
-    else
-      template.process(data...)
+    template.process(data...)
 
   init(newT)
   newT
@@ -352,6 +348,8 @@ init = (T) ->
           delete T.internal.includes
 
     template
+
+  T.get = (name) -> T.templates[name]
 
   T.process = (template, data...) ->
     new Template(template).process data...

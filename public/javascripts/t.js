@@ -450,11 +450,7 @@
       var data, name, template;
       name = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       template = newT.templates[name];
-      if (data.length === 0) {
-        return template;
-      } else {
-        return template.process.apply(template, data);
-      }
+      return template.process.apply(template, data);
     };
     init(newT);
     return newT;
@@ -509,6 +505,9 @@
         }
       };
       return template;
+    };
+    T.get = function(name) {
+      return T.templates[name];
     };
     T.process = function() {
       var data, template, _ref;
