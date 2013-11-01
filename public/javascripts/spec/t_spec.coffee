@@ -161,7 +161,7 @@ describe "T()", ->
     result = ['div', '1', '2', '3']
     expect(T('template', '1', '2', '3').tags).toEqual(result)
 
-  it "render with multiple arguments should work", ->
+  it "toString should work", ->
     T.def('template', (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3])
     result = '<div>123</div>'
     expect(T('template', '1', '2', '3').toString()).toEqual(result)
@@ -190,7 +190,7 @@ describe "T()", ->
           username: 'johndoe'
     expect(T('template', data).tags).toEqual(result)
 
-describe "T().prepare/T.include", ->
+describe "prepare/T.include", ->
   it "should work", ->
     T.def('template', (data) -> ['div', T.include('title', data)])
     partial = (data) -> ['div', data.name]

@@ -30,7 +30,7 @@ T.def('template', ["a.edit", {"href": "/edit"}, "Edit"])
 
 * Render
 ```javascript
-var result = T('template').process().toString()
+var result = T('template').toString()
 ```
 
 * Result is like

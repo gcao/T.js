@@ -328,7 +328,7 @@
       result = ['div', '1', '2', '3'];
       return expect(T('template', '1', '2', '3').tags).toEqual(result);
     });
-    it("render with multiple arguments should work", function() {
+    it("toString should work", function() {
       var result;
       T.def('template', function(arg1, arg2, arg3) {
         return ["div", arg1, arg2, arg3];
@@ -376,7 +376,7 @@
     });
   });
 
-  describe("T().prepare/T.include", function() {
+  describe("prepare/T.include", function() {
     it("should work", function() {
       var partial;
       T.def('template', function(data) {
