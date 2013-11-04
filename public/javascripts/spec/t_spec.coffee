@@ -190,6 +190,24 @@ describe "T()", ->
           username: 'johndoe'
     expect(T('template', data).tags).toEqual(result)
 
+describe "T.each", ->
+  it "should work", ->
+    T.def('template', (item, arg) -> ['div', item, arg])
+    result = [
+      ['div', 'a', 'arg']
+      ['div', 'b', 'arg']
+    ]
+    expect(T.each('template', ['a', 'b'], 'arg').tags).toEqual(result)
+
+describe "T.each_with_index", ->
+  it "should work", ->
+    T.def('template', (item, i, arg) -> ['div', item, i, arg])
+    result = [
+      ['div', 'a', 0, 'arg']
+      ['div', 'b', 1, 'arg']
+    ]
+    expect(T.each_with_index('template', ['a', 'b'], 'arg').tags).toEqual(result)
+
 describe "prepare/T.include", ->
   it "should work", ->
     T.def('template', (data) -> ['div', T.include('title', data)])

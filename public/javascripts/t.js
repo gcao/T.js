@@ -4,7 +4,7 @@
     __hasProp = {}.hasOwnProperty,
     __slice = [].slice;
 
-  VERSION = "0.6.0";
+  VERSION = "0.7.0";
 
   isArray = function(o) {
     return o instanceof Array;
@@ -508,6 +508,32 @@
     };
     T.get = function(name) {
       return T.templates[name];
+    };
+    T.each = function() {
+      var args, array, name;
+      name = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      return T.process(function() {
+        var item, _i, _len, _results;
+        _results = [];
+        for (_i = 0, _len = array.length; _i < _len; _i++) {
+          item = array[_i];
+          _results.push(T.apply(null, [name, item].concat(__slice.call(args))));
+        }
+        return _results;
+      });
+    };
+    T.each_with_index = function() {
+      var args, array, name;
+      name = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      return T.process(function() {
+        var i, item, _i, _len, _results;
+        _results = [];
+        for (i = _i = 0, _len = array.length; _i < _len; i = ++_i) {
+          item = array[i];
+          _results.push(T.apply(null, [name, item, i].concat(__slice.call(args))));
+        }
+        return _results;
+      });
     };
     T.process = function() {
       var data, template, _ref;

@@ -376,6 +376,28 @@
     });
   });
 
+  describe("T.each", function() {
+    return it("should work", function() {
+      var result;
+      T.def('template', function(item, arg) {
+        return ['div', item, arg];
+      });
+      result = [['div', 'a', 'arg'], ['div', 'b', 'arg']];
+      return expect(T.each('template', ['a', 'b'], 'arg').tags).toEqual(result);
+    });
+  });
+
+  describe("T.each_with_index", function() {
+    return it("should work", function() {
+      var result;
+      T.def('template', function(item, i, arg) {
+        return ['div', item, i, arg];
+      });
+      result = [['div', 'a', 0, 'arg'], ['div', 'b', 1, 'arg']];
+      return expect(T.each_with_index('template', ['a', 'b'], 'arg').tags).toEqual(result);
+    });
+  });
+
   describe("prepare/T.include", function() {
     it("should work", function() {
       var partial;

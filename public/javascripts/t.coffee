@@ -1,4 +1,4 @@
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 
 isArray    = (o) -> o instanceof Array
 isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
@@ -350,6 +350,16 @@ init = (T) ->
     template
 
   T.get = (name) -> T.templates[name]
+
+  T.each = (name, array, args...) ->
+    T.process ->
+      for item in array
+        T(name, item, args...)
+
+  T.each_with_index = (name, array, args...) ->
+    T.process ->
+      for item, i in array
+        T(name, item, i, args...)
 
   T.process = (template, data...) ->
     new Template(template).process data...
