@@ -46,7 +46,7 @@ var result = T('template').toString()
 
   var body = ['div', 'Content goes here']
 
-  var result = T('layout').prepare({'body': body}).process().toString()
+  var result = T.get('layout').prepare({'body': body}).process().toString()
   // <div><div>Title</div><div>Content goes here</div></div>
   ```
 
