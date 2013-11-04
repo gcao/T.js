@@ -398,6 +398,20 @@
     });
   });
 
+  describe("T.each_pair", function() {
+    return it("should work", function() {
+      var result;
+      T.def('template', function(key, value, arg) {
+        return ['div', key, value, arg];
+      });
+      result = [['div', 'a', 'aa', 'arg'], ['div', 'b', 'bb', 'arg']];
+      return expect(T.each_pair('template', {
+        a: 'aa',
+        b: 'bb'
+      }, 'arg').tags).toEqual(result);
+    });
+  });
+
   describe("prepare/T.include", function() {
     it("should work", function() {
       var partial;

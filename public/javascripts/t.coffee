@@ -342,6 +342,11 @@ init = (T) ->
       for item, i in array
         T(name, item, i, args...)
 
+  T.each_pair = (name, hash, args...) ->
+    T.process ->
+      for own key, value of hash
+        T(name, key, value, args...)
+
   T.process = (template, data...) ->
     new internal.Template(template).process data...
 

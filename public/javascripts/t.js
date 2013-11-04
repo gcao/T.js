@@ -496,6 +496,20 @@
         return _results;
       });
     };
+    T.each_pair = function() {
+      var args, hash, name;
+      name = arguments[0], hash = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      return T.process(function() {
+        var key, value, _results;
+        _results = [];
+        for (key in hash) {
+          if (!__hasProp.call(hash, key)) continue;
+          value = hash[key];
+          _results.push(T.apply(null, [name, key, value].concat(__slice.call(args))));
+        }
+        return _results;
+      });
+    };
     T.process = function() {
       var data, template, _ref;
       template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
