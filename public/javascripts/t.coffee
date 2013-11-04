@@ -1,17 +1,12 @@
 VERSION = "0.7.0"
 
 create = ->
-  newT = (name, data...) ->
-    template = newT.templates[name]
+  T = (name, data...) ->
+    template = T.templates[name]
     template.process(data...)
 
-  init(newT)
-  newT
-
-init = (T) ->
   T.VERSION   = VERSION
   T.create    = create
-  T.init      = init
   T.templates = {}
   T.internal  = internal = {}
 
@@ -65,7 +60,7 @@ init = (T) ->
         oldIncludes = internal.includes if internal.includes
         internal.includes = includes if includes
 
-        internal.Template.prototype.process.call(this, data...) 
+        internal.Template.prototype.process.call(this, data...)
       finally
         if oldIncludes
           internal.includes = oldIncludes
@@ -351,7 +346,7 @@ init = (T) ->
     new internal.Template(template).process data...
 
   T.include = (name, data...) ->
-    T.internal.includes?[name].process(data...)
+    internal.includes?[name].process(data...)
 
   T.define = T.def = (name, template)->
     T.templates[name] = new internal.Template(template, name)
@@ -393,18 +388,22 @@ init = (T) ->
      .replace(/&quot;/g, '"')
      .replace(/&#039;/g, "'")
 
-T = create()
+  # noConflict support
+  internal.thisRef = this
+  T.noConflict     = ->
+    if T.oldT
+      internal.thisRef.T = T.oldT
+    else
+      delete internal.thisRef.T
+    T
 
-# noConflict support
-T.internal.thisRef = this
-T.noConflict       = ->
-  if T.oldT 
-    T.internal.thisRef.T = T.oldT
-  else
-    delete T.internal.thisRef.T
+  if this.T then T.oldT = this.T
+
   T
 
-if this.T then T.oldT = this.T
+T = create()
+
+# For browser
 this.T = T
 
 # Node.js exports
