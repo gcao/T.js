@@ -238,7 +238,20 @@
       expect(result.tagName).toEqual('DIV');
       return expect(result.getAttribute('name')).toEqual('value');
     });
-    return it("should work with child tags", function() {
+    it("should work with styles", function() {
+      var input, result;
+      input = [
+        'div', {
+          style: {
+            top: '3px'
+          }
+        }
+      ];
+      result = T.internal.renderTags(input);
+      expect(result.tagName).toEqual('DIV');
+      return expect(result.getAttribute('style')).toEqual('top:3px;');
+    });
+    it("should work with child tags", function() {
       var child, input, result;
       input = ['div', ['span', 'text']];
       result = T.internal.renderTags(input);
@@ -246,6 +259,18 @@
       child = result.children[0];
       expect(child.tagName).toEqual('SPAN');
       return expect(child.textContent).toEqual('text');
+    });
+    return it("should register event handlers", function() {
+      var callback, input, result;
+      callback = jasmine.createSpy();
+      input = [
+        'div', {
+          click: callback
+        }, 'text'
+      ];
+      result = T.internal.renderTags(input);
+      $(result).click();
+      return expect(callback).toHaveBeenCalled();
     });
   });
 

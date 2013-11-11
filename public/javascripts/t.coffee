@@ -334,9 +334,21 @@ create = ->
         el.appendChild document.createTextNode(part)
       else if internal.isObject part
         for own key, value of part
-          #if key.toLowerCase() is 'style' and isObject value
-          #  throw 'TODO: convert style hash to string'
-          el.setAttribute(key, value)
+          if typeof value is 'function'
+            $(el).bind(key, value)
+            # For some reason, below code does not work in Jasmine Headless mode
+            #if el.addEventListener
+            #  el.addEventListener key, value, false
+            #else if el.attachEvent # Old IE support
+            #  el.attachEvent "on#{key}", value
+          else
+            if key.toLowerCase() is 'style' and internal.isObject value
+              s = ""
+              for own k, v of value
+                s += "#{k}:#{v};"
+              value = s
+
+            el.setAttribute(key, value)
       else if internal.isArray part
         el.appendChild internal.renderTags(part)
 

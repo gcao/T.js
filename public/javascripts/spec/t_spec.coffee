@@ -110,6 +110,12 @@ describe "T.internal.renderTags", ->
     expect(result.tagName).toEqual('DIV')
     expect(result.getAttribute('name')).toEqual('value')
 
+  it "should work with styles", ->
+    input  = ['div', style: top: '3px']
+    result = T.internal.renderTags(input)
+    expect(result.tagName).toEqual('DIV')
+    expect(result.getAttribute('style')).toEqual('top:3px;')
+
   it "should work with child tags", ->
     input  = ['div', ['span', 'text']]
     result = T.internal.renderTags(input)
@@ -117,6 +123,13 @@ describe "T.internal.renderTags", ->
     child = result.children[0]
     expect(child.tagName).toEqual('SPAN')
     expect(child.textContent).toEqual('text')
+
+  it "should register event handlers", ->
+    callback = jasmine.createSpy()
+    input  = ['div', click: callback, 'text']
+    result = T.internal.renderTags(input)
+    $(result).click()
+    expect(callback).toHaveBeenCalled()
 
 describe "T.process", ->
   it "should create ready-to-be-rendered data structure from template and data", ->

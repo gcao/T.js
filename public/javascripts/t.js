@@ -463,7 +463,7 @@
       return result;
     };
     internal.renderTags = function(tags) {
-      var el, key, part, value, _i, _len;
+      var el, k, key, part, s, v, value, _i, _len;
       el = document.createElement(tags.shift());
       for (_i = 0, _len = tags.length; _i < _len; _i++) {
         part = tags[_i];
@@ -473,7 +473,20 @@
           for (key in part) {
             if (!__hasProp.call(part, key)) continue;
             value = part[key];
-            el.setAttribute(key, value);
+            if (typeof value === 'function') {
+              $(el).bind(key, value);
+            } else {
+              if (key.toLowerCase() === 'style' && internal.isObject(value)) {
+                s = "";
+                for (k in value) {
+                  if (!__hasProp.call(value, k)) continue;
+                  v = value[k];
+                  s += "" + k + ":" + v + ";";
+                }
+                value = s;
+              }
+              el.setAttribute(key, value);
+            }
           }
         } else if (internal.isArray(part)) {
           el.appendChild(internal.renderTags(part));
