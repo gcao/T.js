@@ -145,6 +145,8 @@
         $(options.after).after(this.toString());
       } else if (options["with"]) {
         options["with"](this.toString());
+      } else {
+
       }
       return internal.registerCallbacks();
     };
@@ -459,6 +461,25 @@
         result += "</" + first + ">";
       }
       return result;
+    };
+    internal.renderTags = function(tags) {
+      var el, key, part, value, _i, _len;
+      el = document.createElement(tags.shift());
+      for (_i = 0, _len = tags.length; _i < _len; _i++) {
+        part = tags[_i];
+        if (typeof part === 'string') {
+          el.appendChild(document.createTextNode(part));
+        } else if (internal.isObject(part)) {
+          for (key in part) {
+            if (!__hasProp.call(part, key)) continue;
+            value = part[key];
+            el.setAttribute(key, value);
+          }
+        } else if (internal.isArray(part)) {
+          el.appendChild(internal.renderTags(part));
+        }
+      }
+      return el;
     };
     T.get = function(name) {
       return T.templates[name];

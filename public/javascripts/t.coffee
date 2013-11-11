@@ -89,6 +89,8 @@ create = ->
       $(options.after).after(@toString())
     else if options.with
       options.with(@toString())
+    else
+      # Create nodes
 
     internal.registerCallbacks()
 
@@ -324,6 +326,21 @@ create = ->
       result += "</" + first + ">"
 
     result
+
+  internal.renderTags = (tags) ->
+    el = document.createElement(tags.shift())
+    for part in tags
+      if typeof part is 'string'
+        el.appendChild document.createTextNode(part)
+      else if internal.isObject part
+        for own key, value of part
+          #if key.toLowerCase() is 'style' and isObject value
+          #  throw 'TODO: convert style hash to string'
+          el.setAttribute(key, value)
+      else if internal.isArray part
+        el.appendChild internal.renderTags(part)
+
+    el
 
   T.get  = (name) -> T.templates[name]
 

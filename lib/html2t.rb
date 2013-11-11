@@ -44,7 +44,10 @@ class Html2t
       end
       result
     when Nokogiri::XML::Node::TEXT_NODE
-      node.text
+      text = node.text
+      if text.strip.length > 0
+        node.text
+      end
     when Nokogiri::XML::Node::COMMENT_NODE
       "<!--#{node.text}-->"
     end

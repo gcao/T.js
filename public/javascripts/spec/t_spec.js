@@ -64,22 +64,6 @@
       ];
       return expect(T.internal.processFirst(input)).toEqual(result);
     });
-    it("should parse nested '.tb-item.refresh a.toggle-opacity'", function() {
-      var input, result;
-      input = ['div', ['.tb-item.refresh a.toggle-opacity', 'text']];
-      result = [
-        'div', [
-          'div', {
-            "class": 'tb-item refresh'
-          }, [
-            'a', {
-              "class": 'toggle-opacity'
-            }, 'text'
-          ]
-        ]
-      ];
-      return expect(T.internal.processFirst(input)).toEqual(result);
-    });
     it("should return as is if first starts with '<'", function() {
       var input, result;
       input = ['<!DOCTYPE html>', '...'];
@@ -232,6 +216,36 @@
       };
       result = ' style="top:10px;"';
       return expect(T.internal.renderAttributes(input)).toEqual(result);
+    });
+  });
+
+  describe("T.internal.renderTags", function() {
+    it("should work", function() {
+      var input, result;
+      input = ['div', 'text'];
+      result = T.internal.renderTags(input);
+      expect(result.tagName).toEqual('DIV');
+      return expect(result.textContent).toEqual('text');
+    });
+    it("should work with attributes", function() {
+      var input, result;
+      input = [
+        'div', {
+          name: 'value'
+        }
+      ];
+      result = T.internal.renderTags(input);
+      expect(result.tagName).toEqual('DIV');
+      return expect(result.getAttribute('name')).toEqual('value');
+    });
+    return it("should work with child tags", function() {
+      var child, input, result;
+      input = ['div', ['span', 'text']];
+      result = T.internal.renderTags(input);
+      expect(result.tagName).toEqual('DIV');
+      child = result.children[0];
+      expect(child.tagName).toEqual('SPAN');
+      return expect(child.textContent).toEqual('text');
     });
   });
 

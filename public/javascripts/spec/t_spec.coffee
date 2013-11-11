@@ -27,11 +27,6 @@ describe "T.internal.processFirst", ->
     result = ['div', {class: 'tb-item refresh'}, ['a', {class: 'toggle-opacity'}, 'text']]
     expect(T.internal.processFirst(input)).toEqual(result)
 
-  it "should parse nested '.tb-item.refresh a.toggle-opacity'", ->
-    input  = ['div', ['.tb-item.refresh a.toggle-opacity', 'text']]
-    result = ['div', ['div', {class: 'tb-item refresh'}, ['a', {class: 'toggle-opacity'}, 'text']]]
-    expect(T.internal.processFirst(input)).toEqual(result)
-
   it "should return as is if first starts with '<'", ->
     input  = ['<!DOCTYPE html>', '...']
     result = input
@@ -101,6 +96,27 @@ describe "T.internal.renderAttributes", ->
     input  = {style: top: 10}
     result = ' style="top:10px;"'
     expect(T.internal.renderAttributes(input)).toEqual(result)
+
+describe "T.internal.renderTags", ->
+  it "should work", ->
+    input  = ['div', 'text']
+    result = T.internal.renderTags(input)
+    expect(result.tagName).toEqual('DIV')
+    expect(result.textContent).toEqual('text')
+
+  it "should work with attributes", ->
+    input  = ['div', {name: 'value'}]
+    result = T.internal.renderTags(input)
+    expect(result.tagName).toEqual('DIV')
+    expect(result.getAttribute('name')).toEqual('value')
+
+  it "should work with child tags", ->
+    input  = ['div', ['span', 'text']]
+    result = T.internal.renderTags(input)
+    expect(result.tagName).toEqual('DIV')
+    child = result.children[0]
+    expect(child.tagName).toEqual('SPAN')
+    expect(child.textContent).toEqual('text')
 
 describe "T.process", ->
   it "should create ready-to-be-rendered data structure from template and data", ->
