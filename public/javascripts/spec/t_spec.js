@@ -260,7 +260,7 @@
       expect(child.tagName).toEqual('SPAN');
       return expect(child.textContent).toEqual('text');
     });
-    return it("should register event handlers", function() {
+    it("should register event handlers", function() {
       var callback, input, result;
       callback = jasmine.createSpy();
       input = [
@@ -271,6 +271,31 @@
       result = T.internal.renderTags(input);
       $(result).click();
       return expect(callback).toHaveBeenCalled();
+    });
+    it("should invoke renderComplete callback", function() {
+      var elem, input, renderCompleteCalled, result;
+      elem = null;
+      renderCompleteCalled = false;
+      input = [
+        'div', {
+          renderComplete: function(el) {
+            elem = el;
+            return renderCompleteCalled = true;
+          }
+        }
+      ];
+      result = T.internal.renderTags(input);
+      expect(elem).toBe(result);
+      return expect(renderCompleteCalled).toBe(true);
+    });
+    return it("should work with child tags", function() {
+      var input, result;
+      input = [['div', 'a'], ['span', 'b']];
+      result = T.internal.renderTags(input);
+      expect(result.childNodes[0].tagName).toEqual('DIV');
+      expect(result.childNodes[0].textContent).toEqual('a');
+      expect(result.childNodes[1].tagName).toEqual('SPAN');
+      return expect(result.childNodes[1].textContent).toEqual('b');
     });
   });
 
@@ -374,6 +399,20 @@
       });
       result = '<div>123</div>';
       return expect(T('template', '1', '2', '3').toString()).toEqual(result);
+    });
+    it("toString should not include generated class name if ignoreCallbacks is true", function() {
+      var result;
+      T.def('template', function(arg) {
+        return [
+          "div", {
+            click: function() {}
+          }, arg
+        ];
+      });
+      result = '<div>value</div>';
+      return expect(T('template', 'value').toString({
+        ignoreCallbacks: true
+      })).toEqual(result);
     });
     it("include template as partial should work", function() {
       var data, result;

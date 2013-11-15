@@ -71,26 +71,26 @@ create = ->
 
   internal.TemplateOutput = (@template, @tags) ->
 
-  internal.TemplateOutput.prototype.toString = ->
-    internal.render @tags
+  internal.TemplateOutput.prototype.toString = (options) ->
+    internal.render @tags, options
 
   internal.TemplateOutput.prototype.render = (options) ->
     if options.inside
       $(options.inside).html(@toString())
     else if options.replace
       $(options.replace).replace(@toString())
-    else if options.prepend
-      $(options.prepend).prepend(@toString())
-    else if options.append
-      $(options.append).append(@toString())
+    else if options.prependTo
+      $(options.prependTo).prepend(@toString())
+    else if options.appendTo
+      $(options.appendTo).append(@toString())
     else if options.before
       $(options.before).before(@toString())
     else if options.after
       $(options.after).after(@toString())
-    else if options.with
-      options.with(@toString())
+    else if options.handler
+      options.handler(@toString())
     else
-      # Create nodes
+      return internal.renderTags @tags
 
     internal.registerCallbacks()
 
@@ -279,10 +279,10 @@ create = ->
 
     result
 
-  internal.renderRest = (input) ->
-    (internal.render(item) for item in input).join('')
+  internal.renderRest = (input, options) ->
+    (internal.render(item, options) for item in input).join('')
 
-  internal.render = (input) ->
+  internal.render = (input, options) ->
     return '' if typeof input is 'undefined' or input is null
     return '' + input unless internal.isArray input
     return '' if input.length is 0
@@ -291,9 +291,9 @@ create = ->
 
     # TODO: [['div'], ...]
     if internal.isArray first
-      return internal.render(first) + (internal.render(item) for item in input).join('')
+      return internal.render(first, options) + (internal.render(item, options) for item in input).join('')
 
-    return internal.renderRest input if first is ""
+    return internal.renderRest(input, options) if first is ""
     if input.length is 0
       if first is 'script'
         return "<#{first}></#{first}>"
@@ -304,7 +304,13 @@ create = ->
 
     second = input.shift()
     if internal.isObject second
-      result += internal.renderAttributes second
+      attrs = second
+      if options?.ignoreCallbacks
+        attrs = {}
+        for own key, value of second
+          attrs[key] = value unless typeof value is 'function'
+
+      result += internal.renderAttributes attrs
 
       if input.length is 0
         if first is 'script'
@@ -322,27 +328,44 @@ create = ->
         return result
 
     if input.length > 0
-      result += internal.renderRest input
+      result += internal.renderRest input, options
       result += "</" + first + ">"
 
     result
 
   internal.renderTags = (tags) ->
+    parent = 
+      if internal.isArray tags[0]
+        fragment = document.createDocumentFragment()
+
+    internal.renderChildTags parent, tags
+
+  internal.renderChildTags = (parent, tags) ->
+    if internal.isArray tags[0]
+      for item in tags
+        internal.renderChildTags parent, item
+      return parent
+
     el = document.createElement(tags.shift())
+    if parent then parent.appendChild el
+
+    renderComplete = null
+
     for part in tags
       if typeof part is 'string'
         el.appendChild document.createTextNode(part)
       else if internal.isObject part
         for own key, value of part
-          if typeof value is 'function'
+          if key is 'renderComplete'
+            renderComplete = value
+          else if typeof value is 'function'
             $(el).bind(key, value)
             # For some reason, below code does not work in Jasmine Headless mode
             #if el.addEventListener
             #  el.addEventListener key, value, false
             #else if el.attachEvent # Old IE support
             #  el.attachEvent "on#{key}", value
-          else
-            if key.toLowerCase() is 'style' and internal.isObject value
+          else if key.toLowerCase() is 'style' and internal.isObject value
               s = ""
               for own k, v of value
                 s += "#{k}:#{v};"
@@ -350,8 +373,9 @@ create = ->
 
             el.setAttribute(key, value)
       else if internal.isArray part
-        el.appendChild internal.renderTags(part)
+        internal.renderChildTags(el, part)
 
+    renderComplete?(el)
     el
 
   T.get  = (name) -> T.templates[name]

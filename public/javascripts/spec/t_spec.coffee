@@ -131,6 +131,25 @@ describe "T.internal.renderTags", ->
     $(result).click()
     expect(callback).toHaveBeenCalled()
 
+  it "should invoke renderComplete callback", ->
+    elem = null
+    renderCompleteCalled = false
+    input  = ['div', renderComplete: (el) ->
+      elem = el
+      renderCompleteCalled = true
+    ]
+    result = T.internal.renderTags(input)
+    expect(elem).toBe(result)
+    expect(renderCompleteCalled).toBe(true)
+
+  it "should work with child tags", ->
+    input  = [['div', 'a'], ['span', 'b']]
+    result = T.internal.renderTags(input)
+    expect(result.childNodes[0].tagName).toEqual('DIV')
+    expect(result.childNodes[0].textContent).toEqual('a')
+    expect(result.childNodes[1].tagName).toEqual('SPAN')
+    expect(result.childNodes[1].textContent).toEqual('b')
+
 describe "T.process", ->
   it "should create ready-to-be-rendered data structure from template and data", ->
     template = [
@@ -194,6 +213,15 @@ describe "T()", ->
     T.def('template', (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3])
     result = '<div>123</div>'
     expect(T('template', '1', '2', '3').toString()).toEqual(result)
+
+  it "toString should not include generated class name if ignoreCallbacks is true", ->
+    T.def 'template', (arg) ->
+      [ "div"
+        click: ->
+        arg
+      ]
+    result = '<div>value</div>'
+    expect(T('template', 'value').toString(ignoreCallbacks: true)).toEqual(result)
 
   it "include template as partial should work", ->
     T.def('partial', (data) -> ["div", data.name])

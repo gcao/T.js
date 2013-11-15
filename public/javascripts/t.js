@@ -127,26 +127,26 @@
       this.template = template;
       this.tags = tags;
     };
-    internal.TemplateOutput.prototype.toString = function() {
-      return internal.render(this.tags);
+    internal.TemplateOutput.prototype.toString = function(options) {
+      return internal.render(this.tags, options);
     };
     internal.TemplateOutput.prototype.render = function(options) {
       if (options.inside) {
         $(options.inside).html(this.toString());
       } else if (options.replace) {
         $(options.replace).replace(this.toString());
-      } else if (options.prepend) {
-        $(options.prepend).prepend(this.toString());
-      } else if (options.append) {
-        $(options.append).append(this.toString());
+      } else if (options.prependTo) {
+        $(options.prependTo).prepend(this.toString());
+      } else if (options.appendTo) {
+        $(options.appendTo).append(this.toString());
       } else if (options.before) {
         $(options.before).before(this.toString());
       } else if (options.after) {
         $(options.after).after(this.toString());
-      } else if (options["with"]) {
-        options["with"](this.toString());
+      } else if (options.handler) {
+        options.handler(this.toString());
       } else {
-
+        return internal.renderTags(this.tags);
       }
       return internal.registerCallbacks();
     };
@@ -389,20 +389,20 @@
       }
       return result;
     };
-    internal.renderRest = function(input) {
+    internal.renderRest = function(input, options) {
       var item;
       return ((function() {
         var _i, _len, _results;
         _results = [];
         for (_i = 0, _len = input.length; _i < _len; _i++) {
           item = input[_i];
-          _results.push(internal.render(item));
+          _results.push(internal.render(item, options));
         }
         return _results;
       })()).join('');
     };
-    internal.render = function(input) {
-      var first, item, result, second;
+    internal.render = function(input, options) {
+      var attrs, first, item, key, result, second, value;
       if (typeof input === 'undefined' || input === null) {
         return '';
       }
@@ -414,18 +414,18 @@
       }
       first = input.shift();
       if (internal.isArray(first)) {
-        return internal.render(first) + ((function() {
+        return internal.render(first, options) + ((function() {
           var _i, _len, _results;
           _results = [];
           for (_i = 0, _len = input.length; _i < _len; _i++) {
             item = input[_i];
-            _results.push(internal.render(item));
+            _results.push(internal.render(item, options));
           }
           return _results;
         })()).join('');
       }
       if (first === "") {
-        return internal.renderRest(input);
+        return internal.renderRest(input, options);
       }
       if (input.length === 0) {
         if (first === 'script') {
@@ -437,7 +437,18 @@
       result = "<" + first;
       second = input.shift();
       if (internal.isObject(second)) {
-        result += internal.renderAttributes(second);
+        attrs = second;
+        if (options != null ? options.ignoreCallbacks : void 0) {
+          attrs = {};
+          for (key in second) {
+            if (!__hasProp.call(second, key)) continue;
+            value = second[key];
+            if (typeof value !== 'function') {
+              attrs[key] = value;
+            }
+          }
+        }
+        result += internal.renderAttributes(attrs);
         if (input.length === 0) {
           if (first === 'script') {
             result += "></" + first + ">";
@@ -457,40 +468,59 @@
         }
       }
       if (input.length > 0) {
-        result += internal.renderRest(input);
+        result += internal.renderRest(input, options);
         result += "</" + first + ">";
       }
       return result;
     };
     internal.renderTags = function(tags) {
-      var el, k, key, part, s, v, value, _i, _len;
+      var fragment, parent;
+      parent = internal.isArray(tags[0]) ? fragment = document.createDocumentFragment() : void 0;
+      return internal.renderChildTags(parent, tags);
+    };
+    internal.renderChildTags = function(parent, tags) {
+      var el, item, k, key, part, renderComplete, s, v, value, _i, _j, _len, _len1;
+      if (internal.isArray(tags[0])) {
+        for (_i = 0, _len = tags.length; _i < _len; _i++) {
+          item = tags[_i];
+          internal.renderChildTags(parent, item);
+        }
+        return parent;
+      }
       el = document.createElement(tags.shift());
-      for (_i = 0, _len = tags.length; _i < _len; _i++) {
-        part = tags[_i];
+      if (parent) {
+        parent.appendChild(el);
+      }
+      renderComplete = null;
+      for (_j = 0, _len1 = tags.length; _j < _len1; _j++) {
+        part = tags[_j];
         if (typeof part === 'string') {
           el.appendChild(document.createTextNode(part));
         } else if (internal.isObject(part)) {
           for (key in part) {
             if (!__hasProp.call(part, key)) continue;
             value = part[key];
-            if (typeof value === 'function') {
+            if (key === 'renderComplete') {
+              renderComplete = value;
+            } else if (typeof value === 'function') {
               $(el).bind(key, value);
-            } else {
-              if (key.toLowerCase() === 'style' && internal.isObject(value)) {
-                s = "";
-                for (k in value) {
-                  if (!__hasProp.call(value, k)) continue;
-                  v = value[k];
-                  s += "" + k + ":" + v + ";";
-                }
-                value = s;
+            } else if (key.toLowerCase() === 'style' && internal.isObject(value)) {
+              s = "";
+              for (k in value) {
+                if (!__hasProp.call(value, k)) continue;
+                v = value[k];
+                s += "" + k + ":" + v + ";";
               }
-              el.setAttribute(key, value);
+              value = s;
             }
+            el.setAttribute(key, value);
           }
         } else if (internal.isArray(part)) {
-          el.appendChild(internal.renderTags(part));
+          internal.renderChildTags(el, part);
         }
+      }
+      if (typeof renderComplete === "function") {
+        renderComplete(el);
       }
       return el;
     };
