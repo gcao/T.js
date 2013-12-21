@@ -171,6 +171,12 @@ create = ->
     else if internal.isObject style and not internal.isEmpty style
       attrs.style = style
 
+    if attrs.style
+      for own key, value of attrs.style
+        if key.indexOf('_') >= 0
+          delete attrs.style[key]
+          attrs.style[key.replace(/_/g, '-')] = value
+
     attrs
 
   internal.processCssClasses = (attrs, newAttrs) ->

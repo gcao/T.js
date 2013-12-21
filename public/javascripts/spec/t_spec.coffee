@@ -65,6 +65,11 @@ describe "T.internal.processStyles", ->
     result = {style: {a: 'a-value', b: 'b-value'}}
     expect(T.internal.processStyles(input)).toEqual(result)
 
+  it "should convert _ in style name to -", ->
+    input  = {style: 'a_b:a-value;b:b-value;'}
+    result = {style: {'a-b': 'a-value', b: 'b-value'}}
+    expect(T.internal.processStyles(input)).toEqual(result)
+
 describe "T.internal.processAttributes", ->
   it "should return empty array as is", ->
     input  = []

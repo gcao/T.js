@@ -233,12 +233,23 @@
       return styles;
     };
     internal.processStyles = function(attrs) {
-      var style;
+      var key, style, value, _ref;
       style = attrs.style;
       if (typeof style === 'string') {
         attrs.style = internal.parseStyles(style);
       } else if (internal.isObject(style && !internal.isEmpty(style))) {
         attrs.style = style;
+      }
+      if (attrs.style) {
+        _ref = attrs.style;
+        for (key in _ref) {
+          if (!__hasProp.call(_ref, key)) continue;
+          value = _ref[key];
+          if (key.indexOf('_') >= 0) {
+            delete attrs.style[key];
+            attrs.style[key.replace(/_/g, '-')] = value;
+          }
+        }
       }
       return attrs;
     };

@@ -112,7 +112,7 @@
   });
 
   describe("T.internal.processStyles", function() {
-    return it("should work", function() {
+    it("should work", function() {
       var input, result;
       input = {
         style: 'a:a-value;b:b-value;'
@@ -120,6 +120,19 @@
       result = {
         style: {
           a: 'a-value',
+          b: 'b-value'
+        }
+      };
+      return expect(T.internal.processStyles(input)).toEqual(result);
+    });
+    return it("should convert _ in style name to -", function() {
+      var input, result;
+      input = {
+        style: 'a_b:a-value;b:b-value;'
+      };
+      result = {
+        style: {
+          'a-b': 'a-value',
           b: 'b-value'
         }
       };
