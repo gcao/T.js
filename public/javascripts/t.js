@@ -4,14 +4,13 @@
     __slice = [].slice,
     __hasProp = {}.hasOwnProperty;
 
-  VERSION = "0.7.0";
+  VERSION = "0.8.0";
 
   create = function() {
     var T, internal;
     T = function() {
-      var data, name, template;
-      name = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-      template = T.templates[name];
+      var data, template;
+      template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       return template.process.apply(template, data);
     };
     T.VERSION = VERSION;
@@ -535,45 +534,42 @@
       }
       return el;
     };
-    T.get = function(name) {
-      return T.templates[name];
-    };
     T.each = function() {
-      var args, array, name;
-      name = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      var args, array, template;
+      template = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
       return T.process(function() {
         var item, _i, _len, _results;
         _results = [];
         for (_i = 0, _len = array.length; _i < _len; _i++) {
           item = array[_i];
-          _results.push(T.apply(null, [name, item].concat(__slice.call(args))));
+          _results.push(T.apply(null, [template, item].concat(__slice.call(args))));
         }
         return _results;
       });
     };
     T.each_with_index = function() {
-      var args, array, name;
-      name = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      var args, array, template;
+      template = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
       return T.process(function() {
         var i, item, _i, _len, _results;
         _results = [];
         for (i = _i = 0, _len = array.length; _i < _len; i = ++_i) {
           item = array[i];
-          _results.push(T.apply(null, [name, item, i].concat(__slice.call(args))));
+          _results.push(T.apply(null, [template, item, i].concat(__slice.call(args))));
         }
         return _results;
       });
     };
     T.each_pair = function() {
-      var args, hash, name;
-      name = arguments[0], hash = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
+      var args, hash, template;
+      template = arguments[0], hash = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
       return T.process(function() {
         var key, value, _results;
         _results = [];
         for (key in hash) {
           if (!__hasProp.call(hash, key)) continue;
           value = hash[key];
-          _results.push(T.apply(null, [name, key, value].concat(__slice.call(args))));
+          _results.push(T.apply(null, [template, key, value].concat(__slice.call(args))));
         }
         return _results;
       });
@@ -588,36 +584,8 @@
       name = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       return (_ref = internal.includes) != null ? (_ref1 = _ref[name]).process.apply(_ref1, data) : void 0;
     };
-    T.define = T.def = function(name, template) {
-      return T.templates[name] = new internal.Template(template, name);
-    };
-    T.redefine = T.redef = function(name, template) {
-      var newTemplate, oldTemplate, wrapper;
-      oldTemplate = T.templates[name];
-      newTemplate = new internal.Template(template);
-      wrapper = function() {
-        var backup, data;
-        data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-        try {
-          if (internal.original) {
-            backup = internal.original;
-          }
-          internal.original = oldTemplate;
-          return newTemplate.process.apply(newTemplate, data).tags;
-        } finally {
-          if (backup) {
-            internal.original = backup;
-          } else {
-            delete internal.original;
-          }
-        }
-      };
-      return T.templates[name] = new internal.Template(wrapper, name);
-    };
-    T.wrapped = function() {
-      var data, _ref;
-      data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
-      return (_ref = internal.original).process.apply(_ref, data);
+    T.template = function(template) {
+      return new internal.Template(template);
     };
     T.escape = function(str) {
       if (!str) {

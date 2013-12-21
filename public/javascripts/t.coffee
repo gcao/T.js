@@ -1,8 +1,7 @@
-VERSION = "0.7.0"
+VERSION = "0.8.0"
 
 create = ->
-  T = (name, data...) ->
-    template = T.templates[name]
+  T = (template, data...) ->
     template.process(data...)
 
   T.VERSION   = VERSION
@@ -340,7 +339,7 @@ create = ->
     result
 
   internal.renderTags = (tags) ->
-    parent = 
+    parent =
       if internal.isArray tags[0]
         fragment = document.createDocumentFragment()
 
@@ -384,22 +383,20 @@ create = ->
     renderComplete?(el)
     el
 
-  T.get  = (name) -> T.templates[name]
-
-  T.each = (name, array, args...) ->
+  T.each = (template, array, args...) ->
     T.process ->
       for item in array
-        T(name, item, args...)
+        T(template, item, args...)
 
-  T.each_with_index = (name, array, args...) ->
+  T.each_with_index = (template, array, args...) ->
     T.process ->
       for item, i in array
-        T(name, item, i, args...)
+        T(template, item, i, args...)
 
-  T.each_pair = (name, hash, args...) ->
+  T.each_pair = (template, hash, args...) ->
     T.process ->
       for own key, value of hash
-        T(name, key, value, args...)
+        T(template, key, value, args...)
 
   T.process = (template, data...) ->
     new internal.Template(template).process data...
@@ -407,27 +404,7 @@ create = ->
   T.include = (name, data...) ->
     internal.includes?[name].process(data...)
 
-  T.define = T.def = (name, template)->
-    T.templates[name] = new internal.Template(template, name)
-
-  T.redefine = T.redef = (name, template) ->
-    oldTemplate = T.templates[name]
-    newTemplate = new internal.Template(template)
-    wrapper = (data...) ->
-      try
-        backup = internal.original if internal.original
-        internal.original = oldTemplate
-        newTemplate.process(data...).tags
-      finally
-        if backup
-          internal.original = backup
-        else
-          delete internal.original
-
-    T.templates[name] = new internal.Template(wrapper, name)
-
-  T.wrapped = (data...) ->
-    internal.original.process(data...)
+  T.template = (template) -> new internal.Template(template)
 
   T.escape  = (str) ->
     return str if not str
