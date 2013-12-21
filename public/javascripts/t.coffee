@@ -1,443 +1,436 @@
 VERSION = "0.8.0"
 
-create = ->
-  T = (template, data...) ->
-    template.process(data...)
+T = (template, data...) ->
+  template.process(data...)
 
-  T.VERSION   = VERSION
-  T.create    = create
-  T.templates = {}
-  T.internal  = internal = {}
+T.VERSION   = VERSION
+T.internal  = internal = {}
 
-  internal.callbacks  = []
-  internal.isArray    = (o) -> o instanceof Array
-  internal.isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
-  internal.isTemplate = (o) -> o isnt null and typeof o is "object" and o.isTjsTemplate
-  internal.isEmpty    = (o) ->
-    return true unless o
-    for own key of o
-      return false
-    return true
+internal.callbacks  = []
+internal.isArray    = (o) -> o instanceof Array
+internal.isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
+internal.isTemplate = (o) -> o isnt null and typeof o is "object" and o.isTjsTemplate
+internal.isEmpty    = (o) ->
+  return true unless o
+  for own key of o
+    return false
+  return true
 
-  internal.hasFunction = (o) ->
-    return true if typeof o is 'function'
-    return true if internal.isTemplate o
+internal.hasFunction = (o) ->
+  return true if typeof o is 'function'
+  return true if internal.isTemplate o
 
-    if internal.isArray o
-      for item in o
-        return true if internal.hasFunction item
+  if internal.isArray o
+    for item in o
+      return true if internal.hasFunction item
 
-    else if internal.isObject o
-      for own key, value of o
-        return true if internal.hasFunction value
+  else if internal.isObject o
+    for own key, value of o
+      return true if internal.hasFunction value
 
-  internal.merge      = (o1, o2) ->
-    return o1 unless o2
-    return o2 unless o1
+internal.merge      = (o1, o2) ->
+  return o1 unless o2
+  return o2 unless o1
 
-    for own key, value of o2
-      o1[key] = value
+  for own key, value of o2
+    o1[key] = value
 
-    o1
+  o1
 
-  internal.Template = (@template, @name) ->
-    @isTjsTemplate = true
+internal.Template = (@template, @name) ->
+  @isTjsTemplate = true
 
-  internal.Template.prototype.process = (data...) ->
-    tags = internal.prepareOutput(@template, data...)
-    tags = internal.normalize tags
-    tags = internal.processAttributes tags
-    new internal.TemplateOutput(this, tags)
+internal.Template.prototype.process = (data...) ->
+  tags = internal.prepareOutput(@template, data...)
+  tags = internal.normalize tags
+  tags = internal.processAttributes tags
+  new internal.TemplateOutput(this, tags)
 
-  internal.Template.prototype.prepare = (includes) ->
-    for own key, value of includes
-      includes[key] = new internal.Template(value) unless internal.isTemplate value
+internal.Template.prototype.prepare = (includes) ->
+  for own key, value of includes
+    includes[key] = new internal.Template(value) unless internal.isTemplate value
 
-    template = new internal.Template(@template, @name)
-    template.process = (data...) ->
-      try
-        oldIncludes = internal.includes if internal.includes
-        internal.includes = includes if includes
+  template = new internal.Template(@template, @name)
+  template.process = (data...) ->
+    try
+      oldIncludes = internal.includes if internal.includes
+      internal.includes = includes if includes
 
-        internal.Template.prototype.process.call(this, data...)
-      finally
-        if oldIncludes
-          internal.includes = oldIncludes
-        else
-          delete internal.includes
+      internal.Template.prototype.process.call(this, data...)
+    finally
+      if oldIncludes
+        internal.includes = oldIncludes
+      else
+        delete internal.includes
 
-    template
+  template
 
-  internal.TemplateOutput = (@template, @tags) ->
+internal.TemplateOutput = (@template, @tags) ->
 
-  internal.TemplateOutput.prototype.toString = (options) ->
-    internal.render @tags, options
+internal.TemplateOutput.prototype.toString = (options) ->
+  internal.render @tags, options
 
-  internal.TemplateOutput.prototype.render = (options) ->
-    if options.inside
-      $(options.inside).html(@toString())
-    else if options.replace
-      $(options.replace).replace(@toString())
-    else if options.prependTo
-      $(options.prependTo).prepend(@toString())
-    else if options.appendTo
-      $(options.appendTo).append(@toString())
-    else if options.before
-      $(options.before).before(@toString())
-    else if options.after
-      $(options.after).after(@toString())
-    else if options.handler
-      options.handler(@toString())
+internal.TemplateOutput.prototype.render = (options) ->
+  if options.inside
+    $(options.inside).html(@toString())
+  else if options.replace
+    $(options.replace).replace(@toString())
+  else if options.prependTo
+    $(options.prependTo).prepend(@toString())
+  else if options.appendTo
+    $(options.appendTo).append(@toString())
+  else if options.before
+    $(options.before).before(@toString())
+  else if options.after
+    $(options.after).after(@toString())
+  else if options.handler
+    options.handler(@toString())
+  else
+    return internal.renderTags @tags
+
+  internal.registerCallbacks()
+
+internal.RENDER_COMPLETE_CALLBACK = 'renderComplete'
+internal.FIRST_NO_PROCESS_PATTERN = /^<.*/
+internal.FIRST_FIELD_PATTERN      = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
+
+# Parse first item and add parsed data to array
+internal.processFirst = (items) ->
+  first = items[0]
+
+  return items if internal.isArray first
+
+  throw "Invalid first argument #{first}" unless typeof first is 'string'
+
+  if first.match(internal.FIRST_NO_PROCESS_PATTERN)
+    return items
+
+  parts = first.split ' '
+  if parts.length > 1
+    i    = parts.length - 1
+    rest = items.slice 1
+    while i >= 0
+      part = parts[i]
+      rest.unshift part
+      rest = [internal.processFirst(rest)]
+      i--
+
+    return rest[0]
+
+  if matches = first.match(internal.FIRST_FIELD_PATTERN)
+    tag     = matches[1] || 'div'
+    id      = matches[3]
+    classes = matches[5]
+    if id or classes
+      attrs = {}
+      attrs.id    = id if id
+      attrs.class = classes.replace(/\./g, ' ') if classes
+      items.splice 0, 1, tag, attrs
+
+  items
+
+# Normalize children recursively
+internal.normalize = (items) ->
+  return items unless internal.isArray items
+
+  for i in [items.length - 1..0]
+    item = internal.normalize items[i]
+    if internal.isArray item
+      first = item[0]
+      if first is ''
+        item.shift()
+        items.splice i, 1, item...
+      else if internal.isArray first
+        items.splice i, 1, item...
+    else if item instanceof internal.TemplateOutput
+      items[i] = item.tags
+    else if typeof item is 'undefined' or item is null or item is ''
+      #items.splice i, 1
     else
-      return internal.renderTags @tags
+      items[i] = item
 
-    internal.registerCallbacks()
+  items
 
-  internal.RENDER_COMPLETE_CALLBACK = 'renderComplete'
-  internal.FIRST_NO_PROCESS_PATTERN = /^<.*/
-  internal.FIRST_FIELD_PATTERN      = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
+internal.parseStyles = (str) ->
+  styles = {}
+  for part in str.split(';')
+    [name, value] = part.split(':')
+    if name and value
+      styles[name.trim()] = value.trim()
+  styles
 
-  # Parse first item and add parsed data to array
-  internal.processFirst = (items) ->
-    first = items[0]
+internal.processStyles = (attrs) ->
+  style = attrs.style
 
-    return items if internal.isArray first
+  if typeof style is 'string'
+    attrs.style = internal.parseStyles(style)
+  else if internal.isObject style and not internal.isEmpty style
+    attrs.style = style
 
-    throw "Invalid first argument #{first}" unless typeof first is 'string'
+  if attrs.style
+    for own key, value of attrs.style
+      if key.indexOf('_') >= 0
+        delete attrs.style[key]
+        attrs.style[key.replace(/_/g, '-')] = value
 
-    if first.match(internal.FIRST_NO_PROCESS_PATTERN)
-      return items
+  attrs
 
-    parts = first.split ' '
-    if parts.length > 1
-      i    = parts.length - 1
-      rest = items.slice 1
-      while i >= 0
-        part = parts[i]
-        rest.unshift part
-        rest = [internal.processFirst(rest)]
-        i--
+internal.processCssClasses = (attrs, newAttrs) ->
+  if attrs.class
+    if newAttrs.class
+      newAttrs.class = attrs.class + ' ' + newAttrs.class
+    else
+      newAttrs.class = attrs.class
 
-      return rest[0]
+  newAttrs
 
-    if matches = first.match(internal.FIRST_FIELD_PATTERN)
-      tag     = matches[1] || 'div'
-      id      = matches[3]
-      classes = matches[5]
-      if id or classes
-        attrs = {}
-        attrs.id    = id if id
-        attrs.class = classes.replace(/\./g, ' ') if classes
-        items.splice 0, 1, tag, attrs
+# Combine attributes into one hash and move to second position of array
+internal.processAttributes = (items) ->
+  if internal.isArray items
+    return items if items.length is 0
 
-    items
+    attrs = {}
+    items = internal.processFirst items
+    for item in items
+      if internal.isArray item
+        internal.processAttributes item
+      else if internal.isObject item
+        internal.processStyles item
+        styles = attrs.style
+        newStyles = item.style
 
-  # Normalize children recursively
-  internal.normalize = (items) ->
-    return items unless internal.isArray items
+        # Set item.class to combined css classes, merge will overwrite attrs.class with it
+        internal.processCssClasses(attrs, item)
+
+        attrs = internal.merge(attrs, item)
+
+        styles = internal.merge(styles, newStyles)
+        attrs.style = styles unless internal.isEmpty styles
 
     for i in [items.length - 1..0]
-      item = internal.normalize items[i]
-      if internal.isArray item
-        first = item[0]
-        if first is ''
-          item.shift()
-          items.splice i, 1, item...
-        else if internal.isArray first
-          items.splice i, 1, item...
-      else if item instanceof internal.TemplateOutput
-        items[i] = item.tags
-      else if typeof item is 'undefined' or item is null or item is ''
-        #items.splice i, 1
+      items.splice i, 1 if internal.isObject items[i]
+
+    items.splice 1, 0, attrs unless internal.isEmpty attrs
+  items
+
+internal.prepareOutput = (template, data...) ->
+  if typeof template is 'function'
+    internal.prepareOutput(template(data...), data...)
+  else if internal.isTemplate template
+    template.process(data...)
+  else
+    template
+
+internal.registerCallbacks = (config) ->
+  while internal.callbacks.length > 0
+    [cssClass, myCallbacks] = internal.callbacks.shift()
+
+    for element in document.querySelectorAll('.' + cssClass)
+      # Remove class from DOM
+      if element.getAttribute('class') is cssClass
+        element.removeAttribute('class')
       else
-        items[i] = item
+        element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
 
-    items
+      for own name, callback of myCallbacks
+        if name is internal.RENDER_COMPLETE_CALLBACK
+          callback(element)
+        else
+          $(element).on(name, callback)
 
-  internal.parseStyles = (str) ->
-    styles = {}
-    for part in str.split(';')
-      [name, value] = part.split(':')
-      if name and value
-        styles[name.trim()] = value.trim()
-    styles
+internal.getRandomCssClass = ->
+  String(Math.random()).replace('0.', 'cls')
 
-  internal.processStyles = (attrs) ->
-    style = attrs.style
+internal.processCallbacks = (attributes) ->
+  hasCallbacks = false
+  myCallbacks  = {}
 
-    if typeof style is 'string'
-      attrs.style = internal.parseStyles(style)
-    else if internal.isObject style and not internal.isEmpty style
-      attrs.style = style
+  for own key, value of attributes
+    if typeof value is 'function'
+      hasCallbacks     = true
+      myCallbacks[key] = value
+      delete attributes[key]
 
-    if attrs.style
-      for own key, value of attrs.style
-        if key.indexOf('_') >= 0
-          delete attrs.style[key]
-          attrs.style[key.replace(/_/g, '-')] = value
-
-    attrs
-
-  internal.processCssClasses = (attrs, newAttrs) ->
-    if attrs.class
-      if newAttrs.class
-        newAttrs.class = attrs.class + ' ' + newAttrs.class
-      else
-        newAttrs.class = attrs.class
-
-    newAttrs
-
-  # Combine attributes into one hash and move to second position of array
-  internal.processAttributes = (items) ->
-    if internal.isArray items
-      return items if items.length is 0
-
-      attrs = {}
-      items = internal.processFirst items
-      for item in items
-        if internal.isArray item
-          internal.processAttributes item
-        else if internal.isObject item
-          internal.processStyles item
-          styles = attrs.style
-          newStyles = item.style
-
-          # Set item.class to combined css classes, merge will overwrite attrs.class with it
-          internal.processCssClasses(attrs, item)
-
-          attrs = internal.merge(attrs, item)
-
-          styles = internal.merge(styles, newStyles)
-          attrs.style = styles unless internal.isEmpty styles
-
-      for i in [items.length - 1..0]
-        items.splice i, 1 if internal.isObject items[i]
-
-      items.splice 1, 0, attrs unless internal.isEmpty attrs
-    items
-
-  internal.prepareOutput = (template, data...) ->
-    if typeof template is 'function'
-      internal.prepareOutput(template(data...), data...)
-    else if internal.isTemplate template
-      template.process(data...)
+  if hasCallbacks
+    cssClass = internal.getRandomCssClass()
+    internal.callbacks.push([cssClass, myCallbacks])
+    if attributes.class
+      attributes.class += ' ' + cssClass
     else
-      template
+      attributes.class = cssClass
 
-  internal.registerCallbacks = (config) ->
-    while internal.callbacks.length > 0
-      [cssClass, myCallbacks] = internal.callbacks.shift()
+internal.renderAttributes = (attributes) ->
+  result = ""
 
-      for element in document.querySelectorAll('.' + cssClass)
-        # Remove class from DOM
-        if element.getAttribute('class') is cssClass
-          element.removeAttribute('class')
-        else
-          element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
+  internal.processCallbacks(attributes)
 
-        for own name, callback of myCallbacks
-          if name is internal.RENDER_COMPLETE_CALLBACK
-            callback(element)
-          else
-            $(element).on(name, callback)
-
-  internal.getRandomCssClass = ->
-    String(Math.random()).replace('0.', 'cls')
-
-  internal.processCallbacks = (attributes) ->
-    hasCallbacks = false
-    myCallbacks  = {}
-
-    for own key, value of attributes
-      if typeof value is 'function'
-        hasCallbacks     = true
-        myCallbacks[key] = value
-        delete attributes[key]
-
-    if hasCallbacks
-      cssClass = internal.getRandomCssClass()
-      internal.callbacks.push([cssClass, myCallbacks])
-      if attributes.class
-        attributes.class += ' ' + cssClass
+  for own key, value of attributes
+    if key is "style"
+      styles = attributes.style
+      if internal.isObject styles
+        s = ""
+        for own name, style of styles
+          if typeof style is 'number'
+            style += 'px'
+          s += name + ":" + style + ";"
+        result += " style=\"" + s + "\""
       else
-        attributes.class = cssClass
+        result += " style=\"" + styles + "\""
+    else
+      result += " " + key + "=\"" + value + "\""
 
-  internal.renderAttributes = (attributes) ->
-    result = ""
+  result
 
-    internal.processCallbacks(attributes)
+internal.renderRest = (input, options) ->
+  (internal.render(item, options) for item in input).join('')
 
-    for own key, value of attributes
-      if key is "style"
-        styles = attributes.style
-        if internal.isObject styles
-          s = ""
-          for own name, style of styles
-            if typeof style is 'number'
-              style += 'px'
-            s += name + ":" + style + ";"
-          result += " style=\"" + s + "\""
-        else
-          result += " style=\"" + styles + "\""
-      else
-        result += " " + key + "=\"" + value + "\""
+internal.render = (input, options) ->
+  return '' if typeof input is 'undefined' or input is null
+  return '' + input unless internal.isArray input
+  return '' if input.length is 0
 
-    result
+  first = input.shift()
 
-  internal.renderRest = (input, options) ->
-    (internal.render(item, options) for item in input).join('')
+  # TODO: [['div'], ...]
+  if internal.isArray first
+    return internal.render(first, options) + (internal.render(item, options) for item in input).join('')
 
-  internal.render = (input, options) ->
-    return '' if typeof input is 'undefined' or input is null
-    return '' + input unless internal.isArray input
-    return '' if input.length is 0
+  return internal.renderRest(input, options) if first is ""
+  if input.length is 0
+    if first is 'script'
+      return "<#{first}></#{first}>"
+    else
+      return "<" + first + "/>"
 
-    first = input.shift()
+  result = "<" + first
 
-    # TODO: [['div'], ...]
-    if internal.isArray first
-      return internal.render(first, options) + (internal.render(item, options) for item in input).join('')
+  second = input.shift()
+  if internal.isObject second
+    attrs = second
+    if options?.ignoreCallbacks
+      attrs = {}
+      for own key, value of second
+        attrs[key] = value unless typeof value is 'function'
 
-    return internal.renderRest(input, options) if first is ""
+    result += internal.renderAttributes attrs
+
     if input.length is 0
       if first is 'script'
-        return "<#{first}></#{first}>"
+        result += "></#{first}>"
       else
-        return "<" + first + "/>"
-
-    result = "<" + first
-
-    second = input.shift()
-    if internal.isObject second
-      attrs = second
-      if options?.ignoreCallbacks
-        attrs = {}
-        for own key, value of second
-          attrs[key] = value unless typeof value is 'function'
-
-      result += internal.renderAttributes attrs
-
-      if input.length is 0
-        if first is 'script'
-          result += "></#{first}>"
-        else
-          result += "/>"
-        return result
-      else
-        result += ">"
+        result += "/>"
+      return result
     else
       result += ">"
-      result += internal.render second
-      if input.length is 0
-        result += "</" + first + ">"
-        return result
-
-    if input.length > 0
-      result += internal.renderRest input, options
+  else
+    result += ">"
+    result += internal.render second
+    if input.length is 0
       result += "</" + first + ">"
+      return result
 
-    result
+  if input.length > 0
+    result += internal.renderRest input, options
+    result += "</" + first + ">"
 
-  internal.renderTags = (tags) ->
-    parent =
-      if internal.isArray tags[0]
-        fragment = document.createDocumentFragment()
+  result
 
-    internal.renderChildTags parent, tags
-
-  internal.renderChildTags = (parent, tags) ->
+internal.renderTags = (tags) ->
+  parent =
     if internal.isArray tags[0]
-      for item in tags
-        internal.renderChildTags parent, item
-      return parent
+      fragment = document.createDocumentFragment()
 
-    el = document.createElement(tags.shift())
-    if parent then parent.appendChild el
+  internal.renderChildTags parent, tags
 
-    renderComplete = null
+internal.renderChildTags = (parent, tags) ->
+  if internal.isArray tags[0]
+    for item in tags
+      internal.renderChildTags parent, item
+    return parent
 
-    for part in tags
-      if typeof part is 'string'
-        el.appendChild document.createTextNode(part)
-      else if internal.isObject part
-        for own key, value of part
-          if key is 'renderComplete'
-            renderComplete = value
-          else if typeof value is 'function'
-            $(el).bind(key, value)
-            # For some reason, below code does not work in Jasmine Headless mode
-            #if el.addEventListener
-            #  el.addEventListener key, value, false
-            #else if el.attachEvent # Old IE support
-            #  el.attachEvent "on#{key}", value
-          else if key.toLowerCase() is 'style' and internal.isObject value
-              s = ""
-              for own k, v of value
-                s += "#{k}:#{v};"
-              value = s
+  el = document.createElement(tags.shift())
+  if parent then parent.appendChild el
 
-            el.setAttribute(key, value)
-      else if internal.isArray part
-        internal.renderChildTags(el, part)
+  renderComplete = null
 
-    renderComplete?(el)
-    el
+  for part in tags
+    if typeof part is 'string'
+      el.appendChild document.createTextNode(part)
+    else if internal.isObject part
+      for own key, value of part
+        if key is 'renderComplete'
+          renderComplete = value
+        else if typeof value is 'function'
+          $(el).bind(key, value)
+          # For some reason, below code does not work in Jasmine Headless mode
+          #if el.addEventListener
+          #  el.addEventListener key, value, false
+          #else if el.attachEvent # Old IE support
+          #  el.attachEvent "on#{key}", value
+        else if key.toLowerCase() is 'style' and internal.isObject value
+            s = ""
+            for own k, v of value
+              s += "#{k}:#{v};"
+            value = s
 
-  T.each = (template, array, args...) ->
-    T.process ->
-      for item in array
-        T(template, item, args...)
+          el.setAttribute(key, value)
+    else if internal.isArray part
+      internal.renderChildTags(el, part)
 
-  T.each_with_index = (template, array, args...) ->
-    T.process ->
-      for item, i in array
-        T(template, item, i, args...)
+  renderComplete?(el)
+  el
 
-  T.each_pair = (template, hash, args...) ->
-    T.process ->
-      for own key, value of hash
-        T(template, key, value, args...)
+T.each = (template, array, args...) ->
+  T.process ->
+    for item in array
+      T(template, item, args...)
 
-  T.process = (template, data...) ->
-    new internal.Template(template).process data...
+T.each_with_index = (template, array, args...) ->
+  T.process ->
+    for item, i in array
+      T(template, item, i, args...)
 
-  T.include = (name, data...) ->
-    internal.includes?[name].process(data...)
+T.each_pair = (template, hash, args...) ->
+  T.process ->
+    for own key, value of hash
+      T(template, key, value, args...)
 
-  T.template = (template) -> new internal.Template(template)
+T.process = (template, data...) ->
+  new internal.Template(template).process data...
 
-  T.escape  = (str) ->
-    return str if not str
-    str
-     .replace(/&/g, "&amp;" )
-     .replace(/</g, "&lt;"  )
-     .replace(/>/g, "&gt;"  )
-     .replace(/"/g, "&quot;")
-     .replace(/'/g, "&#039;")
+T.include = (name, data...) ->
+  internal.includes?[name].process(data...)
 
-  T.unescape = (str) ->
-    return str if not str
-    str
-     .replace(/&amp;/g , '&')
-     .replace(/&lt;/g  , '<')
-     .replace(/&gt;/g  , '>')
-     .replace(/&quot;/g, '"')
-     .replace(/&#039;/g, "'")
+T.template = (template) -> new internal.Template(template)
 
-  # noConflict support
-  internal.thisRef = this
-  T.noConflict     = ->
-    if T.oldT
-      internal.thisRef.T = T.oldT
-    else
-      delete internal.thisRef.T
-    T
+T.escape  = (str) ->
+  return str if not str
+  str
+   .replace(/&/g, "&amp;" )
+   .replace(/</g, "&lt;"  )
+   .replace(/>/g, "&gt;"  )
+   .replace(/"/g, "&quot;")
+   .replace(/'/g, "&#039;")
 
-  if this.T then T.oldT = this.T
+T.unescape = (str) ->
+  return str if not str
+  str
+   .replace(/&amp;/g , '&')
+   .replace(/&lt;/g  , '<')
+   .replace(/&gt;/g  , '>')
+   .replace(/&quot;/g, '"')
+   .replace(/&#039;/g, "'")
 
+# noConflict support
+internal.thisRef = this
+T.noConflict     = ->
+  if T.oldT
+    internal.thisRef.T = T.oldT
+  else
+    delete internal.thisRef.T
   T
 
-T = create()
+if this.T then T.oldT = this.T
 
 # For browser
 this.T = T

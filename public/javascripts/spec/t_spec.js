@@ -483,9 +483,9 @@
       template = T.template(function(data) {
         return ['div', T.include('title', data)];
       });
-      partial = function(data) {
+      partial = T.template(function(data) {
         return ['div', data.name];
-      };
+      });
       return expect(template.prepare({
         title: partial
       }).process({
@@ -507,13 +507,13 @@
       return expect(template2.process().tags).toEqual(['div', 'Body2']);
     });
     return it("nested include/prepare should work", function() {
-      var result, template, template2;
-      template = T.template(function() {
+      var result, template1, template2;
+      template1 = T.template(function() {
         return ['div', T.include('title')];
       });
       template2 = T.template(function() {
         return [
-          'div', template.prepare({
+          'div', template1.prepare({
             title: 'Title'
           }).process(), T.include('body')
         ];

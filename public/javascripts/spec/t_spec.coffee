@@ -266,7 +266,7 @@ describe "T.each_pair", ->
 describe "prepare/T.include", ->
   it "should work", ->
     template = T.template (data) -> ['div', T.include('title', data)]
-    partial = (data) -> ['div', data.name]
+    partial = T.template (data) -> ['div', data.name]
     expect(template.prepare(title: partial).process(name: 'John Doe').tags).toEqual(['div', ['div', 'John Doe']])
 
   it "layout can be reused", ->
@@ -277,27 +277,10 @@ describe "prepare/T.include", ->
     expect(template2.process().tags).toEqual(['div', 'Body2'])
 
   it "nested include/prepare should work", ->
-    template = T.template -> ['div', T.include('title')]
-    template2 = T.template -> ['div', template.prepare(title: 'Title').process(), T.include('body')]
+    template1 = T.template -> ['div', T.include('title')]
+    template2 = T.template -> ['div', template1.prepare(title: 'Title').process(), T.include('body')]
     result = ['div', ['div', 'Title'], 'Body']
     expect(template2.prepare(body: 'Body').process().tags).toEqual(result)
-
-#describe "Clone T to avoid template conflicting", ->
-#  it "should work", ->
-#    T1 = T.create()
-#    T2 = T.create()
-#    T1.def('template', 'T1')
-#    T2.def('template', 'T2')
-#    expect(T1('template').tags).toEqual('T1')
-#    expect(T2('template').tags).toEqual('T2')
-
-#  it "should work with complex templates", ->
-#    T1 = T.create()
-#    T2 = T.create()
-#    T1.def('template', (data) -> ['div', T1.include('body', data)])
-#    T2.def('template', (arg1, arg2) -> ['div', arg1, arg2])
-#    expect(T1.get('template').prepare(body: (data) -> ['div', data]).process('John Doe').tags).toEqual(['div', ['div', 'John Doe']])
-#    expect(T2('template', '1', '2').tags).toEqual(['div', '1', '2'])
 
 describe "T.noConflict", ->
   it "should work", ->
