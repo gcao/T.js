@@ -363,9 +363,9 @@
   describe("T()", function() {
     it("should work", function() {
       var data, template;
-      template = T.template(function(data) {
+      template = function(data) {
         return ["div", data.name];
-      });
+      };
       data = {
         name: 'John Doe'
       };
@@ -373,29 +373,29 @@
     });
     it("with multiple arguments should work", function() {
       var result, template;
-      template = T.template(function(arg1, arg2, arg3) {
+      template = function(arg1, arg2, arg3) {
         return ["div", arg1, arg2, arg3];
-      });
+      };
       result = ['div', '1', '2', '3'];
       return expect(T(template, '1', '2', '3').tags).toEqual(result);
     });
     it("toString should work", function() {
       var result, template;
-      template = T.template(function(arg1, arg2, arg3) {
+      template = function(arg1, arg2, arg3) {
         return ["div", arg1, arg2, arg3];
-      });
+      };
       result = '<div>123</div>';
       return expect(T(template, '1', '2', '3').toString()).toEqual(result);
     });
     it("toString should not include generated class name if ignoreCallbacks is true", function() {
       var result, template;
-      template = T.template(function(arg) {
+      template = function(arg) {
         return [
           "div", {
             click: function() {}
           }, arg
         ];
-      });
+      };
       result = '<div>value</div>';
       return expect(T(template, 'value').toString({
         ignoreCallbacks: true
@@ -403,12 +403,12 @@
     });
     it("include template as partial should work", function() {
       var data, partial, result, template;
-      partial = T.template(function(data) {
+      partial = function(data) {
         return ["div", data.name];
-      });
-      template = T.template(function(data) {
+      };
+      template = function(data) {
         return ["div", T(partial, data.account)];
-      });
+      };
       data = {
         account: {
           name: 'John Doe'
@@ -419,15 +419,15 @@
     });
     return it("complex template should work", function() {
       var accountTemplate, data, profileTemplate, result, template;
-      profileTemplate = T.template(function(data) {
+      profileTemplate = function(data) {
         return ['div', data.username];
-      });
-      accountTemplate = T.template(function(data) {
+      };
+      accountTemplate = function(data) {
         return ['div', data.name, T(profileTemplate, data.profile)];
-      });
-      template = T.template(function(data) {
+      };
+      template = function(data) {
         return ['div', T(accountTemplate, data.account)];
-      });
+      };
       result = ['div', ['div', 'John Doe', ['div', 'johndoe']]];
       data = {
         account: {
@@ -444,9 +444,9 @@
   describe("T.each", function() {
     return it("should work", function() {
       var result, template;
-      template = T.template(function(item, arg) {
+      template = function(item, arg) {
         return ['div', item, arg];
-      });
+      };
       result = [['div', 'a', 'arg'], ['div', 'b', 'arg']];
       return expect(T.each(template, ['a', 'b'], 'arg').tags).toEqual(result);
     });
@@ -455,9 +455,9 @@
   describe("T.each_with_index", function() {
     return it("should work", function() {
       var result, template;
-      template = T.template(function(item, i, arg) {
+      template = function(item, i, arg) {
         return ['div', item, i, arg];
-      });
+      };
       result = [['div', 'a', 0, 'arg'], ['div', 'b', 1, 'arg']];
       return expect(T.each_with_index(template, ['a', 'b'], 'arg').tags).toEqual(result);
     });
@@ -466,9 +466,9 @@
   describe("T.each_pair", function() {
     return it("should work", function() {
       var result, template;
-      template = T.template(function(key, value, arg) {
+      template = function(key, value, arg) {
         return ['div', key, value, arg];
-      });
+      };
       result = [['div', 'a', 'aa', 'arg'], ['div', 'b', 'bb', 'arg']];
       return expect(T.each_pair(template, {
         a: 'aa',

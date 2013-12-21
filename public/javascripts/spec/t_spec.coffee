@@ -189,22 +189,22 @@ describe "T.unescape", ->
 
 describe "T()", ->
   it "should work", ->
-    template = T.template (data) -> ["div", data.name]
+    template = (data) -> ["div", data.name]
     data = name: 'John Doe'
     expect(T(template, data).tags).toEqual(['div', 'John Doe'])
 
   it "with multiple arguments should work", ->
-    template = T.template (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3]
+    template = (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3]
     result = ['div', '1', '2', '3']
     expect(T(template, '1', '2', '3').tags).toEqual(result)
 
   it "toString should work", ->
-    template = T.template (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3]
+    template = (arg1, arg2, arg3) -> ["div", arg1, arg2, arg3]
     result = '<div>123</div>'
     expect(T(template, '1', '2', '3').toString()).toEqual(result)
 
   it "toString should not include generated class name if ignoreCallbacks is true", ->
-    template = T.template (arg) ->
+    template = (arg) ->
       [ "div"
         click: ->
         arg
@@ -213,16 +213,16 @@ describe "T()", ->
     expect(T(template, 'value').toString(ignoreCallbacks: true)).toEqual(result)
 
   it "include template as partial should work", ->
-    partial  = T.template (data) -> ["div", data.name]
-    template = T.template (data) -> ["div", T(partial, data.account)]
+    partial  = (data) -> ["div", data.name]
+    template = (data) -> ["div", T(partial, data.account)]
     data   = account: name: 'John Doe'
     result = ['div', ['div', 'John Doe']]
     expect(T(template, data).tags).toEqual(result)
 
   it "complex template should work", ->
-    profileTemplate = T.template (data) -> ['div', data.username]
-    accountTemplate = T.template (data) -> ['div', data.name, T(profileTemplate, data.profile)]
-    template = T.template (data) -> ['div', T(accountTemplate, data.account)]
+    profileTemplate = (data) -> ['div', data.username]
+    accountTemplate = (data) -> ['div', data.name, T(profileTemplate, data.profile)]
+    template = (data) -> ['div', T(accountTemplate, data.account)]
     result = ['div'
       [ 'div'
         'John Doe'
@@ -238,7 +238,7 @@ describe "T()", ->
 
 describe "T.each", ->
   it "should work", ->
-    template = T.template (item, arg) -> ['div', item, arg]
+    template = (item, arg) -> ['div', item, arg]
     result = [
       ['div', 'a', 'arg']
       ['div', 'b', 'arg']
@@ -247,7 +247,7 @@ describe "T.each", ->
 
 describe "T.each_with_index", ->
   it "should work", ->
-    template = T.template (item, i, arg) -> ['div', item, i, arg]
+    template = (item, i, arg) -> ['div', item, i, arg]
     result = [
       ['div', 'a', 0, 'arg']
       ['div', 'b', 1, 'arg']
@@ -256,7 +256,7 @@ describe "T.each_with_index", ->
 
 describe "T.each_pair", ->
   it "should work", ->
-    template = T.template (key, value, arg) -> ['div', key, value, arg]
+    template = (key, value, arg) -> ['div', key, value, arg]
     result = [
       ['div', 'a', 'aa', 'arg']
       ['div', 'b', 'bb', 'arg']
@@ -266,7 +266,7 @@ describe "T.each_pair", ->
 describe "prepare/T.include", ->
   it "should work", ->
     template = T.template (data) -> ['div', T.include('title', data)]
-    partial = T.template (data) -> ['div', data.name]
+    partial  = T.template (data) -> ['div', data.name]
     expect(template.prepare(title: partial).process(name: 'John Doe').tags).toEqual(['div', ['div', 'John Doe']])
 
   it "layout can be reused", ->

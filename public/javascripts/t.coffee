@@ -1,10 +1,12 @@
 VERSION = "0.8.0"
 
 T = (template, data...) ->
+  if not internal.isTemplate template
+    template = new internal.Template(template)
   template.process(data...)
 
-T.VERSION   = VERSION
-T.internal  = internal = {}
+T.VERSION  = VERSION
+T.internal = internal = {}
 
 internal.callbacks  = []
 internal.isArray    = (o) -> o instanceof Array

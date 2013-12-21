@@ -9,6 +9,9 @@
   T = function() {
     var data, template;
     template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
+    if (!internal.isTemplate(template)) {
+      template = new internal.Template(template);
+    }
     return template.process.apply(template, data);
   };
 
