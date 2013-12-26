@@ -269,6 +269,12 @@ describe "prepare/T.include", ->
     partial  = T.template (data) -> ['div', data.name]
     expect(template.prepare(title: partial).process(name: 'John Doe').tags).toEqual(['div', ['div', 'John Doe']])
 
+  it "T.prepare should work", ->
+    layout   = (data) -> ['div', T.include('title', data)]
+    partial  = (data) -> ['div', data.name]
+    template = T.prepare(layout, title: partial)
+    expect(template.process(name: 'John Doe').tags).toEqual(['div', ['div', 'John Doe']])
+
   it "layout can be reused", ->
     layout = T.template -> ['div', T.include('body')]
     template1 = layout.prepare(body: 'Body1')

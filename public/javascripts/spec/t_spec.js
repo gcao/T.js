@@ -492,6 +492,21 @@
         name: 'John Doe'
       }).tags).toEqual(['div', ['div', 'John Doe']]);
     });
+    it("T.prepare should work", function() {
+      var layout, partial, template;
+      layout = function(data) {
+        return ['div', T.include('title', data)];
+      };
+      partial = function(data) {
+        return ['div', data.name];
+      };
+      template = T.prepare(layout, {
+        title: partial
+      });
+      return expect(template.process({
+        name: 'John Doe'
+      }).tags).toEqual(['div', ['div', 'John Doe']]);
+    });
     it("layout can be reused", function() {
       var layout, template1, template2;
       layout = T.template(function() {

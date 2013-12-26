@@ -87,9 +87,8 @@
     return o1;
   };
 
-  internal.Template = function(template, name) {
+  internal.Template = function(template) {
     this.template = template;
-    this.name = name;
     return this.isTjsTemplate = true;
   };
 
@@ -111,7 +110,7 @@
         includes[key] = new internal.Template(value);
       }
     }
-    template = new internal.Template(this.template, this.name);
+    template = new internal.Template(this.template);
     template.process = function() {
       var data, oldIncludes, _ref;
       data = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
@@ -611,9 +610,19 @@
   };
 
   T.process = function() {
-    var data, template, _ref;
+    var data, template;
     template = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    return (_ref = new internal.Template(template)).process.apply(_ref, data);
+    if (!internal.isTemplate(template)) {
+      template = new internal.Template(template);
+    }
+    return template.process.apply(template, data);
+  };
+
+  T.prepare = function(template, includes) {
+    if (!internal.isTemplate(template)) {
+      template = new internal.Template(template);
+    }
+    return template.prepare(includes);
   };
 
   T.include = function() {

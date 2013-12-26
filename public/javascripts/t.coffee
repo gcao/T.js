@@ -39,7 +39,7 @@ internal.merge      = (o1, o2) ->
 
   o1
 
-internal.Template = (@template, @name) ->
+internal.Template = (@template) ->
   @isTjsTemplate = true
 
 internal.Template.prototype.process = (data...) ->
@@ -52,7 +52,7 @@ internal.Template.prototype.prepare = (includes) ->
   for own key, value of includes
     includes[key] = new internal.Template(value) unless internal.isTemplate value
 
-  template = new internal.Template(@template, @name)
+  template = new internal.Template(@template)
   template.process = (data...) ->
     try
       oldIncludes = internal.includes if internal.includes
@@ -398,7 +398,14 @@ T.each_pair = (template, hash, args...) ->
       T(template, key, value, args...)
 
 T.process = (template, data...) ->
-  new internal.Template(template).process data...
+  if not internal.isTemplate template
+    template = new internal.Template(template)
+  template.process data...
+
+T.prepare = (template, includes) ->
+  if not internal.isTemplate template
+    template = new internal.Template(template)
+  template.prepare includes
 
 T.include = (name, data...) ->
   internal.includes?[name].process(data...)
