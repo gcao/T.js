@@ -301,6 +301,23 @@
       expect(elem).toBe(result);
       return expect(renderCompleteCalled).toBe(true);
     });
+    it("should invoke all renderComplete callbacks", function() {
+      var input, renderCompleteCalled, result;
+      renderCompleteCalled = 0;
+      input = [
+        'div', {
+          renderComplete: [
+            function(el) {
+              return renderCompleteCalled += 1;
+            }, function(el) {
+              return renderCompleteCalled += 1;
+            }
+          ]
+        }
+      ];
+      result = T.internal.renderTags(input);
+      return expect(renderCompleteCalled).toBe(2);
+    });
     return it("should work with child tags", function() {
       var input, result;
       input = [['div', 'a'], ['span', 'b']];
@@ -338,13 +355,41 @@
       result = ['div', '1', '2', '3'];
       return expect(T.process(template, '1', '2', '3').tags).toEqual(result);
     });
-    return it("can be called with different data", function() {
+    it("can be called with different data", function() {
       var template;
       template = function(data) {
         return ['div', data];
       };
       expect(T.process(template, 'test').tags).toEqual(['div', 'test']);
       return expect(T.process(template, 'test1').tags).toEqual(['div', 'test1']);
+    });
+    it("should invoke postProcess callback", function() {
+      var input, result;
+      input = [
+        'div', {
+          postProcess: function(data) {
+            return data.push('value');
+          }
+        }
+      ];
+      result = T.process(input);
+      return expect(result.tags).toEqual(['div', 'value']);
+    });
+    return it("should invoke all postProcess callbacks", function() {
+      var input, result;
+      input = [
+        'div', {
+          postProcess: function(data) {
+            return data.push('value1');
+          }
+        }, {
+          postProcess: function(data) {
+            return data.push('value2');
+          }
+        }
+      ];
+      result = T.process(input);
+      return expect(result.tags).toEqual(['div', 'value1', 'value2']);
     });
   });
 
@@ -477,7 +522,7 @@
     });
   });
 
-  describe("prepare/T.include", function() {
+  describe("prepare/include", function() {
     it("should work", function() {
       var partial, template;
       template = T.template(function(data) {

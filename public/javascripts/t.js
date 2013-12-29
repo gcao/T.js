@@ -72,7 +72,7 @@
   };
 
   internal.merge = function(o1, o2) {
-    var key, value;
+    var key, value, value1;
     if (!o2) {
       return o1;
     }
@@ -82,7 +82,20 @@
     for (key in o2) {
       if (!__hasProp.call(o2, key)) continue;
       value = o2[key];
-      o1[key] = value;
+      if (['postProcess', 'renderComplete'].indexOf(key) >= 0) {
+        value1 = o1[key];
+        if (value1) {
+          if (internal.isArray(value1)) {
+            value1.push(value);
+          } else {
+            o1[key] = [value1, value];
+          }
+        } else {
+          o1[key] = value;
+        }
+      } else {
+        o1[key] = value;
+      }
     }
     return o1;
   };
@@ -98,6 +111,7 @@
     tags = internal.prepareOutput.apply(internal, [this.template].concat(__slice.call(data)));
     tags = internal.normalize(tags);
     tags = internal.processAttributes(tags);
+    internal.handlePostProcess(tags);
     return new internal.TemplateOutput(this, tags);
   };
 
@@ -155,15 +169,16 @@
       $(options.before).before(this.toString());
     } else if (options.after) {
       $(options.after).after(this.toString());
+    } else if (options.here) {
+      document.write(this.toString);
     } else if (options.handler) {
       options.handler(this.toString());
     } else {
-      return internal.renderTags(this.tags);
+      internal.renderTags(this.tags);
+      return;
     }
     return internal.registerCallbacks();
   };
-
-  internal.RENDER_COMPLETE_CALLBACK = 'renderComplete';
 
   internal.FIRST_NO_PROCESS_PATTERN = /^<.*/;
 
@@ -332,6 +347,49 @@
     }
   };
 
+  internal.handlePostProcess = function(arr) {
+    var callback, callbacks, item, _i, _j, _len, _len1;
+    if (!internal.isArray(arr)) {
+      return;
+    }
+    for (_i = 0, _len = arr.length; _i < _len; _i++) {
+      item = arr[_i];
+      internal.handlePostProcess(item);
+    }
+    callbacks = arr[1].postProcess;
+    if (callbacks) {
+      if (typeof callbacks === 'function') {
+        callbacks(arr);
+      } else {
+        for (_j = 0, _len1 = callbacks.length; _j < _len1; _j++) {
+          callback = callbacks[_j];
+          callback(arr);
+        }
+      }
+      delete arr[1].postProcess;
+      if (internal.isEmpty(arr[1])) {
+        return arr.splice(1, 1);
+      }
+    }
+  };
+
+  internal.handleRenderComplete = function(callbacks, el) {
+    var callback, _i, _len, _results;
+    if (!callbacks) {
+      return;
+    }
+    if (typeof callbacks === 'function') {
+      return callbacks(el);
+    } else {
+      _results = [];
+      for (_i = 0, _len = callbacks.length; _i < _len; _i++) {
+        callback = callbacks[_i];
+        _results.push(callback(el));
+      }
+      return _results;
+    }
+  };
+
   internal.registerCallbacks = function(config) {
     var callback, cssClass, element, myCallbacks, name, _ref, _results;
     _results = [];
@@ -354,8 +412,8 @@
             for (name in myCallbacks) {
               if (!__hasProp.call(myCallbacks, name)) continue;
               callback = myCallbacks[name];
-              if (name === internal.RENDER_COMPLETE_CALLBACK) {
-                _results2.push(callback(element));
+              if (name === 'renderComplete') {
+                _results2.push(handleRenderComplete(callback, element));
               } else {
                 _results2.push($(element).on(name, callback));
               }
@@ -520,7 +578,7 @@
   };
 
   internal.renderChildTags = function(parent, tags) {
-    var el, item, k, key, part, renderComplete, s, v, value, _i, _j, _len, _len1;
+    var callback, el, item, k, key, part, renderComplete, s, v, value, _i, _j, _k, _len, _len1, _len2;
     if (internal.isArray(tags[0])) {
       for (_i = 0, _len = tags.length; _i < _len; _i++) {
         item = tags[_i];
@@ -560,8 +618,15 @@
         internal.renderChildTags(el, part);
       }
     }
-    if (typeof renderComplete === "function") {
-      renderComplete(el);
+    if (renderComplete) {
+      if (typeof renderComplete === 'function') {
+        renderComplete(el);
+      } else {
+        for (_k = 0, _len2 = renderComplete.length; _k < _len2; _k++) {
+          callback = renderComplete[_k];
+          callback(el);
+        }
+      }
     }
     return el;
   };

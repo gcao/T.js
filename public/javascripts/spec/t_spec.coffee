@@ -147,6 +147,17 @@ describe "T.internal.renderTags", ->
     expect(elem).toBe(result)
     expect(renderCompleteCalled).toBe(true)
 
+  it "should invoke all renderComplete callbacks", ->
+    renderCompleteCalled = 0
+    input  = ['div', 
+      renderComplete: [
+        (el) -> renderCompleteCalled += 1 
+        (el) -> renderCompleteCalled += 1 
+      ]
+    ]
+    result = T.internal.renderTags(input)
+    expect(renderCompleteCalled).toBe(2)
+
   it "should work with child tags", ->
     input  = [['div', 'a'], ['span', 'b']]
     result = T.internal.renderTags(input)
@@ -178,6 +189,22 @@ describe "T.process", ->
     template = (data) -> ['div', data ]
     expect(T.process(template, 'test' ).tags).toEqual(['div', 'test'])
     expect(T.process(template, 'test1').tags).toEqual(['div', 'test1'])
+
+  it "should invoke postProcess callback", ->
+    input  = ['div', 
+      postProcess: (data) ->
+        data.push 'value'
+    ]
+    result = T.process(input)
+    expect(result.tags).toEqual(['div', 'value'])
+
+  it "should invoke all postProcess callbacks", ->
+    input  = ['div', 
+      postProcess: (data) -> data.push 'value1'
+    , postProcess: (data) -> data.push 'value2'
+    ]
+    result = T.process(input)
+    expect(result.tags).toEqual(['div', 'value1', 'value2'])
 
 describe "T.escape", ->
   it "should work", ->
@@ -263,7 +290,7 @@ describe "T.each_pair", ->
     ]
     expect(T.each_pair(template, {a: 'aa', b: 'bb'}, 'arg').tags).toEqual(result)
 
-describe "prepare/T.include", ->
+describe "prepare/include", ->
   it "should work", ->
     template = T.template (data) -> ['div', T.include('title', data)]
     partial  = T.template (data) -> ['div', data.name]

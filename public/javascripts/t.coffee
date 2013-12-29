@@ -35,7 +35,17 @@ internal.merge      = (o1, o2) ->
   return o2 unless o1
 
   for own key, value of o2
-    o1[key] = value
+    if ['postProcess', 'renderComplete'].indexOf(key) >= 0
+      value1 = o1[key]
+      if value1
+        if internal.isArray value1
+          value1.push value
+        else
+          o1[key] = [value1, value]
+      else
+        o1[key] = value
+    else
+      o1[key] = value
 
   o1
 
@@ -46,6 +56,7 @@ internal.Template.prototype.process = (data...) ->
   tags = internal.prepareOutput(@template, data...)
   tags = internal.normalize tags
   tags = internal.processAttributes tags
+  internal.handlePostProcess tags
   new internal.TemplateOutput(this, tags)
 
 internal.Template.prototype.prepare = (includes) ->
@@ -85,14 +96,16 @@ internal.TemplateOutput.prototype.render = (options) ->
     $(options.before).before(@toString())
   else if options.after
     $(options.after).after(@toString())
+  else if options.here
+    document.write(@toString)
   else if options.handler
     options.handler(@toString())
   else
-    return internal.renderTags @tags
+    internal.renderTags @tags
+    return
 
   internal.registerCallbacks()
 
-internal.RENDER_COMPLETE_CALLBACK = 'renderComplete'
 internal.FIRST_NO_PROCESS_PATTERN = /^<.*/
 internal.FIRST_FIELD_PATTERN      = /^([^#.]+)?(#([^.]+))?(.(.*))?$/
 
@@ -223,6 +236,31 @@ internal.prepareOutput = (template, data...) ->
   else
     template
 
+internal.handlePostProcess = (arr) ->
+  if not internal.isArray arr then return
+  for item in arr
+    internal.handlePostProcess item
+
+  callbacks = arr[1].postProcess
+  if callbacks
+    if typeof callbacks is 'function'
+      callbacks(arr)
+    else
+      for callback in callbacks
+        callback(arr)
+
+    delete arr[1].postProcess
+    if internal.isEmpty(arr[1]) then arr.splice(1, 1)
+
+internal.handleRenderComplete = (callbacks, el) ->
+  if not callbacks then return
+
+  if typeof callbacks is 'function'
+    callbacks(el)
+  else
+    for callback in callbacks
+      callback(el)
+
 internal.registerCallbacks = (config) ->
   while internal.callbacks.length > 0
     [cssClass, myCallbacks] = internal.callbacks.shift()
@@ -235,8 +273,8 @@ internal.registerCallbacks = (config) ->
         element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
 
       for own name, callback of myCallbacks
-        if name is internal.RENDER_COMPLETE_CALLBACK
-          callback(element)
+        if name is 'renderComplete'
+          handleRenderComplete(callback, element)
         else
           $(element).on(name, callback)
 
@@ -379,7 +417,13 @@ internal.renderChildTags = (parent, tags) ->
     else if internal.isArray part
       internal.renderChildTags(el, part)
 
-  renderComplete?(el)
+  if renderComplete
+    if typeof renderComplete is 'function'
+      renderComplete(el)
+    else
+      for callback in renderComplete
+        callback(el)
+
   el
 
 T.each = (template, array, args...) ->
