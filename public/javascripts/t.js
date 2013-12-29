@@ -170,7 +170,7 @@
     } else if (options.after) {
       $(options.after).after(this.toString());
     } else if (options.here) {
-      document.write(this.toString);
+      document.write(this.toString());
     } else if (options.handler) {
       options.handler(this.toString());
     } else {

@@ -97,7 +97,7 @@ internal.TemplateOutput.prototype.render = (options) ->
   else if options.after
     $(options.after).after(@toString())
   else if options.here
-    document.write(@toString)
+    document.write(@toString())
   else if options.handler
     options.handler(@toString())
   else
