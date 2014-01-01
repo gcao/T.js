@@ -11,56 +11,57 @@
 
 todos = ["Do this", "Do that"]
 
-T.def 'main', ->
-  [ "div#container"
-    style: 
-      width: "300px"
-      padding: "3px"
-      border: "1px solid grey"
+templates =
+  main: ->
+    [ "div#container"
+      style: 
+        width: 300
+        padding: 3
+        border: "1px solid grey"
 
-    [ "div.header"
-      style:
-        padding: "3px"
-        background: "#fbb"
-        "font-weight": "bold"
-      "My TODO List"
+      [ "div.header"
+        style:
+          padding: 3
+          background: "#fbb"
+          font_weight: "bold"
+
+        "My TODO List"
+      ]
+      [ "div.contents"
+        style: width: "100%"
+      ]
+      [ "input"
+        type: "text"
+        placeholder: "Type content and hit Enter"
+        style: width: "98%"
+        keyup: (event) ->
+          return if event.which isnt 13
+
+          event.preventDefault()
+          todos.push $(this).val()
+          $(this).val('')
+      ]
     ]
-    [ "div.contents"
-      style: width: "100%"
+
+  rowTemplate: (items, index) ->
+    [ "div.content"
+      style: padding: "3px"
+
+      T.escape(items[index])
+      "&nbsp;&nbsp;"
+      [ "a"
+        href: "javascript:void(0)"
+        click: -> 
+          items.splice(index, 1)
+        "X"
+      ]
     ]
-    [ "input"
-      type: "text"
-      placeholder: "Type content and hit Enter"
-      style: width: "98%"
-      keyup: (event) ->
-        return if event.which isnt 13
 
-        event.preventDefault()
-        todos.push $(this).val()
-        $(this).val('')
-    ]
-  ]
+  rowsTemplate: (rows) ->
+    T(templates.rowTemplate, rows, i) for i in [0..rows.length - 1]
 
-T('main').process().render inside: $('body')
-
-T.def 'rowTemplate', (items, index) ->
-  [ "div.content"
-    style: padding: "3px"
-
-    T.escape(items[index])
-    "&nbsp;&nbsp;"
-    [ "a"
-      href: "javascript:void(0)"
-      click: -> 
-        items.splice(index, 1)
-      "X"
-    ]
-  ]
-
-T.def 'rowsTemplate', (rows) ->
-  T('rowTemplate', rows, i) for i in [0..rows.length - 1]
-
-T('rowsTemplate', todos).render inside: '.contents'
+T(templates.main).render inside: $('body')
+T(templates.rowsTemplate, todos).render inside: '.contents'
 
 </script>
 </head>

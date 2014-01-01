@@ -413,7 +413,7 @@
               if (!__hasProp.call(myCallbacks, name)) continue;
               callback = myCallbacks[name];
               if (name === 'renderComplete') {
-                _results2.push(handleRenderComplete(callback, element));
+                _results2.push(internal.handleRenderComplete(callback, element));
               } else {
                 _results2.push($(element).on(name, callback));
               }
@@ -578,7 +578,7 @@
   };
 
   internal.renderChildTags = function(parent, tags) {
-    var callback, el, item, k, key, part, renderComplete, s, v, value, _i, _j, _k, _len, _len1, _len2;
+    var el, item, k, key, part, renderComplete, s, v, value, _i, _j, _len, _len1;
     if (internal.isArray(tags[0])) {
       for (_i = 0, _len = tags.length; _i < _len; _i++) {
         item = tags[_i];
@@ -618,16 +618,7 @@
         internal.renderChildTags(el, part);
       }
     }
-    if (renderComplete) {
-      if (typeof renderComplete === 'function') {
-        renderComplete(el);
-      } else {
-        for (_k = 0, _len2 = renderComplete.length; _k < _len2; _k++) {
-          callback = renderComplete[_k];
-          callback(el);
-        }
-      }
-    }
+    internal.handleRenderComplete(renderComplete, el);
     return el;
   };
 

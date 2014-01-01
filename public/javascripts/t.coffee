@@ -274,7 +274,7 @@ internal.registerCallbacks = (config) ->
 
       for own name, callback of myCallbacks
         if name is 'renderComplete'
-          handleRenderComplete(callback, element)
+          internal.handleRenderComplete(callback, element)
         else
           $(element).on(name, callback)
 
@@ -417,12 +417,7 @@ internal.renderChildTags = (parent, tags) ->
     else if internal.isArray part
       internal.renderChildTags(el, part)
 
-  if renderComplete
-    if typeof renderComplete is 'function'
-      renderComplete(el)
-    else
-      for callback in renderComplete
-        callback(el)
+  internal.handleRenderComplete(renderComplete, el)
 
   el
 

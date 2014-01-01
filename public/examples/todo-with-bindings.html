@@ -9,66 +9,66 @@
   <script type="text/javascript" src="../javascripts/t.js"></script>
   <script type="text/coffeescript">
 
-# Templates
-T.def 'main', (todos) ->
-  [ "div#container"
-    style: 
-      width: 300
-      padding: 3
-      border: "1px solid grey"
-
-    [ "div.header"
+templates =
+  main: (todos) ->
+    [ "div#container"
       style:
+        width: 300
         padding: 3
-        background: "#fbb"
-        "font-weight": "bold"
+        border: "1px solid grey"
 
-      "My TODO List"
+      [ "div.header"
+        style:
+          padding: 3
+          background: "#fbb"
+          font_weight: "bold"
+
+        "My TODO List"
+      ]
+      [ "div.todos"
+        style: width: "100%"
+
+        T(templates.todos, todos)
+      ]
+      [ "input"
+        type: "text"
+        placeholder: "Type content and hit Enter"
+        style: width: "98%"
+        keyup: (event) ->
+          return if event.which isnt 13
+
+          event.preventDefault()
+          todos.push $(this).val()
+          $(this).val('')
+      ]
     ]
-    [ "div.todos"
-      style: width: "100%"
 
-      T('todos', todos)
+  todo: (todos, index) ->
+    [ "div.content"
+      style: padding: 3
+
+      T.escape(todos[index])
+      "&nbsp;&nbsp;"
+      [ "a"
+        href: "javascript:void(0)"
+        click: -> todos.splice(index, 1)
+
+        "X"
+      ]
     ]
-    [ "input"
-      type: "text"
-      placeholder: "Type content and hit Enter"
-      style: width: "98%"
-      keyup: (event) ->
-        return if event.which isnt 13
 
-        event.preventDefault()
-        todos.push $(this).val()
-        $(this).val('')
-    ]
-  ]
-
-T.def 'todo', (todos, index) ->
-  [ "div.content"
-    style: padding: 3
-
-    T.escape(todos[index])
-    "&nbsp;&nbsp;"
-    [ "a"
-      href: "javascript:void(0)"
-      click: -> todos.splice(index, 1)
-
-      "X"
-    ]
-  ]
-
-T.def 'todos', (todos) ->
-  if todos.length > 0
-    T('todo', todos, i) for i in [0..todos.length - 1]
+  todos: (todos) ->
+    if todos.length > 0
+      T(templates.todo, todos, i) for i in [0..todos.length - 1]
 
 # Model
 window.todos = ['Do this', 'Do that']
 
 # Model change listener
 watch window, 'todos', ->
-  T('todos', window.todos).render inside: '.todos'
+  T(templates.todos, window.todos).render inside: '.todos'
 
-T('main', todos).render inside: 'body'
+T(templates.main, todos).render inside: 'body'
 
 </script>
 </head>
