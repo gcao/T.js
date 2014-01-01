@@ -348,7 +348,7 @@
   };
 
   internal.handlePostProcess = function(arr) {
-    var callback, callbacks, item, _i, _j, _len, _len1;
+    var callback, callbacks, item, _i, _j, _len, _len1, _ref;
     if (!internal.isArray(arr)) {
       return;
     }
@@ -356,7 +356,7 @@
       item = arr[_i];
       internal.handlePostProcess(item);
     }
-    callbacks = arr[1].postProcess;
+    callbacks = (_ref = arr[1]) != null ? _ref.postProcess : void 0;
     if (callbacks) {
       if (typeof callbacks === 'function') {
         callbacks(arr);

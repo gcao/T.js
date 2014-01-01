@@ -241,7 +241,7 @@ internal.handlePostProcess = (arr) ->
   for item in arr
     internal.handlePostProcess item
 
-  callbacks = arr[1].postProcess
+  callbacks = arr[1]?.postProcess
   if callbacks
     if typeof callbacks is 'function'
       callbacks(arr)
