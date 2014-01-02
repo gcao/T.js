@@ -190,6 +190,19 @@ describe "T.process", ->
     expect(T.process(template, 'test' ).tags).toEqual(['div', 'test'])
     expect(T.process(template, 'test1').tags).toEqual(['div', 'test1'])
 
+  it "should work with nested templates", ->
+    child  = -> ['div', 'child']
+    parent = -> ['div', 'parent', T(child)]
+    result = ['div', 'parent', ['div', 'child']]
+    expect(T(parent).tags).toEqual(result)
+
+  it "should work with nested bare templates", ->
+    grandChild  = -> ['div', 'grand child']
+    child  = -> T(grandChild)
+    parent = -> ['div', 'parent', T(child)]
+    result = ['div', 'parent', ['div', 'grand child']]
+    expect(T(parent).tags).toEqual(result)
+
   it "should invoke postProcess callback", ->
     input  = ['div', 
       postProcess: (data) ->

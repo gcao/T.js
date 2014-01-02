@@ -363,6 +363,31 @@
       expect(T.process(template, 'test').tags).toEqual(['div', 'test']);
       return expect(T.process(template, 'test1').tags).toEqual(['div', 'test1']);
     });
+    it("should work with nested templates", function() {
+      var child, parent, result;
+      child = function() {
+        return ['div', 'child'];
+      };
+      parent = function() {
+        return ['div', 'parent', T(child)];
+      };
+      result = ['div', 'parent', ['div', 'child']];
+      return expect(T(parent).tags).toEqual(result);
+    });
+    it("should work with nested bare templates", function() {
+      var child, grandChild, parent, result;
+      grandChild = function() {
+        return ['div', 'grand child'];
+      };
+      child = function() {
+        return T(grandChild);
+      };
+      parent = function() {
+        return ['div', 'parent', T(child)];
+      };
+      result = ['div', 'parent', ['div', 'grand child']];
+      return expect(T(parent).tags).toEqual(result);
+    });
     it("should invoke postProcess callback", function() {
       var input, result;
       input = [

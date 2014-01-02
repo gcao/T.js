@@ -25,12 +25,12 @@ represent html/xml data.
 
 * Define template
 ```javascript
-T.def('template', ["a.edit", {"href": "/edit"}, "Edit"])
+var template = ["a.edit", {href: "/edit"}, "Edit"]
 ```
 
 * Render
 ```javascript
-var result = T('template').toString()
+var result = T(template).toString()
 ```
 
 * Result is like
@@ -42,11 +42,15 @@ var result = T('template').toString()
 
 * Support layout, e.g.
   ```javascript
-  T.def('layout', ['div', ['div', 'Title'], T.include('body')]);
+  var layout = T.template(function(){ 
+    return ['div', ['div', 'Title'], T.include('body')]; 
+  });
 
   var body = ['div', 'Content goes here']
 
-  var result = T.get('layout').prepare({'body': body}).process().toString()
+  var template = layout.prepare({'body': body}); 
+
+  var result = template.process().toString()
   // <div><div>Title</div><div>Content goes here</div></div>
   ```
 
@@ -54,21 +58,20 @@ var result = T('template').toString()
 
 ### EXAMPLE 1: A simple template that uses data
 ```javascript
-T.def('template', function(account){
-  return [
-    'div.account', 
+var template = function(account){
+  return ['div.account', 
     ['div.header', 'Account Info'],
     ['div.label', 'Name'],
     ['div', account.name],
     ['div.label', 'Age'],
     ['div', account.age]
   ];
-});
+}
 var account = {
   name: 'John Doe',
   age: 25
 };
-var result = T('template', account).toString();
+var result = T(template, account).toString();
 // result is like below (after formatted)
 // <div class="account">
 //   <div class="header">Account Info</div>

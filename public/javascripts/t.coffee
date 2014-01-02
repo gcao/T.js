@@ -11,7 +11,7 @@ T.internal = internal = {}
 internal.callbacks  = []
 internal.isArray    = (o) -> o instanceof Array
 internal.isObject   = (o) -> o isnt null and typeof o is "object" and (o not instanceof Array)
-internal.isTemplate = (o) -> o isnt null and typeof o is "object" and o.isTjsTemplate
+internal.isTemplate = (o) -> o instanceof internal.Template
 internal.isEmpty    = (o) ->
   return true unless o
   for own key of o
@@ -50,7 +50,6 @@ internal.merge      = (o1, o2) ->
   o1
 
 internal.Template = (@template) ->
-  @isTjsTemplate = true
 
 internal.Template.prototype.process = (data...) ->
   tags = internal.prepareOutput(@template, data...)
@@ -233,6 +232,8 @@ internal.prepareOutput = (template, data...) ->
     internal.prepareOutput(template(data...), data...)
   else if internal.isTemplate template
     template.process(data...)
+  else if template instanceof internal.TemplateOutput
+    template.tags
   else
     template
 
@@ -447,7 +448,7 @@ T.prepare = (template, includes) ->
   template.prepare includes
 
 T.include = (name, data...) ->
-  internal.includes?[name].process(data...)
+  internal.includes?[name]?.process(data...)
 
 T.template = (template) -> new internal.Template(template)
 

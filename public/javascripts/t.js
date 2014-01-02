@@ -30,7 +30,7 @@
   };
 
   internal.isTemplate = function(o) {
-    return o !== null && typeof o === "object" && o.isTjsTemplate;
+    return o instanceof internal.Template;
   };
 
   internal.isEmpty = function(o) {
@@ -102,7 +102,6 @@
 
   internal.Template = function(template) {
     this.template = template;
-    return this.isTjsTemplate = true;
   };
 
   internal.Template.prototype.process = function() {
@@ -342,6 +341,8 @@
       return internal.prepareOutput.apply(internal, [template.apply(null, data)].concat(__slice.call(data)));
     } else if (internal.isTemplate(template)) {
       return template.process.apply(template, data);
+    } else if (template instanceof internal.TemplateOutput) {
+      return template.tags;
     } else {
       return template;
     }
@@ -684,7 +685,7 @@
   T.include = function() {
     var data, name, _ref, _ref1;
     name = arguments[0], data = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
-    return (_ref = internal.includes) != null ? (_ref1 = _ref[name]).process.apply(_ref1, data) : void 0;
+    return (_ref = internal.includes) != null ? (_ref1 = _ref[name]) != null ? _ref1.process.apply(_ref1, data) : void 0 : void 0;
   };
 
   T.template = function(template) {
