@@ -159,7 +159,7 @@
     if (options.inside) {
       $(options.inside).html(this.toString());
     } else if (options.replace) {
-      $(options.replace).replace(this.toString());
+      $(options.replace).replaceWith(this.toString());
     } else if (options.prependTo) {
       $(options.prependTo).prepend(this.toString());
     } else if (options.appendTo) {
@@ -463,7 +463,9 @@
     for (key in attributes) {
       if (!__hasProp.call(attributes, key)) continue;
       value = attributes[key];
-      if (key === "style") {
+      if (key === "temp") {
+
+      } else if (key === "style") {
         styles = attributes.style;
         if (internal.isObject(styles)) {
           s = "";

@@ -86,7 +86,7 @@ internal.TemplateOutput.prototype.render = (options) ->
   if options.inside
     $(options.inside).html(@toString())
   else if options.replace
-    $(options.replace).replace(@toString())
+    $(options.replace).replaceWith(@toString())
   else if options.prependTo
     $(options.prependTo).prepend(@toString())
   else if options.appendTo
@@ -306,7 +306,8 @@ internal.renderAttributes = (attributes) ->
   internal.processCallbacks(attributes)
 
   for own key, value of attributes
-    if key is "style"
+    if key is "temp"
+    else if key is "style"
       styles = attributes.style
       if internal.isObject styles
         s = ""
