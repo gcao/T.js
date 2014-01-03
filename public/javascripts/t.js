@@ -639,7 +639,7 @@
     });
   };
 
-  T.each_with_index = function() {
+  T.eachWithIndex = function() {
     var args, array, template;
     template = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
     return T.process(function() {
@@ -653,7 +653,7 @@
     });
   };
 
-  T.each_pair = function() {
+  T.eachPair = function() {
     var args, hash, template;
     template = arguments[0], hash = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
     return T.process(function() {

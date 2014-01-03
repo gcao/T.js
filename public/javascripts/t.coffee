@@ -428,12 +428,12 @@ T.each = (template, array, args...) ->
     for item in array
       T(template, item, args...)
 
-T.each_with_index = (template, array, args...) ->
+T.eachWithIndex = (template, array, args...) ->
   T.process ->
     for item, i in array
       T(template, item, i, args...)
 
-T.each_pair = (template, hash, args...) ->
+T.eachPair = (template, hash, args...) ->
   T.process ->
     for own key, value of hash
       T(template, key, value, args...)

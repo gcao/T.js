@@ -522,25 +522,25 @@
     });
   });
 
-  describe("T.each_with_index", function() {
+  describe("T.eachWithIndex", function() {
     return it("should work", function() {
       var result, template;
       template = function(item, i, arg) {
         return ['div', item, i, arg];
       };
       result = [['div', 'a', 0, 'arg'], ['div', 'b', 1, 'arg']];
-      return expect(T.each_with_index(template, ['a', 'b'], 'arg').tags).toEqual(result);
+      return expect(T.eachWithIndex(template, ['a', 'b'], 'arg').tags).toEqual(result);
     });
   });
 
-  describe("T.each_pair", function() {
+  describe("T.eachPair", function() {
     return it("should work", function() {
       var result, template;
       template = function(key, value, arg) {
         return ['div', key, value, arg];
       };
       result = [['div', 'a', 'aa', 'arg'], ['div', 'b', 'bb', 'arg']];
-      return expect(T.each_pair(template, {
+      return expect(T.eachPair(template, {
         a: 'aa',
         b: 'bb'
       }, 'arg').tags).toEqual(result);

@@ -285,23 +285,23 @@ describe "T.each", ->
     ]
     expect(T.each(template, ['a', 'b'], 'arg').tags).toEqual(result)
 
-describe "T.each_with_index", ->
+describe "T.eachWithIndex", ->
   it "should work", ->
     template = (item, i, arg) -> ['div', item, i, arg]
     result = [
       ['div', 'a', 0, 'arg']
       ['div', 'b', 1, 'arg']
     ]
-    expect(T.each_with_index(template, ['a', 'b'], 'arg').tags).toEqual(result)
+    expect(T.eachWithIndex(template, ['a', 'b'], 'arg').tags).toEqual(result)
 
-describe "T.each_pair", ->
+describe "T.eachPair", ->
   it "should work", ->
     template = (key, value, arg) -> ['div', key, value, arg]
     result = [
       ['div', 'a', 'aa', 'arg']
       ['div', 'b', 'bb', 'arg']
     ]
-    expect(T.each_pair(template, {a: 'aa', b: 'bb'}, 'arg').tags).toEqual(result)
+    expect(T.eachPair(template, {a: 'aa', b: 'bb'}, 'arg').tags).toEqual(result)
 
 describe "prepare/include", ->
   it "should work", ->
