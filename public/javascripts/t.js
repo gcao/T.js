@@ -237,7 +237,7 @@
         if (first === '') {
           item.shift();
           items.splice.apply(items, [i, 1].concat(__slice.call(item)));
-        } else if (internal.isArray(first)) {
+        } else if (internal.isArray(first) || internal.isObject(first)) {
           items.splice.apply(items, [i, 1].concat(__slice.call(item)));
         }
       } else if (item instanceof internal.TemplateOutput) {

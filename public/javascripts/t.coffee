@@ -154,7 +154,7 @@ internal.normalize = (items) ->
       if first is ''
         item.shift()
         items.splice i, 1, item...
-      else if internal.isArray first
+      else if internal.isArray(first) or internal.isObject(first)
         items.splice i, 1, item...
     else if item instanceof internal.TemplateOutput
       items[i] = item.tags

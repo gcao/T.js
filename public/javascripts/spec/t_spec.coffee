@@ -43,6 +43,11 @@ describe "T.internal.normalize", ->
     result = ['div', 'text']
     expect(T.internal.normalize(input)).toEqual(result)
 
+  it "should merge child array", ->
+    input  = ['div', [class: 'test']]
+    result = ['div', class: 'test']
+    expect(T.internal.normalize(input)).toEqual(result)
+
   it "should normalize array if first item is an array", ->
     input  = ['div', [['div'], 'text']]
     result = ['div', ['div'], 'text']

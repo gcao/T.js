@@ -85,6 +85,22 @@
       result = ['div', 'text'];
       return expect(T.internal.normalize(input)).toEqual(result);
     });
+    it("should merge child array", function() {
+      var input, result;
+      input = [
+        'div', [
+          {
+            "class": 'test'
+          }
+        ]
+      ];
+      result = [
+        'div', {
+          "class": 'test'
+        }
+      ];
+      return expect(T.internal.normalize(input)).toEqual(result);
+    });
     it("should normalize array if first item is an array", function() {
       var input, result;
       input = ['div', [['div'], 'text']];

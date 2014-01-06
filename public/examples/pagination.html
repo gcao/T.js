@@ -64,10 +64,7 @@ templates =
     ]
 
   todos: (todos) ->
-    if todos.length > 0
-      result = T(templates.pagination, todos, rowTemplate: templates.todo)
-      #console.log JSON.stringify result
-      result
+    T(templates.pagination, todos, rowTemplate: templates.todo)
 
   pagination: (data, config = {}) ->
     items    = data.length
@@ -78,8 +75,9 @@ templates =
     if pages is 1
       return (T(config.rowTemplate, item, i, data) for item, i in data)
 
-    createClickHandler = (page) ->
-      -> $('.pagination').trigger('jumpToPage', page)
+    jumpToPage: (page) ->
+      result = T(templates.pagination, todos, rowTemplate: templates.todo, page: page)
+      result.render replace: '.pagination'
 
     links = ->
       for i in [0..pages - 1]
@@ -90,19 +88,16 @@ templates =
         else if i is 0 or i is pages - 1 or page < i < page + 3 or page - 3 < i < page
           [ 'a'
             href: 'javascript:void(0)'
-            click: createClickHandler(i)
+            click:
+              ((page) ->
+                -> jumpToPage(todos, page)
+              )(i)
             i + 1
           ]
         else if (i is 1 and i < page - 3) or (i is pages - 2 and i < page + 3)
           '...'
 
     [ 'div.pagination'
-      jumpToPage: (_, page) ->
-        result = T(templates.pagination, window.todos, rowTemplate: templates.todo, page: page)
-        console.log page
-        console.log JSON.stringify result
-        result.render replace: '.pagination'
-
       [ 'div.header', links() ]
       [ 'div.body'
         for i in [0..pageSize-1]
@@ -122,9 +117,7 @@ window.todos = ['Do 1', 'Do 2', 'Do 3', 'Do 4', 'Do 5', 'Do 6']
 watch window, 'todos', ->
   T(templates.todos, window.todos).render inside: '.todos'
 
-output = T(templates.main, todos)
-#console.log JSON.stringify(output.tags)
-output.render inside: 'body'
+T(templates.main, todos).render inside: 'body'
 
 </script>
 </head>
