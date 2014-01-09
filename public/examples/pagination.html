@@ -34,7 +34,7 @@ templates =
       [ "div.todos"
         style: width: "100%"
 
-        T(templates.todos, todos)
+        templates.todos todos
       ]
       [ "input"
         type: "text"
@@ -64,7 +64,7 @@ templates =
     ]
 
   todos: (todos) ->
-    T(templates.pagination, todos, rowTemplate: templates.todo)
+    templates.pagination todos, rowTemplate: templates.todo
 
   pagination: (data, config = {}) ->
     items    = data.length
@@ -73,11 +73,10 @@ templates =
     page     = config.page || 0
 
     if pages is 1
-      return (T(config.rowTemplate, item, i, data) for item, i in data)
+      return (config.rowTemplate(item, i, data) for item, i in data)
 
-    jumpToPage: (page) ->
-      result = T(templates.pagination, todos, rowTemplate: templates.todo, page: page)
-      result.render replace: '.pagination'
+    jumpToPage = (todos, page) ->
+      T(templates.pagination(todos, rowTemplate: templates.todo, page: page)).render replace: '.pagination'
 
     links = ->
       for i in [0..pages - 1]
@@ -90,7 +89,7 @@ templates =
             href: 'javascript:void(0)'
             click:
               ((page) ->
-                -> jumpToPage(todos, page)
+                -> jumpToPage(data, page)
               )(i)
             i + 1
           ]
@@ -105,7 +104,7 @@ templates =
           if index >= items then continue
 
           item = data[index]
-          T(config.rowTemplate, item, i, data)
+          config.rowTemplate item, i, data
       ]
       [ 'div.footer', links() ]
     ]
@@ -115,9 +114,9 @@ window.todos = ['Do 1', 'Do 2', 'Do 3', 'Do 4', 'Do 5', 'Do 6']
 
 # Model change listener
 watch window, 'todos', ->
-  T(templates.todos, window.todos).render inside: '.todos'
+  T(templates.todos(window.todos)).render inside: '.todos'
 
-T(templates.main, todos).render inside: 'body'
+T(templates.main(todos)).render inside: 'body'
 
 </script>
 </head>
