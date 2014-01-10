@@ -141,27 +141,27 @@ describe "T.internal.renderTags", ->
     $(result).click()
     expect(callback).toHaveBeenCalled()
 
-  it "should invoke renderComplete callback", ->
+  it "should invoke postRender callback", ->
     elem = null
-    renderCompleteCalled = false
-    input  = ['div', renderComplete: (el) ->
+    postRenderCalled = false
+    input  = ['div', postRender: (el) ->
       elem = el
-      renderCompleteCalled = true
+      postRenderCalled = true
     ]
     result = T.internal.renderTags(input)
     expect(elem).toBe(result)
-    expect(renderCompleteCalled).toBe(true)
+    expect(postRenderCalled).toBe(true)
 
-  it "should invoke all renderComplete callbacks", ->
-    renderCompleteCalled = 0
-    input  = ['div', 
-      renderComplete: [
-        (el) -> renderCompleteCalled += 1 
-        (el) -> renderCompleteCalled += 1 
+  it "should invoke all postRender callbacks", ->
+    postRenderCalled = 0
+    input  = ['div',
+      postRender: [
+        (el) -> postRenderCalled += 1
+        (el) -> postRenderCalled += 1
       ]
     ]
     result = T.internal.renderTags(input)
-    expect(renderCompleteCalled).toBe(2)
+    expect(postRenderCalled).toBe(2)
 
   it "should work with child tags", ->
     input  = [['div', 'a'], ['span', 'b']]
@@ -209,7 +209,7 @@ describe "T.process", ->
     expect(T(parent).tags).toEqual(result)
 
   it "should invoke postProcess callback", ->
-    input  = ['div', 
+    input  = ['div',
       postProcess: (data) ->
         data.push 'value'
     ]
@@ -217,7 +217,7 @@ describe "T.process", ->
     expect(result.tags).toEqual(['div', 'value'])
 
   it "should invoke all postProcess callbacks", ->
-    input  = ['div', 
+    input  = ['div',
       postProcess: (data) -> data.push 'value1'
     , postProcess: (data) -> data.push 'value2'
     ]

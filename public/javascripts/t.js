@@ -82,7 +82,7 @@
     for (key in o2) {
       if (!__hasProp.call(o2, key)) continue;
       value = o2[key];
-      if (['postProcess', 'renderComplete'].indexOf(key) >= 0) {
+      if (['postProcess', 'postRender'].indexOf(key) >= 0) {
         value1 = o1[key];
         if (value1) {
           if (internal.isArray(value1)) {
@@ -173,8 +173,7 @@
     } else if (options.handler) {
       options.handler(this.toString());
     } else {
-      internal.renderTags(this.tags);
-      return;
+      return internal.renderTags(this.tags);
     }
     return internal.registerCallbacks();
   };
@@ -374,7 +373,7 @@
     }
   };
 
-  internal.handleRenderComplete = function(callbacks, el) {
+  internal.handlePostRender = function(callbacks, el) {
     var callback, _i, _len, _results;
     if (!callbacks) {
       return;
@@ -413,8 +412,8 @@
             for (name in myCallbacks) {
               if (!__hasProp.call(myCallbacks, name)) continue;
               callback = myCallbacks[name];
-              if (name === 'renderComplete') {
-                _results2.push(internal.handleRenderComplete(callback, element));
+              if (name === 'postRender') {
+                _results2.push(internal.handlePostRender(callback, element));
               } else {
                 _results2.push($(element).on(name, callback));
               }
@@ -575,13 +574,15 @@
   };
 
   internal.renderTags = function(tags) {
-    var fragment, parent;
-    parent = internal.isArray(tags[0]) ? fragment = document.createDocumentFragment() : void 0;
+    var parent;
+    if (internal.isArray(tags[0])) {
+      parent = document.createElement('div');
+    }
     return internal.renderChildTags(parent, tags);
   };
 
   internal.renderChildTags = function(parent, tags) {
-    var el, item, k, key, part, renderComplete, s, v, value, _i, _j, _len, _len1;
+    var el, item, k, key, part, postRender, s, v, value, _i, _j, _len, _len1;
     if (internal.isArray(tags[0])) {
       for (_i = 0, _len = tags.length; _i < _len; _i++) {
         item = tags[_i];
@@ -593,7 +594,7 @@
     if (parent) {
       parent.appendChild(el);
     }
-    renderComplete = null;
+    postRender = null;
     for (_j = 0, _len1 = tags.length; _j < _len1; _j++) {
       part = tags[_j];
       if (typeof part === 'string') {
@@ -602,8 +603,8 @@
         for (key in part) {
           if (!__hasProp.call(part, key)) continue;
           value = part[key];
-          if (key === 'renderComplete') {
-            renderComplete = value;
+          if (key === 'postRender') {
+            postRender = value;
           } else if (typeof value === 'function') {
             $(el).bind(key, value);
           } else if (key.toLowerCase() === 'style' && internal.isObject(value)) {
@@ -621,7 +622,7 @@
         internal.renderChildTags(el, part);
       }
     }
-    internal.handleRenderComplete(renderComplete, el);
+    internal.handlePostRender(postRender, el);
     return el;
   };
 

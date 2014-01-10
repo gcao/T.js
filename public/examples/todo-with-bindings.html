@@ -28,7 +28,7 @@ templates =
       [ "div.todos"
         style: width: "100%"
 
-        T(templates.todos, todos)
+        templates.todos todos
       ]
       [ "input"
         type: "text"
@@ -59,16 +59,16 @@ templates =
 
   todos: (todos) ->
     if todos.length > 0
-      T(templates.todo, todos, i) for i in [0..todos.length - 1]
+      templates.todo(todos, i) for i in [0..todos.length - 1]
 
 # Model
 window.todos = ['Do this', 'Do that']
 
 # Model change listener
 watch window, 'todos', ->
-  T(templates.todos, window.todos).render inside: '.todos'
+  T(templates.todos(window.todos)).render inside: '.todos'
 
-T(templates.main, todos).render inside: 'body'
+T(templates.main(todos)).render inside: 'body'
 
 </script>
 </head>

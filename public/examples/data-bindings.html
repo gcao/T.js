@@ -24,12 +24,12 @@ bind = (el, obj, properties, options) ->
 # Template
 mainTemplate = (data) ->
   [ 'div'
-    renderComplete: (el) -> bind($(el).find('input'), data, 'name')
+    postRender: (el) -> bind($(el).find('input'), data, 'name')
 
     [ "span"
-      renderComplete: (el) -> bind(el, data, 'name')
+      postRender: (el) -> bind(el, data, 'name')
 
-      data.name 
+      data.name
     ]
     [ "input"
       type: "text"
@@ -44,7 +44,7 @@ mainTemplate = (data) ->
 # Model
 window.data = name: 'John Doe'
 
-T(mainTemplate, data).render inside: 'body'
+T(mainTemplate(data)).render inside: 'body'
 
 </script>
 </head>

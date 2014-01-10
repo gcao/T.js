@@ -301,38 +301,38 @@
       $(result).click();
       return expect(callback).toHaveBeenCalled();
     });
-    it("should invoke renderComplete callback", function() {
-      var elem, input, renderCompleteCalled, result;
+    it("should invoke postRender callback", function() {
+      var elem, input, postRenderCalled, result;
       elem = null;
-      renderCompleteCalled = false;
+      postRenderCalled = false;
       input = [
         'div', {
-          renderComplete: function(el) {
+          postRender: function(el) {
             elem = el;
-            return renderCompleteCalled = true;
+            return postRenderCalled = true;
           }
         }
       ];
       result = T.internal.renderTags(input);
       expect(elem).toBe(result);
-      return expect(renderCompleteCalled).toBe(true);
+      return expect(postRenderCalled).toBe(true);
     });
-    it("should invoke all renderComplete callbacks", function() {
-      var input, renderCompleteCalled, result;
-      renderCompleteCalled = 0;
+    it("should invoke all postRender callbacks", function() {
+      var input, postRenderCalled, result;
+      postRenderCalled = 0;
       input = [
         'div', {
-          renderComplete: [
+          postRender: [
             function(el) {
-              return renderCompleteCalled += 1;
+              return postRenderCalled += 1;
             }, function(el) {
-              return renderCompleteCalled += 1;
+              return postRenderCalled += 1;
             }
           ]
         }
       ];
       result = T.internal.renderTags(input);
-      return expect(renderCompleteCalled).toBe(2);
+      return expect(postRenderCalled).toBe(2);
     });
     return it("should work with child tags", function() {
       var input, result;

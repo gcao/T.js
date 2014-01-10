@@ -35,7 +35,7 @@ internal.merge      = (o1, o2) ->
   return o2 unless o1
 
   for own key, value of o2
-    if ['postProcess', 'renderComplete'].indexOf(key) >= 0
+    if ['postProcess', 'postRender'].indexOf(key) >= 0
       value1 = o1[key]
       if value1
         if internal.isArray value1
@@ -100,8 +100,7 @@ internal.TemplateOutput.prototype.render = (options) ->
   else if options.handler
     options.handler(@toString())
   else
-    internal.renderTags @tags
-    return
+    return internal.renderTags @tags
 
   internal.registerCallbacks()
 
@@ -253,7 +252,7 @@ internal.handlePostProcess = (arr) ->
     delete arr[1].postProcess
     if internal.isEmpty(arr[1]) then arr.splice(1, 1)
 
-internal.handleRenderComplete = (callbacks, el) ->
+internal.handlePostRender = (callbacks, el) ->
   if not callbacks then return
 
   if typeof callbacks is 'function'
@@ -274,8 +273,8 @@ internal.registerCallbacks = (config) ->
         element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
 
       for own name, callback of myCallbacks
-        if name is 'renderComplete'
-          internal.handleRenderComplete(callback, element)
+        if name is 'postRender'
+          internal.handlePostRender(callback, element)
         else
           $(element).on(name, callback)
 
@@ -378,9 +377,8 @@ internal.render = (input, options) ->
   result
 
 internal.renderTags = (tags) ->
-  parent =
-    if internal.isArray tags[0]
-      fragment = document.createDocumentFragment()
+  if internal.isArray tags[0]
+    parent = document.createElement('div')
 
   internal.renderChildTags parent, tags
 
@@ -393,15 +391,15 @@ internal.renderChildTags = (parent, tags) ->
   el = document.createElement(tags.shift())
   if parent then parent.appendChild el
 
-  renderComplete = null
+  postRender = null
 
   for part in tags
     if typeof part is 'string'
       el.appendChild document.createTextNode(part)
     else if internal.isObject part
       for own key, value of part
-        if key is 'renderComplete'
-          renderComplete = value
+        if key is 'postRender'
+          postRender = value
         else if typeof value is 'function'
           $(el).bind(key, value)
           # For some reason, below code does not work in Jasmine Headless mode
@@ -419,7 +417,7 @@ internal.renderChildTags = (parent, tags) ->
     else if internal.isArray part
       internal.renderChildTags(el, part)
 
-  internal.handleRenderComplete(renderComplete, el)
+  internal.handlePostRender(postRender, el)
 
   el
 

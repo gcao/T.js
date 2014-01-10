@@ -7,7 +7,7 @@ T.def 'main', (game) ->
     T('right-panel', game)
     languageChanged: (e, language) ->
       console.log "Language is changed to #{language}"
-    renderComplete: (el) -> 
+    postRender: (el) -> 
       game.element = el
   ]
 
