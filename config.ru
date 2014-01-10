@@ -14,6 +14,10 @@ class MyApp < Sinatra::Base
   get '/spec_runner.html' do
     erb :spec_runner
   end
+
+  get '/examples/editor' do
+    erb :editor
+  end
 end
 
 run MyApp
