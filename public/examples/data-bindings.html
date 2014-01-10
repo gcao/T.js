@@ -24,10 +24,10 @@ bind = (el, obj, properties, options) ->
 # Template
 mainTemplate = (data) ->
   [ 'div'
-    postRender: (el) -> bind($(el).find('input'), data, 'name')
+    afterRender: (el) -> bind($(el).find('input'), data, 'name')
 
     [ "span"
-      postRender: (el) -> bind(el, data, 'name')
+      afterRender: (el) -> bind(el, data, 'name')
 
       data.name
     ]

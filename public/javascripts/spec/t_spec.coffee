@@ -141,27 +141,27 @@ describe "T.internal.renderTags", ->
     $(result).click()
     expect(callback).toHaveBeenCalled()
 
-  it "should invoke postRender callback", ->
+  it "should invoke afterRender callback", ->
     elem = null
-    postRenderCalled = false
-    input  = ['div', postRender: (el) ->
+    afterRenderCalled = false
+    input  = ['div', afterRender: (el) ->
       elem = el
-      postRenderCalled = true
+      afterRenderCalled = true
     ]
     result = T.internal.renderTags(input)
     expect(elem).toBe(result)
-    expect(postRenderCalled).toBe(true)
+    expect(afterRenderCalled).toBe(true)
 
-  it "should invoke all postRender callbacks", ->
-    postRenderCalled = 0
+  it "should invoke all afterRender callbacks", ->
+    afterRenderCalled = 0
     input  = ['div',
-      postRender: [
-        (el) -> postRenderCalled += 1
-        (el) -> postRenderCalled += 1
+      afterRender: [
+        (el) -> afterRenderCalled += 1
+        (el) -> afterRenderCalled += 1
       ]
     ]
     result = T.internal.renderTags(input)
-    expect(postRenderCalled).toBe(2)
+    expect(afterRenderCalled).toBe(2)
 
   it "should work with child tags", ->
     input  = [['div', 'a'], ['span', 'b']]
@@ -208,18 +208,18 @@ describe "T.process", ->
     result = ['div', 'parent', ['div', 'grand child']]
     expect(T(parent).tags).toEqual(result)
 
-  it "should invoke postProcess callback", ->
+  it "should invoke afterProcess callback", ->
     input  = ['div',
-      postProcess: (data) ->
+      afterProcess: (data) ->
         data.push 'value'
     ]
     result = T.process(input)
     expect(result.tags).toEqual(['div', 'value'])
 
-  it "should invoke all postProcess callbacks", ->
+  it "should invoke all afterProcess callbacks", ->
     input  = ['div',
-      postProcess: (data) -> data.push 'value1'
-    , postProcess: (data) -> data.push 'value2'
+      afterProcess: (data) -> data.push 'value1'
+    , afterProcess: (data) -> data.push 'value2'
     ]
     result = T.process(input)
     expect(result.tags).toEqual(['div', 'value1', 'value2'])

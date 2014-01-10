@@ -301,38 +301,38 @@
       $(result).click();
       return expect(callback).toHaveBeenCalled();
     });
-    it("should invoke postRender callback", function() {
-      var elem, input, postRenderCalled, result;
+    it("should invoke afterRender callback", function() {
+      var afterRenderCalled, elem, input, result;
       elem = null;
-      postRenderCalled = false;
+      afterRenderCalled = false;
       input = [
         'div', {
-          postRender: function(el) {
+          afterRender: function(el) {
             elem = el;
-            return postRenderCalled = true;
+            return afterRenderCalled = true;
           }
         }
       ];
       result = T.internal.renderTags(input);
       expect(elem).toBe(result);
-      return expect(postRenderCalled).toBe(true);
+      return expect(afterRenderCalled).toBe(true);
     });
-    it("should invoke all postRender callbacks", function() {
-      var input, postRenderCalled, result;
-      postRenderCalled = 0;
+    it("should invoke all afterRender callbacks", function() {
+      var afterRenderCalled, input, result;
+      afterRenderCalled = 0;
       input = [
         'div', {
-          postRender: [
+          afterRender: [
             function(el) {
-              return postRenderCalled += 1;
+              return afterRenderCalled += 1;
             }, function(el) {
-              return postRenderCalled += 1;
+              return afterRenderCalled += 1;
             }
           ]
         }
       ];
       result = T.internal.renderTags(input);
-      return expect(postRenderCalled).toBe(2);
+      return expect(afterRenderCalled).toBe(2);
     });
     return it("should work with child tags", function() {
       var input, result;
@@ -404,11 +404,11 @@
       result = ['div', 'parent', ['div', 'grand child']];
       return expect(T(parent).tags).toEqual(result);
     });
-    it("should invoke postProcess callback", function() {
+    it("should invoke afterProcess callback", function() {
       var input, result;
       input = [
         'div', {
-          postProcess: function(data) {
+          afterProcess: function(data) {
             return data.push('value');
           }
         }
@@ -416,15 +416,15 @@
       result = T.process(input);
       return expect(result.tags).toEqual(['div', 'value']);
     });
-    return it("should invoke all postProcess callbacks", function() {
+    return it("should invoke all afterProcess callbacks", function() {
       var input, result;
       input = [
         'div', {
-          postProcess: function(data) {
+          afterProcess: function(data) {
             return data.push('value1');
           }
         }, {
-          postProcess: function(data) {
+          afterProcess: function(data) {
             return data.push('value2');
           }
         }

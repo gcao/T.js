@@ -35,7 +35,7 @@ internal.merge      = (o1, o2) ->
   return o2 unless o1
 
   for own key, value of o2
-    if ['postProcess', 'postRender'].indexOf(key) >= 0
+    if ['afterProcess', 'afterRender'].indexOf(key) >= 0
       value1 = o1[key]
       if value1
         if internal.isArray value1
@@ -241,7 +241,7 @@ internal.handlePostProcess = (arr) ->
   for item in arr
     internal.handlePostProcess item
 
-  callbacks = arr[1]?.postProcess
+  callbacks = arr[1]?.afterProcess
   if callbacks
     if typeof callbacks is 'function'
       callbacks(arr)
@@ -249,7 +249,7 @@ internal.handlePostProcess = (arr) ->
       for callback in callbacks
         callback(arr)
 
-    delete arr[1].postProcess
+    delete arr[1].afterProcess
     if internal.isEmpty(arr[1]) then arr.splice(1, 1)
 
 internal.handlePostRender = (callbacks, el) ->
@@ -273,7 +273,7 @@ internal.registerCallbacks = (config) ->
         element.setAttribute('class', element.getAttribute('class').replace(cssClass, ''))
 
       for own name, callback of myCallbacks
-        if name is 'postRender'
+        if name is 'afterRender'
           internal.handlePostRender(callback, element)
         else
           $(element).on(name, callback)
@@ -391,15 +391,15 @@ internal.renderChildTags = (parent, tags) ->
   el = document.createElement(tags.shift())
   if parent then parent.appendChild el
 
-  postRender = null
+  afterRender = null
 
   for part in tags
     if typeof part is 'string'
       el.appendChild document.createTextNode(part)
     else if internal.isObject part
       for own key, value of part
-        if key is 'postRender'
-          postRender = value
+        if key is 'afterRender'
+          afterRender = value
         else if typeof value is 'function'
           $(el).bind(key, value)
           # For some reason, below code does not work in Jasmine Headless mode
@@ -417,7 +417,7 @@ internal.renderChildTags = (parent, tags) ->
     else if internal.isArray part
       internal.renderChildTags(el, part)
 
-  internal.handlePostRender(postRender, el)
+  internal.handlePostRender(afterRender, el)
 
   el
 

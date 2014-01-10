@@ -82,7 +82,7 @@
     for (key in o2) {
       if (!__hasProp.call(o2, key)) continue;
       value = o2[key];
-      if (['postProcess', 'postRender'].indexOf(key) >= 0) {
+      if (['afterProcess', 'afterRender'].indexOf(key) >= 0) {
         value1 = o1[key];
         if (value1) {
           if (internal.isArray(value1)) {
@@ -356,7 +356,7 @@
       item = arr[_i];
       internal.handlePostProcess(item);
     }
-    callbacks = (_ref = arr[1]) != null ? _ref.postProcess : void 0;
+    callbacks = (_ref = arr[1]) != null ? _ref.afterProcess : void 0;
     if (callbacks) {
       if (typeof callbacks === 'function') {
         callbacks(arr);
@@ -366,7 +366,7 @@
           callback(arr);
         }
       }
-      delete arr[1].postProcess;
+      delete arr[1].afterProcess;
       if (internal.isEmpty(arr[1])) {
         return arr.splice(1, 1);
       }
@@ -412,7 +412,7 @@
             for (name in myCallbacks) {
               if (!__hasProp.call(myCallbacks, name)) continue;
               callback = myCallbacks[name];
-              if (name === 'postRender') {
+              if (name === 'afterRender') {
                 _results2.push(internal.handlePostRender(callback, element));
               } else {
                 _results2.push($(element).on(name, callback));
@@ -582,7 +582,7 @@
   };
 
   internal.renderChildTags = function(parent, tags) {
-    var el, item, k, key, part, postRender, s, v, value, _i, _j, _len, _len1;
+    var afterRender, el, item, k, key, part, s, v, value, _i, _j, _len, _len1;
     if (internal.isArray(tags[0])) {
       for (_i = 0, _len = tags.length; _i < _len; _i++) {
         item = tags[_i];
@@ -594,7 +594,7 @@
     if (parent) {
       parent.appendChild(el);
     }
-    postRender = null;
+    afterRender = null;
     for (_j = 0, _len1 = tags.length; _j < _len1; _j++) {
       part = tags[_j];
       if (typeof part === 'string') {
@@ -603,8 +603,8 @@
         for (key in part) {
           if (!__hasProp.call(part, key)) continue;
           value = part[key];
-          if (key === 'postRender') {
-            postRender = value;
+          if (key === 'afterRender') {
+            afterRender = value;
           } else if (typeof value === 'function') {
             $(el).bind(key, value);
           } else if (key.toLowerCase() === 'style' && internal.isObject(value)) {
@@ -622,7 +622,7 @@
         internal.renderChildTags(el, part);
       }
     }
-    internal.handlePostRender(postRender, el);
+    internal.handlePostRender(afterRender, el);
     return el;
   };
 
