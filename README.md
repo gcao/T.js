@@ -2,7 +2,7 @@
 
 ## DESCRIPTION
 
-T.js is a template engine that uses simple Javascript data structure to 
+T.js is a template engine that uses simple Javascript data structure to
 represent html/xml data.
 
 ### BASIC RULES
@@ -42,13 +42,13 @@ var result = T(template).toString()
 
 * Support layout, e.g.
   ```javascript
-  var layout = T.template(function(){ 
-    return ['div', ['div', 'Title'], T.include('body')]; 
+  var layout = T.template(function(){
+    return ['div', ['div', 'Title'], T.include('body')];
   });
 
   var body = ['div', 'Content goes here']
 
-  var template = layout.prepare({'body': body}); 
+  var template = layout.prepare({'body': body});
 
   var result = template.process().toString()
   // <div><div>Title</div><div>Content goes here</div></div>
@@ -59,7 +59,7 @@ var result = T(template).toString()
 ### EXAMPLE 1: A simple template that uses data
 ```javascript
 var template = function(account){
-  return ['div.account', 
+  return ['div.account',
     ['div.header', 'Account Info'],
     ['div.label', 'Name'],
     ['div', account.name],
@@ -86,42 +86,42 @@ var result = T(template, account).toString();
 
 ## DEVELOPMENT SETUP (MAC)
 
-$ git clone git://github.com/gcao/T.js.git  
+$ git clone git://github.com/gcao/T.js.git
 $ cd T.js
 
-$ brew install node  
-$ npm install coffee-script  
+$ brew install node
+$ npm install coffee-script
 
-$ gem install bundler  
-$ bundle  
-$ guard  
+$ gem install bundler
+$ bundle
+$ guard
 
 ## NOTES
 
-* Run with LiveReload support:  
+* Run with LiveReload support:
 thin -p 8000 start
 
-* Run with no external dependency:  
+* Run with no external dependency:
 cd public && python -m SimpleHTTPServer
 
-* Open Demo Page:  
+* Open Demo Page:
 open http://localhost:8000
 
-* Run Jasmine tests in browser:  
-open http://localhost:8000/spec_runner.html
+* Run Jasmine tests in browser:
+open http://localhost:8000/spec_runner
 
-* Convert between html and T:  
-bin/html2t spec/fixtures/test.html  
-bin/html2t spec/fixtures/test.html | bin/t2html  
+* Convert between html and T:
+bin/html2t spec/fixtures/test.html
+bin/html2t spec/fixtures/test.html | bin/t2html
 
-* Convert T to CoffeeScript (js2coffee has to be installed):  
+* Convert T to CoffeeScript (js2coffee has to be installed):
 bin/html2t spec/fixtures/test.html | js2coffee
 
-* Convert haml to html to T template to html:  
+* Convert haml to html to T template to html:
 bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t | bin/t2html
 
-* Integrate with Jasmine Headless WebKit:  
-Config file is located at public/javascripts/spec/jasmine.yml  
+* Integrate with Jasmine Headless WebKit:
+Config file is located at public/javascripts/spec/jasmine.yml
 jasmine-headless-webkit -c -j public/javascripts/spec/jasmine.yml
 
 ## CREDITS

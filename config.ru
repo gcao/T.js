@@ -11,8 +11,12 @@ class MyApp < Sinatra::Base
     erb :index
   end
 
-  get '/spec_runner.html' do
+  get '/spec_runner' do
     erb :spec_runner
+  end
+
+  get '/svg' do
+    erb :svg
   end
 
   get '/examples/editor' do
