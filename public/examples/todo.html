@@ -18,7 +18,7 @@ templates =
 
       # Event handler
       todosUpdated: (e, newTodos) ->
-        T(templates.todos, newTodos).render inside: '.todos'
+        T(templates.todos(newTodos)).render inside: '.todos'
 
       [ "div.header"
         style:
@@ -29,9 +29,9 @@ templates =
       ]
       [ "div.todos"
         style: width: "100%"
-        T(templates.todos, todos)
+        templates.todos(todos)
       ]
-      T(templates.todoInput, todos)
+      templates.todoInput(todos)
     ]
 
   todo: (todos, index) ->
@@ -52,12 +52,13 @@ templates =
   todos: (todos) ->
     return if todos.length is 0
 
-    T(templates.todo, todos, i) for i in [0..todos.length - 1]
+    templates.todo(todos, i) for i in [0..todos.length - 1]
 
   todoInput: (todos) ->
     [ "input"
       type: "text"
       style: width: "98%"
+      placeholder: "Enter content and hit Return"
       keyup: (event) ->
         if event.which is 13
           event.preventDefault()
@@ -65,10 +66,11 @@ templates =
           todos.push $(this).val()
           $(this).val('')
           $(this).trigger('todosUpdated', [todos])
-      placeholder: "Enter content and hit Return"
     ]
 
-T(templates.todoContainer, ["Do this", "Do that"]).render inside: 'body'
+todos = ["Do this", "Do that"]
+
+T(templates.todoContainer(todos)).render inside: 'body'
 
 </script>
 </head>

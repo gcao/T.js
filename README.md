@@ -38,22 +38,6 @@ var result = T(template).toString()
 <a class="edit" href="/edit">Edit</a>
 ```
 
-### ADVANCED FEATURES
-
-* Support layout, e.g.
-  ```javascript
-  var layout = T.template(function(){
-    return ['div', ['div', 'Title'], T.include('body')];
-  });
-
-  var body = ['div', 'Content goes here']
-
-  var template = layout.prepare({'body': body});
-
-  var result = template.process().toString()
-  // <div><div>Title</div><div>Content goes here</div></div>
-  ```
-
 ## EXAMPLES
 
 ### EXAMPLE 1: A simple template that uses data
@@ -71,7 +55,7 @@ var account = {
   name: 'John Doe',
   age: 25
 };
-var result = T(template, account).toString();
+var result = T(template(account)).toString();
 // result is like below (after formatted)
 // <div class="account">
 //   <div class="header">Account Info</div>
