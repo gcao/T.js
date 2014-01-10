@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>T.js example - edit template and render in real time</title>
+  <script type="text/javascript" src="examples/coffee-script.js"></script>
+  <script type="text/javascript" src="examples/watch.js"></script>
+  <script type="text/javascript" src="javascripts/jquery-1.8.2.min.js"></script>
+  <script type="text/javascript" src="javascripts/t.js"></script>
+</head>
+<body>
+  <h2>T.js example</h2>
+  <div style="display:inline-block">
+    <textarea style="z-index: 1000; width: 400px; height: 600px;"></textarea>
+  </div>
+  <div id="output" style="display:inline-block; vertical-align: top;">
+  </div>
+
+  <script type="text/coffeescript">
+    $('textarea').val """
+    T(['div'
+      'test'
+    ]).render inside: '#output'
+    """
+
+    window.run = ->
+      console.log $('textarea').val()
+      CoffeeScript.run $('textarea').val()
+
+    $('textarea').change run
+
+    run()
+  </script>
+</body>
+</html>
+
