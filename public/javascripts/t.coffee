@@ -441,6 +441,9 @@ T.process = (template, data...) ->
     template = new internal.Template(template)
   template.process data...
 
+#T.render = (template, options) ->
+#  T(template).render options
+
 T.prepare = (template, includes) ->
   if not internal.isTemplate template
     template = new internal.Template(template)

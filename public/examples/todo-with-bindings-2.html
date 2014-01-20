@@ -9,8 +9,6 @@
   <script type="text/javascript" src="../javascripts/t.js"></script>
   <script type="text/coffeescript">
 
-todos = ["Do this", "Do that"]
-
 templates =
   main: ->
     [ "div#container"
@@ -60,8 +58,10 @@ templates =
   rowsTemplate: (rows) ->
     T(templates.rowTemplate, rows, i) for i in [0..rows.length - 1]
 
-T(templates.main).render inside: $('body')
-T(templates.rowsTemplate, todos).render inside: '.contents'
+T(templates.main).render inside: 'body'
+
+T(templates.rowsTemplate(["Do this", "Do that"]))
+  .render inside: '.contents'
 
 </script>
 </head>
