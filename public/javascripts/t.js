@@ -626,47 +626,62 @@
     return el;
   };
 
+  T["if"] = function(cond, trueValue, falseValue) {
+    var result;
+    if (typeof cond === 'function') {
+      cond = cond();
+    }
+    result = cond ? trueValue : falseValue;
+    if (typeof result === 'function') {
+      return result();
+    } else {
+      return result;
+    }
+  };
+
+  T.unless = T.ifNot = function(cond, value) {
+    if (typeof cond === 'function') {
+      cond = cond();
+    }
+    if (!cond) {
+      if (typeof value === 'function') {
+        return value();
+      } else {
+        return value;
+      }
+    }
+  };
+
   T.each = function() {
-    var args, array, template;
-    template = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-    return T.process(function() {
-      var item, _i, _len, _results;
+    var args, item, key, o, template, value, _i, _j, _len, _results, _results1;
+    o = arguments[0], args = 3 <= arguments.length ? __slice.call(arguments, 1, _i = arguments.length - 1) : (_i = 1, []), template = arguments[_i++];
+    if (internal.isArray(o)) {
       _results = [];
-      for (_i = 0, _len = array.length; _i < _len; _i++) {
-        item = array[_i];
-        _results.push(T.apply(null, [template, item].concat(__slice.call(args))));
+      for (_j = 0, _len = o.length; _j < _len; _j++) {
+        item = o[_j];
+        _results.push(template.apply(null, [item].concat(__slice.call(args))));
       }
       return _results;
-    });
+    } else {
+      _results1 = [];
+      for (key in o) {
+        if (!__hasProp.call(o, key)) continue;
+        value = o[key];
+        _results1.push(template.apply(null, [key, value].concat(__slice.call(args))));
+      }
+      return _results1;
+    }
   };
 
-  T.eachWithIndex = function() {
-    var args, array, template;
-    template = arguments[0], array = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-    return T.process(function() {
-      var i, item, _i, _len, _results;
-      _results = [];
-      for (i = _i = 0, _len = array.length; _i < _len; i = ++_i) {
-        item = array[i];
-        _results.push(T.apply(null, [template, item, i].concat(__slice.call(args))));
-      }
-      return _results;
-    });
-  };
-
-  T.eachPair = function() {
-    var args, hash, template;
-    template = arguments[0], hash = arguments[1], args = 3 <= arguments.length ? __slice.call(arguments, 2) : [];
-    return T.process(function() {
-      var key, value, _results;
-      _results = [];
-      for (key in hash) {
-        if (!__hasProp.call(hash, key)) continue;
-        value = hash[key];
-        _results.push(T.apply(null, [template, key, value].concat(__slice.call(args))));
-      }
-      return _results;
-    });
+  T.each2 = function() {
+    var args, i, item, o, template, _i, _j, _len, _results;
+    o = arguments[0], args = 3 <= arguments.length ? __slice.call(arguments, 1, _i = arguments.length - 1) : (_i = 1, []), template = arguments[_i++];
+    _results = [];
+    for (i = _j = 0, _len = o.length; _j < _len; i = ++_j) {
+      item = o[i];
+      _results.push(template.apply(null, [i, item].concat(__slice.call(args))));
+    }
+    return _results;
   };
 
   T.process = function() {

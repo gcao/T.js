@@ -282,31 +282,30 @@ describe "T()", ->
     expect(T(template, data).tags).toEqual(result)
 
 describe "T.each", ->
-  it "should work", ->
+  it "should work with array", ->
     template = (item, arg) -> ['div', item, arg]
     result = [
       ['div', 'a', 'arg']
       ['div', 'b', 'arg']
     ]
-    expect(T.each(template, ['a', 'b'], 'arg').tags).toEqual(result)
+    expect(T(T.each(['a', 'b'], 'arg', template)).tags).toEqual(result)
 
-describe "T.eachWithIndex", ->
-  it "should work", ->
-    template = (item, i, arg) -> ['div', item, i, arg]
-    result = [
-      ['div', 'a', 0, 'arg']
-      ['div', 'b', 1, 'arg']
-    ]
-    expect(T.eachWithIndex(template, ['a', 'b'], 'arg').tags).toEqual(result)
-
-describe "T.eachPair", ->
-  it "should work", ->
+  it "should work with hash", ->
     template = (key, value, arg) -> ['div', key, value, arg]
     result = [
       ['div', 'a', 'aa', 'arg']
       ['div', 'b', 'bb', 'arg']
     ]
-    expect(T.eachPair(template, {a: 'aa', b: 'bb'}, 'arg').tags).toEqual(result)
+    expect(T(T.each({a: 'aa', b: 'bb'}, 'arg', template)).tags).toEqual(result)
+
+describe "T.each2", ->
+  it "index should be passed in", ->
+    template = (index, item, arg) -> ['div', index, item, arg]
+    result = [
+      ['div', 0, 'a', 'arg']
+      ['div', 1, 'b', 'arg']
+    ]
+    expect(T(T.each2(['a', 'b'], 'arg', template)).tags).toEqual(result)
 
 describe "prepare/include", ->
   it "should work", ->

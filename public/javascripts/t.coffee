@@ -421,20 +421,46 @@ internal.renderChildTags = (parent, tags) ->
 
   el
 
-T.each = (template, array, args...) ->
-  T.process ->
-    for item in array
-      T(template, item, args...)
+T.if = (cond, trueValue, falseValue) ->
+  if typeof cond is 'function'
+    cond = cond()
 
-T.eachWithIndex = (template, array, args...) ->
-  T.process ->
-    for item, i in array
-      T(template, item, i, args...)
+  result = if cond then trueValue else falseValue
+  if typeof result is 'function'
+    result()
+  else
+    result
 
-T.eachPair = (template, hash, args...) ->
-  T.process ->
-    for own key, value of hash
-      T(template, key, value, args...)
+T.unless = T.ifNot = (cond, value) ->
+  if typeof cond is 'function'
+    cond = cond()
+
+  if not cond
+    if typeof value is 'function'
+      value()
+    else
+      value
+
+T.each = (o, args..., template) ->
+  if internal.isArray o
+    for item in o
+      template(item, args...)
+    #T.process ->
+    #  for item in o
+    #    T(template, item, args...)
+  else
+    for own key, value of o
+      template(key, value, args...)
+    #T.process ->
+    #  for own key, value of o
+    #    T(template, key, value, args...)
+
+T.each2 = (o, args..., template) ->
+  for item, i in o
+    template(i, item, args...)
+  #T.process ->
+  #  for item, i in o
+  #    T(template, i, item, args...)
 
 T.process = (template, data...) ->
   if not internal.isTemplate template

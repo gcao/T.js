@@ -528,38 +528,35 @@
   });
 
   describe("T.each", function() {
-    return it("should work", function() {
+    it("should work with array", function() {
       var result, template;
       template = function(item, arg) {
         return ['div', item, arg];
       };
       result = [['div', 'a', 'arg'], ['div', 'b', 'arg']];
-      return expect(T.each(template, ['a', 'b'], 'arg').tags).toEqual(result);
+      return expect(T(T.each(['a', 'b'], 'arg', template)).tags).toEqual(result);
     });
-  });
-
-  describe("T.eachWithIndex", function() {
-    return it("should work", function() {
-      var result, template;
-      template = function(item, i, arg) {
-        return ['div', item, i, arg];
-      };
-      result = [['div', 'a', 0, 'arg'], ['div', 'b', 1, 'arg']];
-      return expect(T.eachWithIndex(template, ['a', 'b'], 'arg').tags).toEqual(result);
-    });
-  });
-
-  describe("T.eachPair", function() {
-    return it("should work", function() {
+    return it("should work with hash", function() {
       var result, template;
       template = function(key, value, arg) {
         return ['div', key, value, arg];
       };
       result = [['div', 'a', 'aa', 'arg'], ['div', 'b', 'bb', 'arg']];
-      return expect(T.eachPair(template, {
+      return expect(T(T.each({
         a: 'aa',
         b: 'bb'
-      }, 'arg').tags).toEqual(result);
+      }, 'arg', template)).tags).toEqual(result);
+    });
+  });
+
+  describe("T.each2", function() {
+    return it("index should be passed in", function() {
+      var result, template;
+      template = function(index, item, arg) {
+        return ['div', index, item, arg];
+      };
+      result = [['div', 0, 'a', 'arg'], ['div', 1, 'b', 'arg']];
+      return expect(T(T.each2(['a', 'b'], 'arg', template)).tags).toEqual(result);
     });
   });
 
