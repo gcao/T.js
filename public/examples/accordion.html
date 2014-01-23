@@ -11,10 +11,15 @@
   <script type="text/javascript" src="../javascripts/t.js"></script>
   <script type="text/coffeescript">
 
-class AccordionGroup extends Array
+class window.AccordionGroup
+  constructor: (@data...) ->
+
+  push: (args...) ->
+    @data.push arg for arg in args
+
   template: ->
     [ '.accordion-group'
-      for accordion in @
+      for accordion in @data
         accordion.template()
     ]
 
@@ -33,7 +38,7 @@ class Accordion
       ]
     ]
 
-accordionGroup = new AccordionGroup()
+window.accordionGroup = new AccordionGroup()
 accordionGroup.push(new Accordion(accordionGroup, 'Accordion 1', 'First accordion body'))
 accordionGroup.push(new Accordion(accordionGroup, 'Accordion 2', 'Second accordion body'))
 accordionGroup.push(new Accordion(accordionGroup, 'Accordion 3', 'Third accordion body'))
