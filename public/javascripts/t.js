@@ -226,27 +226,27 @@
 
   internal.normalize = function(items) {
     var first, i, item, _i, _j, _ref, _ref1;
-    if (!internal.isArray(items)) {
+    if (items === null || typeof items === 'undefined') {
+      return '';
+    } else if (items instanceof internal.TemplateOutput) {
+      return internal.normalize(items.tags);
+    } else if (internal.isArray(items)) {
+      if (items.length === 0) {
+        return '';
+      }
+    } else {
       return items;
     }
     for (i = _i = _ref = items.length - 1; _ref <= 0 ? _i <= 0 : _i >= 0; i = _ref <= 0 ? ++_i : --_i) {
       item = internal.normalize(items[i]);
+      items[i] = item;
       if (internal.isArray(item)) {
         first = item[0];
-        if (item.length === 0) {
-          items.splice(i, 1, '');
-        } else if (first === '' || typeof first === 'undefined' || first === null) {
-          item.shift();
-          items.splice.apply(items, [i, 1, ''].concat(__slice.call(item)));
+        if (first === '') {
+          items.splice.apply(items, [i, 1].concat(__slice.call(item)));
         } else if (internal.isArray(first) || internal.isObject(first)) {
           items.splice.apply(items, [i, 1].concat(__slice.call(item)));
         }
-      } else if (item instanceof internal.TemplateOutput) {
-        items[i] = item.tags;
-      } else if (typeof item === 'undefined' || item === null || item === '') {
-        items.splice(i, 1, '');
-      } else {
-        items[i] = item;
       }
     }
     for (i = _j = _ref1 = items.length - 1; _ref1 <= 1 ? _j <= 1 : _j >= 1; i = _ref1 <= 1 ? ++_j : --_j) {
@@ -254,10 +254,6 @@
       if (item === '' || typeof item === 'undefined' || item === null) {
         items.splice(i, 1);
       }
-    }
-    first = items[0];
-    if (first === null || typeof first === 'undefined') {
-      items[0] = '';
     }
     return items;
   };
