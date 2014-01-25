@@ -107,6 +107,12 @@
       result = ['div', ['div'], 'text'];
       return expect(T.internal.normalize(input)).toEqual(result);
     });
+    it("should normalize empty array", function() {
+      var input, result;
+      input = ['div', [[], 'text']];
+      result = ['div', 'text'];
+      return expect(T.internal.normalize(input)).toEqual(result);
+    });
     return it("should normalize array recursively", function() {
       var input, result;
       input = ['div', ['', 'text', ['', 'text2']]];

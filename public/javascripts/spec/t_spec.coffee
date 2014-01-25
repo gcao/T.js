@@ -53,6 +53,11 @@ describe "T.internal.normalize", ->
     result = ['div', ['div'], 'text']
     expect(T.internal.normalize(input)).toEqual(result)
 
+  it "should normalize empty array", ->
+    input  = ['div', [[], 'text']]
+    result = ['div', 'text']
+    expect(T.internal.normalize(input)).toEqual(result)
+
   it "should normalize array recursively", ->
     input  = ['div', ['', 'text', ['', 'text2']]]
     result = ['div', 'text', 'text2']

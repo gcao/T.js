@@ -150,17 +150,28 @@ internal.normalize = (items) ->
     item = internal.normalize items[i]
     if internal.isArray item
       first = item[0]
-      if first is ''
+      if item.length is 0
+        items.splice i, 1, ''
+      else if first is '' or typeof first is 'undefined' or first is null
         item.shift()
-        items.splice i, 1, item...
+        items.splice i, 1, '', item...
       else if internal.isArray(first) or internal.isObject(first)
         items.splice i, 1, item...
     else if item instanceof internal.TemplateOutput
       items[i] = item.tags
     else if typeof item is 'undefined' or item is null or item is ''
-      #items.splice i, 1
+      items.splice i, 1, ''
     else
       items[i] = item
+
+  for i in [items.length - 1..1]
+    item = items[i]
+    if item is '' or typeof item is 'undefined' or item is null
+      items.splice i, 1
+
+  first = items[0]
+  if first is null or typeof first is 'undefined'
+    items[0] = ''
 
   items
 

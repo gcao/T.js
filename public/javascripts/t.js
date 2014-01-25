@@ -225,7 +225,7 @@
   };
 
   internal.normalize = function(items) {
-    var first, i, item, _i, _ref;
+    var first, i, item, _i, _j, _ref, _ref1;
     if (!internal.isArray(items)) {
       return items;
     }
@@ -233,19 +233,31 @@
       item = internal.normalize(items[i]);
       if (internal.isArray(item)) {
         first = item[0];
-        if (first === '') {
+        if (item.length === 0) {
+          items.splice(i, 1, '');
+        } else if (first === '' || typeof first === 'undefined' || first === null) {
           item.shift();
-          items.splice.apply(items, [i, 1].concat(__slice.call(item)));
+          items.splice.apply(items, [i, 1, ''].concat(__slice.call(item)));
         } else if (internal.isArray(first) || internal.isObject(first)) {
           items.splice.apply(items, [i, 1].concat(__slice.call(item)));
         }
       } else if (item instanceof internal.TemplateOutput) {
         items[i] = item.tags;
       } else if (typeof item === 'undefined' || item === null || item === '') {
-
+        items.splice(i, 1, '');
       } else {
         items[i] = item;
       }
+    }
+    for (i = _j = _ref1 = items.length - 1; _ref1 <= 1 ? _j <= 1 : _j >= 1; i = _ref1 <= 1 ? ++_j : --_j) {
+      item = items[i];
+      if (item === '' || typeof item === 'undefined' || item === null) {
+        items.splice(i, 1);
+      }
+    }
+    first = items[0];
+    if (first === null || typeof first === 'undefined') {
+      items[0] = '';
     }
     return items;
   };
