@@ -22,6 +22,10 @@
 
 #http://getbootstrap.com/javascript/#collapse
 
+watchAndRun = (obj, prop, callback) ->
+  callback()
+  watch obj, prop, callback
+
 bind = (el, obj, properties) ->
   tagName = $(el).get(0).tagName
 
@@ -36,32 +40,28 @@ bind = (el, obj, properties) ->
 
     $(el).blur(callback).change(callback)
 
-class window.AccordionGroup
-  constructor: (@data...) ->
+window.AccordionGroup = (args...) ->
+  @push arg for arg in args
+  return  # Seems if the function returns an array, the object created with "new AccordionGroup" won't be able to find custom methods
 
-  add: (args...) ->
-    @data.push arg for arg in args
+AccordionGroup.prototype = new Array
 
-  get: (index) -> @data[index]
+AccordionGroup.prototype.collapseAllExcept = (accordion) ->
+  for item in @
+    if item isnt accordion
+      return if item.active and not item.collapse()
 
-  indexOf: (child) -> @data.indexOf(child)
+  true
 
-  collapseAllExcept: (accordion) ->
-    for item in @data
-      if item isnt accordion
-        return if item.active and not item.collapse()
-
-    true
-
-  template: ->
-    [ '.accordion-group'
-      for accordion in @data
-        accordion.template()
-    ]
+AccordionGroup.prototype.template = ->
+  [ '.accordion-group'
+    for accordion in @
+      accordion.template()
+  ]
 
 class Accordion
   constructor: (@parent, @heading, @body) ->
-    @parent.add @
+    @parent.push @
     @disabled = true
     @finished = false
 
@@ -69,7 +69,7 @@ class Accordion
     @disabled = false
 
   next: ->
-    @parent.get @parent.indexOf(@) + 1
+    @parent[@parent.indexOf(@) + 1]
 
   expand: ->
     return if @disabled
@@ -112,12 +112,8 @@ class Accordion
 
             [ 'i.pull-right.glyphicon'
               afterRender: (el) =>
-                callback = =>
+                watchAndRun @, ['active', 'disabled', 'finished'], =>
                   $(el).attr('class', "pull-right glyphicon glyphicon-#{@icon()}")
-
-                watch @, ['active', 'disabled', 'finished'], callback
-
-                callback()
             ]
           ]
         ]
@@ -125,11 +121,8 @@ class Accordion
       [ '.panel-collapse.collapse'
 
         afterRender: (el) =>
-          callback = => $(el).toggleClass('in', !!@active)
-
-          watch @, 'active', callback
-
-          callback()
+          watchAndRun @, 'active', =>
+            $(el).toggleClass('in', !!@active)
 
         [ '.panel-body'
           @body()
@@ -157,7 +150,7 @@ class Section
     @accordion.heading = => @name
     @accordion.body    = => @body()
 
-window.accordionGroup = new AccordionGroup()
+window.accordionGroup = new AccordionGroup
 
 window.account = new Section('Account')
 account.validations.push (model) ->
@@ -239,9 +232,9 @@ shipping.body = ->
 
 shipping.addToAccordion(accordionGroup)
 
-accordionGroup.get(0).enable()
-accordionGroup.get(1).enable()
-accordionGroup.get(0).expand()
+accordionGroup[0].enable()
+accordionGroup[1].enable()
+accordionGroup[0].expand()
 
 T(accordionGroup.template()).render inside: 'body'
 
