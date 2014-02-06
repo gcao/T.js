@@ -1,0 +1,35 @@
+{
+  "name": "T",
+  "version": "0.7.0",
+  "homepage": "https://github.com/gcao/T.js",
+  "authors": [
+    "Guoliang Cao <gcao99@gmail.com>"
+  ],
+  "description": "A Javascript library that enables writing HTML template in Javascript",
+  "main": "public/javascripts/t.js",
+  "keywords": [
+    "javascript",
+    "template",
+    "templating",
+    "html"
+  ],
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "Gemfile*",
+    "Guardfile",
+    "config.ru",
+    "bin",
+    "lib",
+    "public/examples/**/*",
+    "public/jasmine/**/*",
+    "public/javascripts/spec/*",
+    "public/javascripts/t_spec.*",
+    "public/javascripts/jquery*.*",
+    "public/*.html",
+    "spec",
+    "views"
+  ]
+}

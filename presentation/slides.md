@@ -3,7 +3,7 @@
 
 # What Is T.js?
 
-A small Javascript library that enables writing HTML template in Javascript.
+A small JavaScript library that enables writing HTML template in JavaScript.
 
 !SLIDE incremental text-size-80
 
@@ -20,16 +20,16 @@ Map an array to a HTML tag
 ```
 
 * First item is the tag name, and id and css classes if present, e.g. 'div#id.class'
-* Attributes are in hash
+* Attributes are object properties
 * Text contents are strings
-* Child tags are in child arrays
+* Child tags are child arrays
 * Texts and child tags are rendered sequentially
 
 !SLIDE incremental
 
 # What Does It Imply?
 
-We can use Javascript's full power to build up the array
+We can use JavaScript's full power to build up the array
 
 E.g. create functions that return arrays:
 
@@ -52,19 +52,17 @@ Define => Process => Render
 
 ```javascript
 // Define
-T.def('name', function(arg1, arg2){
+var template = function(arg1, arg2){
   return ['div', arg1, arg2];
-});
+}
 
 // Process
-T('name', 'First', 'Second') <=> T('name').process('First', 'Second')
+T(template('First', 'Second'))
 
 // Render: will replace body's content with the result
-T('name', 'First', 'Second').render({inside: 'body'});
+T(template('First', 'Second')).render({inside: 'body'});
 
-T('name') // The template object
-
-T('name', 'First', 'Second').toString(); // <div>FirstSecond</div>
+T(template('First', 'Second')).toString(); // <div>FirstSecond</div>
 ```
 
 !SLIDE incremental text-size-90
@@ -74,7 +72,7 @@ T('name', 'First', 'Second').toString(); // <div>FirstSecond</div>
 ## Templates written in CoffeeScript look beautiful!
 
 ```coffeescript
-T.def 'todo', (todos, index) ->
+todo = (todos, index) ->
   [ "div.todo"
     style: padding: "3px"
 
@@ -97,7 +95,7 @@ T.def 'todo', (todos, index) ->
 * Event handlers can access both data and element
 
   ```coffeescript
-  T.def 'todo', (todos, index) ->
+  todo = (todos, index) ->
       [ "div.todo"
         todos[index]
         [ "a"
@@ -112,16 +110,16 @@ T.def 'todo', (todos, index) ->
 
 !SLIDE incremental text-size-90
 
-# renderComplete Callback
+# afterRender Callback
 
 * Will be executed after tags are inserted into DOM
 * Any element can have its own callback
-* Like event handlers, renderComplete can access both data and element
+* Like event handlers, afterRender can access both data and element
 
   ```coffeescript
-  T.def 'name', (name) ->
+  template = (name) ->
       [ "div"
-        renderComplete: (el) ->
+        afterRender: (el) ->
           console.log(name + " is rendered.")
         name
       ]
@@ -138,9 +136,9 @@ T.def 'todo', (todos, index) ->
 <div id='data-binding' style='margin-left: 105px; margin-top: -10px; margin-bottom: -10px; font-size: 18px;'/>
 
 <script type="text/javascript">
-var bind;
+console.log('here')
 
-bind = function(el, obj, properties, options) {
+var bind = function(el, obj, properties, options) {
   var tagName;
   tagName = $(el).get(0).tagName;
   watch(obj, properties, function() {
@@ -157,15 +155,15 @@ bind = function(el, obj, properties, options) {
   }
 };
 
-T.def('main', function(data) {
+var template = function(data) {
   return [
     'div', {
-      renderComplete: function(el) {
+      afterRender: function(el) {
         return bind($(el).find('input'), data, 'name');
       }
     }, [
       "span", {
-        renderComplete: function(el) {
+        afterRender: function(el) {
           return bind(el, data, 'name');
         }
       }, data.name
@@ -183,17 +181,17 @@ T.def('main', function(data) {
   ];
 });
 
-window.data = {
+var model = {
   name: 'John Doe'
 };
 
-T('main', data).render({
+T(template(model)).render({
   inside: '#data-binding'
 });
 </script>
 
 * Data binding, especially two way data binding, is really hard!
-* Javascript frameworks are catching up in this area.
+* JavaScript frameworks are catching up in this area.
 * KnockoutJS is a very good data binding framework, its implementation is complex though.
 * Using **T.js** and **Watch.js**, we could achieve two way data binding with little code.
 
@@ -210,12 +208,11 @@ bind = (el, obj, properties, options) ->
   if tagName is 'INPUT'
     $(el).change -> obj[properties] = $(this).val()
 
-# Template
-T.def 'main', (data) ->
+template = (data) ->
   [ 'div'
-    renderComplete: (el) -> bind($(el).find('input'), data, 'name')
+    afterRender: (el) -> bind($(el).find('input'), data, 'name')
     [ "span",
-      renderComplete: (el) -> bind(el, data, 'name')
+      afterRender: (el) -> bind(el, data, 'name')
       data.name
     ]
     [ "input"
@@ -224,9 +221,8 @@ T.def 'main', (data) ->
     ]
   ]
 
-# Model
-window.data = name: 'John Doe'
-T('main', data).render inside: 'body'
+model = name: 'John Doe'
+T(template(model)).render inside: 'body'
 ```
 
 !SLIDE

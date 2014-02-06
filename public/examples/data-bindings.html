@@ -22,13 +22,14 @@ bind = (el, obj, properties, options) ->
     $(el).change -> obj[properties] = $(this).val()
 
 # Template
-T.def 'main', (data) ->
+mainTemplate = (data) ->
   [ 'div'
-    renderComplete: (el) -> bind($(el).find('input'), data, 'name')
+    afterRender: (el) -> bind($(el).find('input'), data, 'name')
 
-    [ "span", 
-      renderComplete: (el) -> bind(el, data, 'name')
-      data.name 
+    [ "span"
+      afterRender: (el) -> bind(el, data, 'name')
+
+      data.name
     ]
     [ "input"
       type: "text"
@@ -43,7 +44,7 @@ T.def 'main', (data) ->
 # Model
 window.data = name: 'John Doe'
 
-T('main', data).render inside: 'body'
+T(mainTemplate(data)).render inside: 'body'
 
 </script>
 </head>

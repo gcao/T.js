@@ -8,66 +8,69 @@
   <script type="text/javascript" src="../javascripts/t.js"></script>
   <script type="text/coffeescript">
 
-T.def 'todoContainer', (todos) ->
-  [ "div#container"
-    style: 
-      width: "300px"
-      padding: "3px"
-      border: "1px solid grey"
+templates =
+  todoContainer: (todos) ->
+    [ "div#container"
+      style: 
+        width: 300
+        padding: 3
+        border: "1px solid grey"
 
-    # Event handler
-    todosUpdated: (e, newTodos) ->
-      T('todos', newTodos).render inside: '.todos'
+      # Event handler
+      todosUpdated: (e, newTodos) ->
+        T(templates.todos(newTodos)).render inside: '.todos'
 
-    [ "div.header"
-      style:
-        padding: "3px"
-        background: "#fbb"
-        "font-weight": "bold"
-      "My TODO List"
+      [ "div.header"
+        style:
+          padding: 3
+          background: "#fbb"
+          font_weight: "bold"
+        "My TODO List"
+      ]
+      [ "div.todos"
+        style: width: "100%"
+        templates.todos(todos)
+      ]
+      templates.todoInput(todos)
     ]
-    [ "div.todos"
-      style: width: "100%"
-      T('todos', todos)
+
+  todo: (todos, index) ->
+    [ "div.todo"
+      style: padding: 3
+
+      T.escape(todos[index])
+      "&nbsp;&nbsp;"
+      [ "a"
+        href: "javascript:void(0)"
+        click: ->
+          todos.splice(index, 1)
+          $(this).trigger('todosUpdated', [todos])
+        "X"
+      ]
     ]
-    T('todoInput', todos)
-  ]
 
-T.def 'todo', (todos, index) ->
-  [ "div.todo"
-    style: padding: "3px"
+  todos: (todos) ->
+    return if todos.length is 0
 
-    T.escape(todos[index])
-    "&nbsp;&nbsp;"
-    [ "a"
-      href: "javascript:void(0)"
-      click: ->
-        todos.splice(index, 1)
-        $(this).trigger('todosUpdated', [todos])
-      "X"
+    templates.todo(todos, i) for i in [0..todos.length - 1]
+
+  todoInput: (todos) ->
+    [ "input"
+      type: "text"
+      style: width: "98%"
+      placeholder: "Enter content and hit Return"
+      keyup: (event) ->
+        if event.which is 13
+          event.preventDefault()
+
+          todos.push $(this).val()
+          $(this).val('')
+          $(this).trigger('todosUpdated', [todos])
     ]
-  ]
 
-T.def 'todos', (todos) ->
-  return if todos.length is 0
+todos = ["Do this", "Do that"]
 
-  T('todo', todos, i) for i in [0..todos.length - 1]
-
-T.def 'todoInput', (todos) ->
-  [ "input"
-    type: "text"
-    style: width: "98%"
-    keyup: (event) ->
-      if event.which is 13
-        event.preventDefault()
-
-        todos.push $(this).val()
-        $(this).val('')
-        $(this).trigger('todosUpdated', [todos])
-    placeholder: "Enter content and hit Return"
-  ]
-
-T('todoContainer', ["Do this", "Do that"]).render inside: 'body'
+T(templates.todoContainer(todos)).render inside: 'body'
 
 </script>
 </head>

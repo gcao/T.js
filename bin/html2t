@@ -10,7 +10,7 @@ Hash.class_eval do
     return "" if empty?
 
     pairs = []
-    each do |k, v| 
+    each do |k, v|
       pairs << "\"#{k}\": \"#{v.gsub('"', '\"')}\""
     end
     "{#{pairs.join(',')}}"
@@ -18,8 +18,10 @@ Hash.class_eval do
 end
 
 options = {
-  :fragment => ENV['HTML_FRAGMENT'] == 'true'
+  fragment: ENV['HTML_FRAGMENT'] == 'true',
+  condense: true
 }
 
+puts 'var template ='
 p Html2t.new(options).parse ARGF.read
 

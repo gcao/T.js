@@ -37,14 +37,27 @@ class Html2t
     when Nokogiri::XML::Node::ELEMENT_NODE
       result = [node.name]
       attrs_data = attrs_to_data(node.attributes)
-      result << attrs_data unless attrs_data.empty?
+      unless attrs_data.empty?
+        if @options[:condense]
+          if attrs_data['id']
+            result[0] += '#' + attrs_data.delete('id')
+          end
+          if attrs_data['class']
+            result[0] += '.' + attrs_data.delete('class').gsub(' ', '.')
+          end
+        end
+        result << attrs_data unless attrs_data.empty?
+      end
       node.children.each do |child|
         data = node_to_data(child)
         result << data if data
       end
       result
     when Nokogiri::XML::Node::TEXT_NODE
-      node.text
+      text = node.text
+      if text.strip.length > 0
+        node.text
+      end
     when Nokogiri::XML::Node::COMMENT_NODE
       "<!--#{node.text}-->"
     end

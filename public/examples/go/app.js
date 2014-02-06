@@ -6,7 +6,7 @@ T.def('main', function(game) {
       languageChanged: function(e, language) {
         return console.log("Language is changed to " + language);
       },
-      renderComplete: function(el) {
+      afterRender: function(el) {
         return game.element = el;
       }
     }

@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <title>T.js example - an accordion widget</title>
+  <link href="bootstrap-3.0.3.min.css" rel="stylesheet" type="text/css" media="screen"/>
+  <script type="text/javascript" src="coffee-script.js"></script>
+  <script type="text/javascript" src="../javascripts/jquery-1.8.2.min.js"></script>
+  <script type="text/javascript" src="watch.js"></script>
+  <script type="text/javascript" src="../javascripts/t.js"></script>
+  <script type="text/coffeescript">
+
+
+
+#http://getbootstrap.com/javascript/#collapse
+
+watchAndRun = (obj, prop, callback) ->
+  callback()
+  watch obj, prop, callback
+
+bind = (el, obj, properties) ->
+  tagName = $(el).get(0).tagName
+
+  watch obj, properties, ->
+    if tagName is 'INPUT'
+      $(el).val(obj[properties])
+
+  if tagName is 'INPUT'
+    callback = ->
+      delete obj.errors
+      obj[properties] = $(this).val()
+
+    $(el).blur(callback).change(callback)
+
+AccordionGroup = (args...) ->
+  @push arg for arg in args
+  return  # Seems if the function returns an array, the object created with "new AccordionGroup" won't be able to find custom methods
+
+AccordionGroup.prototype = new Array
+
+AccordionGroup.prototype.collapseAllExcept = (accordion) ->
+  for item in @
+    if item isnt accordion
+      return if item.active and not item.collapse()
+
+  true
+
+AccordionGroup.prototype.template = ->
+  [ '.accordion-group'
+    for accordion in @
+      accordion.template()
+  ]
+
+class Accordion
+  constructor: (@parent, @heading, @body) ->
+    @parent.push @
+    @disabled = true
+    @finished = false
+
+  enable: ->
+    @disabled = false
+
+  next: ->
+    @parent[@parent.indexOf(@) + 1]
+
+  expand: ->
+    return if @disabled
+
+    if @parent.collapseAllExcept(@)
+      @active = true
+      @next()?.enable()
+
+  collapse: ->
+    return if @section and not @section.isValid()
+
+    @active = false
+
+    true
+
+  toggle: ->
+    if @active then @collapse() else @expand()
+
+  icon: ->
+    if @disabled
+      'ban-circle'
+    else if @active
+      'edit'
+    else if @section?.isValid()
+      'ok'
+    else
+      'play'
+
+  template: ->
+    [ '.accordion.panel.panel-default'
+      afterRender: (el) => @el = el
+      [ '.panel-heading'
+        [ 'h4.panel-title'
+          [ 'a.accordion-toggle'
+
+            href: 'javascript:void(0)'
+            click: => @toggle()
+
+            @heading()
+
+            [ 'i.pull-right.glyphicon'
+              afterRender: (el) =>
+                watchAndRun @, ['active', 'disabled', 'finished'], =>
+                  $(el).attr('class', "pull-right glyphicon glyphicon-#{@icon()}")
+            ]
+          ]
+        ]
+      ]
+      [ '.panel-collapse.collapse'
+
+        afterRender: (el) =>
+          watchAndRun @, 'active', =>
+            $(el).toggleClass('in', !!@active)
+
+        [ '.panel-body'
+          @body()
+        ]
+      ]
+    ]
+
+class Section
+  constructor: (@name) ->
+    @validations = []
+
+  validate: ->
+    @errors = {}
+    for validation in @validations
+      validation(@)
+
+  isValid: ->
+    if not @errors then @validate()
+
+    T.internal.isEmpty(@errors)
+
+  addToAccordion: (parent) ->
+    @accordion = new Accordion(parent)
+    @accordion.section = @
+    @accordion.heading = => @name
+    @accordion.body    = => @body()
+
+accordionGroup = new AccordionGroup
+
+account = new Section('Account')
+account.validations.push (model) ->
+  if model.firstName is null or model.firstName is '' or typeof model.firstName is 'undefined'
+    model.errors.firstName = "First name is required"
+
+account.body = ->
+  [ '.account'
+    'Please fill in your contact information:'
+    [ 'div'
+      [ 'label', style: margin_right: 10, 'First name' ]
+      [ 'input'
+        name: 'firstName'
+        value: @firstName or ''
+        afterRender: (el) => bind(el, @, 'firstName')
+      ]
+    ]
+  ]
+
+account.addToAccordion(accordionGroup)
+
+address = new Section('Address')
+address.validations.push (model) ->
+  if model.addressLine1 is null or model.addressLine1 is '' or typeof model.addressLine1 is 'undefined'
+    model.errors.addressLine1 = "Address line 1 is required"
+
+address.body = ->
+  [ '.address'
+    'Please fill in your home address:'
+    [ 'div'
+      [ 'label', style: margin_right: 10, 'Address line 1' ]
+      [ 'input'
+        name: 'addressLine1'
+        value: @addressLine1 or ''
+        afterRender: (el) => bind(el, @, 'addressLine1')
+      ]
+    ]
+  ]
+
+address.addToAccordion(accordionGroup)
+
+billing = new Section('Billing')
+billing.validations.push (model) ->
+  if model.cardNumber is null or model.cardNumber is '' or typeof model.cardNumber is 'undefined'
+    model.errors.cardNumber = "Credit card number is required"
+
+billing.body = ->
+  [ '.billing'
+    'Please fill in your payment method:'
+    [ 'div'
+      [ 'label', style: margin_right: 10, 'Credit card number' ]
+      [ 'input'
+        name: 'cardNumber'
+        value: @cardNumber or ''
+        afterRender: (el) => bind(el, @, 'cardNumber')
+      ]
+    ]
+  ]
+
+billing.addToAccordion(accordionGroup)
+
+shipping = new Section('Shipping')
+shipping.validations.push (model) ->
+  if model.addressLine1 is null or model.addressLine1 is '' or typeof model.addressLine1 is 'undefined'
+    model.errors.addressLine1 = "Address line 1 is required"
+
+shipping.body = ->
+  [ '.shipping'
+    'Please fill in your shipping address:'
+    [ 'div'
+      [ 'label', style: margin_right: 10, 'Address line 1' ]
+      [ 'input'
+        name: 'addressLine1'
+        value: @addressLine1 or ''
+        afterRender: (el) => bind(el, @, 'addressLine1')
+      ]
+    ]
+  ]
+
+shipping.addToAccordion(accordionGroup)
+
+accordionGroup[0].enable()
+accordionGroup[1].enable()
+accordionGroup[0].expand()
+
+T(accordionGroup.template()).render inside: 'body'
+
+
+
+  </script>
+</head>
+<body>
+This example shows a simple accordion widget created with T.js.
+</body>
+</html>
+

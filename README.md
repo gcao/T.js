@@ -2,7 +2,7 @@
 
 ## DESCRIPTION
 
-T.js is a template engine that uses simple Javascript data structure to 
+T.js is a template engine that uses simple Javascript data structure to
 represent html/xml data.
 
 ### BASIC RULES
@@ -18,19 +18,19 @@ represent html/xml data.
 
 ## USAGE
 
-* Include T.js on top of HTML
+* Include T.js in HTML
 ```html
 <script src="PATH_TO/t.js"></script>
 ```
 
 * Define template
 ```javascript
-T.def('template', ["a.edit", {"href": "/edit"}, "Edit"])
+var template = ["a.edit", {href: "/edit"}, "Edit"]
 ```
 
 * Render
 ```javascript
-var result = T('template').process().toString()
+var result = T(template).toString()
 ```
 
 * Result is like
@@ -54,21 +54,20 @@ var result = T('template').process().toString()
 
 ### EXAMPLE 1: A simple template that uses data
 ```javascript
-T.def('template', function(account){
-  return [
-    'div.account', 
+var template = function(account){
+  return ['div.account',
     ['div.header', 'Account Info'],
     ['div.label', 'Name'],
     ['div', account.name],
     ['div.label', 'Age'],
     ['div', account.age]
   ];
-});
+}
 var account = {
   name: 'John Doe',
   age: 25
 };
-var result = T('template', account).toString();
+var result = T(template(account)).toString();
 // result is like below (after formatted)
 // <div class="account">
 //   <div class="header">Account Info</div>
@@ -83,42 +82,42 @@ var result = T('template', account).toString();
 
 ## DEVELOPMENT SETUP (MAC)
 
-$ git clone git://github.com/gcao/T.js.git  
+$ git clone git://github.com/gcao/T.js.git
 $ cd T.js
 
-$ brew install node  
-$ npm install coffee-script  
+$ brew install node
+$ npm install coffee-script
 
-$ gem install bundler  
-$ bundle  
-$ guard  
+$ gem install bundler
+$ bundle
+$ guard
 
 ## NOTES
 
-* Run with LiveReload support:  
+* Run with LiveReload support:
 thin -p 8000 start
 
-* Run with no external dependency:  
+* Run with no external dependency:
 cd public && python -m SimpleHTTPServer
 
-* Open Demo Page:  
+* Open Demo Page:
 open http://localhost:8000
 
-* Run Jasmine tests in browser:  
-open http://localhost:8000/spec_runner.html
+* Run Jasmine tests in browser:
+open http://localhost:8000/spec_runner
 
-* Convert between html and T:  
-bin/html2t spec/fixtures/test.html  
-bin/html2t spec/fixtures/test.html | bin/t2html  
+* Convert between html and T:
+bin/html2t spec/fixtures/test.html
+bin/html2t spec/fixtures/test.html | bin/t2html
 
-* Convert T to CoffeeScript (js2coffee has to be installed):  
+* Convert T to CoffeeScript (js2coffee has to be installed):
 bin/html2t spec/fixtures/test.html | js2coffee
 
-* Convert haml to html to T template to html:  
+* Convert haml to html to T template to html:
 bundle exec bin/haml2erb spec/fixtures/test.haml | HTML_FRAGMENT=true bin/html2t | bin/t2html
 
-* Integrate with Jasmine Headless WebKit:  
-Config file is located at public/javascripts/spec/jasmine.yml  
+* Integrate with Jasmine Headless WebKit:
+Config file is located at public/javascripts/spec/jasmine.yml
 jasmine-headless-webkit -c -j public/javascripts/spec/jasmine.yml
 
 ## CREDITS
