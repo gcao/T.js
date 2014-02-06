@@ -136,21 +136,19 @@ todo = (todos, index) ->
 <div id='data-binding' style='margin-left: 105px; margin-top: -10px; margin-bottom: -10px; font-size: 18px;'/>
 
 <script type="text/javascript">
-console.log('here')
+var bind = function(el, obj, property) {
+  var tagName = $(el).get(0).tagName;
 
-var bind = function(el, obj, properties, options) {
-  var tagName;
-  tagName = $(el).get(0).tagName;
-  watch(obj, properties, function() {
+  watch(obj, property, function() {
     if (tagName === 'INPUT') {
-      return $(el).val(obj[properties]);
+      $(el).val(obj[property]);
     } else if (tagName === 'SPAN') {
-      return $(el).text(obj[properties]);
+      $(el).text(obj[property]);
     }
   });
   if (tagName === 'INPUT') {
     return $(el).change(function() {
-      return obj[properties] = $(this).val();
+      obj[property] = $(this).val();
     });
   }
 };
@@ -159,12 +157,12 @@ var template = function(data) {
   return [
     'div', {
       afterRender: function(el) {
-        return bind($(el).find('input'), data, 'name');
+        bind($(el).find('input'), data, 'name');
       }
     }, [
       "span", {
         afterRender: function(el) {
-          return bind(el, data, 'name');
+          bind(el, data, 'name');
         }
       }, data.name
     ], [
@@ -179,7 +177,7 @@ var template = function(data) {
       }
     ]
   ];
-});
+}
 
 var model = {
   name: 'John Doe'
