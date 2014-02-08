@@ -123,18 +123,10 @@ class Accordion
     ]
 
 class Section
-  constructor: (@name) ->
-    @validations = []
-
-  validate: ->
-    @errors = {}
-    for validation in @validations
-      validation(@)
+  constructor: (@name, @model) ->
 
   isValid: ->
-    if not @errors then @validate()
-
-    T.internal.isEmpty(@errors)
+    @model.validate()
 
   addToAccordion: (parent) ->
     @accordion = new Accordion(parent)
@@ -142,87 +134,131 @@ class Section
     @accordion.heading = => @name
     @accordion.body    = => @body()
 
-accordionGroup = new AccordionGroup
+class AccountSection extends Section
+  constructor: (model) ->
+    super('Account', model)
 
-account = new Section('Account')
-account.validations.push (model) ->
-  if model.firstName is null or model.firstName is '' or typeof model.firstName is 'undefined'
-    model.errors.firstName = "First name is required"
+  body: ->
+    return unless @model
 
-account.body = ->
-  [ '.account'
-    'Please fill in your contact information:'
-    [ 'div'
-      [ 'label', style: margin_right: 10, 'First name' ]
-      [ 'input'
-        name: 'firstName'
-        value: @firstName or ''
-        afterRender: (el) => bind(el, @, 'firstName')
+    [ '.account'
+      'Please fill in your contact information:'
+      [ 'div'
+        [ 'label', style: margin_right: 10, 'First name' ]
+        [ 'input'
+          name: 'firstName'
+          value: @model.firstName or ''
+          afterRender: (el) => bind(el, @model, 'firstName')
+        ]
       ]
     ]
-  ]
 
-account.addToAccordion(accordionGroup)
+class AddressSection extends Section
+  constructor: (model) ->
+    super('Address', model)
 
-address = new Section('Address')
-address.validations.push (model) ->
-  if model.addressLine1 is null or model.addressLine1 is '' or typeof model.addressLine1 is 'undefined'
-    model.errors.addressLine1 = "Address line 1 is required"
+  body: ->
+    return unless @model
 
-address.body = ->
-  [ '.address'
-    'Please fill in your home address:'
-    [ 'div'
-      [ 'label', style: margin_right: 10, 'Address line 1' ]
-      [ 'input'
-        name: 'addressLine1'
-        value: @addressLine1 or ''
-        afterRender: (el) => bind(el, @, 'addressLine1')
+    [ '.address'
+      'Please fill in your address:'
+      [ 'div'
+        [ 'label', style: margin_right: 10, 'Address line 1' ]
+        [ 'input'
+          name: 'addressLine1'
+          value: @model.addressLine1 or ''
+          afterRender: (el) => bind(el, @model, 'addressLine1')
+        ]
       ]
     ]
-  ]
 
-address.addToAccordion(accordionGroup)
+class BillingSection extends Section
+  constructor: (model) ->
+    super('Billing', model)
 
-billing = new Section('Billing')
-billing.validations.push (model) ->
-  if model.cardNumber is null or model.cardNumber is '' or typeof model.cardNumber is 'undefined'
-    model.errors.cardNumber = "Credit card number is required"
+  body: ->
+    return unless @model
 
-billing.body = ->
-  [ '.billing'
-    'Please fill in your payment method:'
-    [ 'div'
-      [ 'label', style: margin_right: 10, 'Credit card number' ]
-      [ 'input'
-        name: 'cardNumber'
-        value: @cardNumber or ''
-        afterRender: (el) => bind(el, @, 'cardNumber')
+    [ '.billing'
+      'Please fill in your billing information:'
+      [ 'div'
+        [ 'label', style: margin_right: 10, 'Credit card number:' ]
+        [ 'input'
+          name: 'cardNumber'
+          value: @model.cardNumber or ''
+          afterRender: (el) => bind(el, @model, 'cardNumber')
+        ]
       ]
     ]
-  ]
 
-billing.addToAccordion(accordionGroup)
+class ShippingSection extends Section
+  constructor: (model) ->
+    super('Shipping', model)
 
-shipping = new Section('Shipping')
-shipping.validations.push (model) ->
-  if model.addressLine1 is null or model.addressLine1 is '' or typeof model.addressLine1 is 'undefined'
-    model.errors.addressLine1 = "Address line 1 is required"
+  body: ->
+    return unless @model
 
-shipping.body = ->
-  [ '.shipping'
-    'Please fill in your shipping address:'
-    [ 'div'
-      [ 'label', style: margin_right: 10, 'Address line 1' ]
-      [ 'input'
-        name: 'addressLine1'
-        value: @addressLine1 or ''
-        afterRender: (el) => bind(el, @, 'addressLine1')
+    [ '.billing'
+      'Please fill in your shipping information:'
+      [ 'div'
+        [ 'label', style: margin_right: 10, 'Shipping method:' ]
+        [ 'input'
+          name: 'shippingMethod'
+          value: @model.shippingMethod or ''
+          afterRender: (el) => bind(el, @model, 'shippingMethod')
+        ]
       ]
     ]
-  ]
 
-shipping.addToAccordion(accordionGroup)
+class BaseModel
+  constructor: ->
+
+  validate: ->
+    @errors = {}
+    for validation in @constructor.validations
+      validation(@)
+    T.internal.isEmpty(@errors)
+
+  isValid: ->
+    @validate() unless @errors
+    T.internal.isEmpty(@errors)
+
+class Account extends BaseModel
+  constructor: ->
+
+  @validations: []
+  @validations.push (model) ->
+    unless model.firstName and model.firstName isnt ''
+      myErrors = model.errors.firstName || []
+      myErrors.push
+        field: 'firstName'
+        message: 'First name is required'
+      model.errors.firstName = myErrors
+
+class Address extends BaseModel
+  constructor: ->
+
+  @validations: []
+  @validations.push (model) ->
+
+class Billing extends BaseModel
+  constructor: ->
+
+  @validations: []
+  @validations.push (model) ->
+
+class Shipping extends BaseModel
+  constructor: ->
+
+  @validations: []
+  @validations.push (model) ->
+
+window.accordionGroup = new AccordionGroup
+
+new AccountSection(new Account).addToAccordion(accordionGroup)
+new AddressSection(new Address).addToAccordion(accordionGroup)
+new BillingSection(new Billing).addToAccordion(accordionGroup)
+new ShippingSection(new Shipping).addToAccordion(accordionGroup)
 
 accordionGroup[0].enable()
 accordionGroup[1].enable()
