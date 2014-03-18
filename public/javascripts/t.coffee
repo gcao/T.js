@@ -55,7 +55,7 @@ internal.Template.prototype.process = (data...) ->
   tags = internal.prepareOutput(@template, data...)
   tags = internal.normalize tags
   tags = internal.processAttributes tags
-  internal.handlePostProcess tags
+  internal.handleAfterProcess tags
   new internal.TemplateOutput(this, tags)
 
 internal.Template.prototype.prepare = (includes) ->
@@ -243,10 +243,10 @@ internal.prepareOutput = (template, data...) ->
   else
     template
 
-internal.handlePostProcess = (arr) ->
+internal.handleAfterProcess = (arr) ->
   if not internal.isArray arr then return
   for item in arr
-    internal.handlePostProcess item
+    internal.handleAfterProcess item
 
   callbacks = arr[1]?.afterProcess
   if callbacks
@@ -259,7 +259,7 @@ internal.handlePostProcess = (arr) ->
     delete arr[1].afterProcess
     if internal.isEmpty(arr[1]) then arr.splice(1, 1)
 
-internal.handlePostRender = (callbacks, el) ->
+internal.handleAfterRender = (callbacks, el) ->
   if not callbacks then return
 
   if typeof callbacks is 'function'
@@ -281,7 +281,7 @@ internal.registerCallbacks = (config) ->
 
       for own name, callback of myCallbacks
         if name is 'afterRender'
-          internal.handlePostRender(callback, element)
+          internal.handleAfterRender(callback, element)
         else
           $(element).on(name, callback)
 
@@ -312,6 +312,8 @@ internal.renderAttributes = (attributes) ->
   internal.processCallbacks(attributes)
 
   for own key, value of attributes
+    if value is null or typeof value is 'undefined' then continue
+
     if key is "temp"
     else if key is "style"
       styles = attributes.style
@@ -339,7 +341,6 @@ internal.render = (input, options) ->
 
   first = input.shift()
 
-  # TODO: [['div'], ...]
   if internal.isArray first
     return internal.render(first, options) + (internal.render(item, options) for item in input).join('')
 
@@ -424,7 +425,7 @@ internal.renderChildTags = (parent, tags) ->
     else if internal.isArray part
       internal.renderChildTags(el, part)
 
-  internal.handlePostRender(afterRender, el)
+  internal.handleAfterRender(afterRender, el)
 
   el
 
@@ -452,30 +453,18 @@ T.each = (o, args..., template) ->
   if internal.isArray o
     for item in o
       template(item, args...)
-    #T.process ->
-    #  for item in o
-    #    T(template, item, args...)
   else
     for own key, value of o
       template(key, value, args...)
-    #T.process ->
-    #  for own key, value of o
-    #    T(template, key, value, args...)
 
 T.each2 = (o, args..., template) ->
   for item, i in o
     template(i, item, args...)
-  #T.process ->
-  #  for item, i in o
-  #    T(template, i, item, args...)
 
 T.process = (template, data...) ->
   if not internal.isTemplate template
     template = new internal.Template(template)
   template.process data...
-
-#T.render = (template, options) ->
-#  T(template).render options
 
 T.prepare = (template, includes) ->
   if not internal.isTemplate template
