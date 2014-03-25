@@ -1,4 +1,4 @@
-VERSION = "0.8.0"
+VERSION = "0.9.0"
 
 T = (template, data...) ->
   if not internal.isTemplate template
@@ -35,7 +35,7 @@ internal.merge      = (o1, o2) ->
   return o2 unless o1
 
   for own key, value of o2
-    if ['afterProcess', 'afterRender'].indexOf(key) >= 0
+    if ['afterRender'].indexOf(key) >= 0
       value1 = o1[key]
       if value1
         if internal.isArray value1
@@ -55,7 +55,6 @@ internal.Template.prototype.process = (data...) ->
   tags = internal.prepareOutput(@template, data...)
   tags = internal.normalize tags
   tags = internal.processAttributes tags
-  internal.handleAfterProcess tags
   new internal.TemplateOutput(this, tags)
 
 internal.Template.prototype.prepare = (includes) ->
@@ -243,22 +242,6 @@ internal.prepareOutput = (template, data...) ->
   else
     template
 
-internal.handleAfterProcess = (arr) ->
-  if not internal.isArray arr then return
-  for item in arr
-    internal.handleAfterProcess item
-
-  callbacks = arr[1]?.afterProcess
-  if callbacks
-    if typeof callbacks is 'function'
-      callbacks(arr)
-    else
-      for callback in callbacks
-        callback(arr)
-
-    delete arr[1].afterProcess
-    if internal.isEmpty(arr[1]) then arr.splice(1, 1)
-
 internal.handleAfterRender = (callbacks, el) ->
   if not callbacks then return
 
@@ -429,38 +412,6 @@ internal.renderChildTags = (parent, tags) ->
 
   el
 
-T.if = (cond, trueValue, falseValue) ->
-  if typeof cond is 'function'
-    cond = cond()
-
-  result = if cond then trueValue else falseValue
-  if typeof result is 'function'
-    result()
-  else
-    result
-
-T.unless = T.ifNot = (cond, value) ->
-  if typeof cond is 'function'
-    cond = cond()
-
-  if not cond
-    if typeof value is 'function'
-      value()
-    else
-      value
-
-T.each = (o, args..., template) ->
-  if internal.isArray o
-    for item in o
-      template(item, args...)
-  else
-    for own key, value of o
-      template(key, value, args...)
-
-T.each2 = (o, args..., template) ->
-  for item, i in o
-    template(i, item, args...)
-
 T.process = (template, data...) ->
   if not internal.isTemplate template
     template = new internal.Template(template)
@@ -494,20 +445,5 @@ T.unescape = (str) ->
    .replace(/&quot;/g, '"')
    .replace(/&#039;/g, "'")
 
-# noConflict support
-internal.thisRef = this
-T.noConflict     = ->
-  if T.oldT
-    internal.thisRef.T = T.oldT
-  else
-    delete internal.thisRef.T
-  T
-
-if this.T then T.oldT = this.T
-
-# For browser
 this.T = T
-
-# Node.js exports
-module?.exports = T
 
