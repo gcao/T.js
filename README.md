@@ -70,14 +70,14 @@ var result = T(template(account)).toString();
 
 ## DEVELOPMENT SETUP (MAC)
 
-$ git clone git://github.com/gcao/T.js.git
+$ git clone git://github.com/gcao/T.js.git  
 $ cd T.js
 
-$ brew install node
+$ brew install node  
 $ npm install coffee-script
 
-$ gem install bundler
-$ bundle
+$ gem install bundler  
+$ bundle  
 $ guard
 
 ## NOTES
